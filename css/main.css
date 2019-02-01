@@ -1895,7 +1895,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #a7dff0;
+  background: #ff9881;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2702,8 +2702,9 @@ ul.breadcrumb li+li:last-child {
   color: #fff;
 }
 .site-subtitle {
-  margin: 10px 10px 0;
+  margin: 10px 40px 0;
   font-weight: initial;
+  font-size: 10%;
 }
 .custom-logo-image {
   margin-top: 20px;
