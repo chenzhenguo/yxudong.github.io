@@ -50,6 +50,18 @@
       </tags>
   </entry>
   <entry>
+    <title><![CDATA[单链表的反转]]></title>
+    <url>%2F2019%2F02%2F01%2F%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC%2F</url>
+    <content type="text"><![CDATA[单链表的反转 链表的定义1234typedef struct LinkNode&#123; int val; struct LinkNode *next;&#125; LinkNode; 非递归写法123456789101112131415161718LinkNode* Reverse(LinkNode *head)&#123; if(head == NULL || head-&gt;next == NULL)&#123; return head; &#125; LinkNode* pre = head; LinkNode* cur = head-&gt;next; LinkNode* temp = head-&gt;next-&gt;next; while(cur)&#123; temp = cur-&gt;next; cur-&gt;next = pre; pre = cur; cur = temp; &#125; head-&gt;next = NULL; return pre;&#125; 递归写法1234567891011LinkNode* Re_Reverse(LinkNode* head)&#123; if (head == NULL || head-&gt;next == NULL)&#123; return head; &#125; LinkNode* newHead = Re_Reverse(head-&gt;next); //一直循环到链尾 head-&gt;next-&gt;next = head; //翻转链表的指向 head-&gt;next = NULL; //记得赋值NULL，防止链表错乱 return newHead; //新链表头永远指向的是原链表的链尾&#125;]]></content>
+      <categories>
+        <category>DS</category>
+      </categories>
+      <tags>
+        <tag>C</tag>
+        <tag>DS，剑指offer</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[快速排序递归及非递归实现]]></title>
     <url>%2F2019%2F02%2F01%2F%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E9%80%92%E5%BD%92%E5%8F%8A%E9%9D%9E%E9%80%92%E5%BD%92%E5%AE%9E%E7%8E%B0%2F</url>
     <content type="text"><![CDATA[快速排序递归及非递归实现 递归1234567891011121314151617181920212223void QuickSort(int A[], int low, int high)&#123; if(low &lt; high)&#123; int pivotpos = Partition(A, low, high); QuickSort(A, low, pivotpos - 1); QuickSort(A, pivotpos + 1, high); &#125;&#125;int Partition(int A [], int low, int high)&#123; int pivot = A[low]; while(low &lt; high)&#123; while(low &lt; high &amp;&amp; A[high] &gt;= pivot)&#123; --high; &#125; A[low] = A[high]; while(low &lt; high &amp;&amp; A [low] &gt;= pivot)&#123; ++low; &#125; A[high] = A[low]; &#125; A[low] = pivot; return low;&#125; 非递归12345678910111213141516171819202122232425262728293031323334353637383940414243void QuickSort(int *array, int left, int right)&#123; stack&lt;int&gt; s; s.push(left); s.push(right); //后入的right，所以要先拿right //其实就是用栈保存每一个待排序子串的首尾元素下标，下一次while循环时取出这个范围，对这段子序列进行partition操作 while(!s.empty)&#123; int right = s.top(); s.pop(); int left = s.top(); s.pop(); int index = Partition(array, left, right); if(index-1 &gt; left)&#123; s.push(left); s.push(index - 1); &#125; if(index+1 &lt; right)&#123; s.push(index + 1); s.push(right); &#125; &#125;&#125;int PartSort(int* array,int left,int right)&#123; int key = array[right]; while(left &lt; right) &#123; while(left &lt; right &amp;&amp; array[left] &lt;= key) &#123; ++left; &#125; array[right] = array[left]; while(left &lt; right &amp;&amp; array[right] &gt;= key) &#123; --right; &#125; array[left] = array[right]; &#125; array[right] = key; return right;&#125;]]></content>
@@ -60,18 +72,6 @@
         <tag>C</tag>
         <tag>C++</tag>
         <tag>DS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[单链表的反转]]></title>
-    <url>%2F2019%2F02%2F01%2F%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC%2F</url>
-    <content type="text"><![CDATA[单链表的反转 链表的定义1234typedef struct LinkNode&#123; int val; struct LinkNode *next;&#125; LinkNode; 非递归写法123456789101112131415161718LinkNode* Reverse(LinkNode *head)&#123; if(head == NULL || head-&gt;next == NULL)&#123; return head; &#125; LinkNode* pre = head; LinkNode* cur = head-&gt;next; LinkNode* temp = head-&gt;next-&gt;next; while(cur)&#123; temp = cur-&gt;next; cur-&gt;next = pre; pre = cur; cur = temp; &#125; head-&gt;next = NULL; return pre;&#125; 递归写法1234567891011LinkNode* Re_Reverse(LinkNode* head)&#123; if (head == NULL || head-&gt;next == NULL)&#123; return head; &#125; LinkNode* newHead = Re_Reverse(head-&gt;next); //一直循环到链尾 head-&gt;next-&gt;next = head; //翻转链表的指向 head-&gt;next = NULL; //记得赋值NULL，防止链表错乱 return newHead; //新链表头永远指向的是原链表的链尾&#125;]]></content>
-      <categories>
-        <category>DS</category>
-      </categories>
-      <tags>
-        <tag>C</tag>
-        <tag>DS，剑指offer</tag>
       </tags>
   </entry>
   <entry>
