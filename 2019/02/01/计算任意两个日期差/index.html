@@ -96,25 +96,25 @@
 
 
 
-  <meta name="description" content="单链表的反转 链表的定义1234typedef struct LinkNode&amp;#123;    int val;    struct LinkNode *next;&amp;#125; LinkNode; 非递归写法123456789101112131415161718LinkNode* Reverse(LinkNode *head)&amp;#123;    if(head == NULL || head-&amp;">
-<meta name="keywords" content="C,DS，剑指offer">
+  <meta name="description" content="计算任意两个日期差 题目描述有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天 输入： 有多组数据，每组数据有两行，分别表示两个日期，形式为 YYYYMMDD 输出： 每组数据输出一行，即日期差值 样例输入： 2011041220110422 样例输出： 11">
+<meta name="keywords" content="C++,DS">
 <meta property="og:type" content="article">
-<meta property="og:title" content="单链表的反转">
-<meta property="og:url" content="http://yxudong.github.io/2019/02/01/单链表的反转/index.html">
+<meta property="og:title" content="计算日期差">
+<meta property="og:url" content="http://yxudong.github.io/2019/02/01/计算任意两个日期差/index.html">
 <meta property="og:site_name" content="Yxd&#39;s Blog">
-<meta property="og:description" content="单链表的反转 链表的定义1234typedef struct LinkNode&amp;#123;    int val;    struct LinkNode *next;&amp;#125; LinkNode; 非递归写法123456789101112131415161718LinkNode* Reverse(LinkNode *head)&amp;#123;    if(head == NULL || head-&amp;">
+<meta property="og:description" content="计算任意两个日期差 题目描述有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天 输入： 有多组数据，每组数据有两行，分别表示两个日期，形式为 YYYYMMDD 输出： 每组数据输出一行，即日期差值 样例输入： 2011041220110422 样例输出： 11">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-02-23T05:40:43.510Z">
+<meta property="og:updated_time" content="2019-02-23T05:42:04.421Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="单链表的反转">
-<meta name="twitter:description" content="单链表的反转 链表的定义1234typedef struct LinkNode&amp;#123;    int val;    struct LinkNode *next;&amp;#125; LinkNode; 非递归写法123456789101112131415161718LinkNode* Reverse(LinkNode *head)&amp;#123;    if(head == NULL || head-&amp;">
+<meta name="twitter:title" content="计算日期差">
+<meta name="twitter:description" content="计算任意两个日期差 题目描述有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天 输入： 有多组数据，每组数据有两行，分别表示两个日期，形式为 YYYYMMDD 输出： 每组数据输出一行，即日期差值 样例输入： 2011041220110422 样例输出： 11">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yxudong.github.io/2019/02/01/单链表的反转/">
+  <link rel="canonical" href="http://yxudong.github.io/2019/02/01/计算任意两个日期差/">
 
 
 
@@ -124,7 +124,7 @@
   };
 </script>
 
-  <title>单链表的反转 | Yxd's Blog</title>
+  <title>计算日期差 | Yxd's Blog</title>
   
 
 
@@ -327,7 +327,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2019/02/01/单链表的反转/">
+    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2019/02/01/计算任意两个日期差/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yxd">
@@ -344,7 +344,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">单链表的反转
+          <h1 class="post-title" itemprop="name headline">计算日期差
 
               
             
@@ -387,7 +387,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-02-23 13:40:43" itemprop="dateModified" datetime="2019-02-23T13:40:43+08:00">2019-02-23</time>
+                <time title="修改时间：2019-02-23 13:42:04" itemprop="dateModified" datetime="2019-02-23T13:42:04+08:00">2019-02-23</time>
               
             
           </span>
@@ -439,11 +439,20 @@
       
 
       
-        <h2 id="单链表的反转"><a href="#单链表的反转" class="headerlink" title="单链表的反转"></a>单链表的反转</h2><hr>
-<h3 id="链表的定义"><a href="#链表的定义" class="headerlink" title="链表的定义"></a>链表的定义</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">typedef struct LinkNode&#123;</span><br><span class="line">    int val;</span><br><span class="line">    struct LinkNode *next;</span><br><span class="line">&#125; LinkNode;</span><br></pre></td></tr></table></figure>
-<h3 id="非递归写法"><a href="#非递归写法" class="headerlink" title="非递归写法"></a>非递归写法</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LinkNode* <span class="title">Reverse</span><span class="params">(LinkNode *head)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(head == <span class="literal">NULL</span> || head-&gt;next == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    LinkNode* pre = head;</span><br><span class="line">    LinkNode* cur = head-&gt;next;</span><br><span class="line">    LinkNode* temp = head-&gt;next-&gt;next;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(cur)&#123;</span><br><span class="line">        temp = cur-&gt;next;</span><br><span class="line">        cur-&gt;next = pre;</span><br><span class="line">        pre = cur;</span><br><span class="line">        cur = temp;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    head-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> pre;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <h2 id="计算任意两个日期差"><a href="#计算任意两个日期差" class="headerlink" title="计算任意两个日期差"></a>计算任意两个日期差</h2><hr>
+<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天</p>
+<p><strong>输入</strong>：</p>
+<p>有多组数据，每组数据有两行，分别表示两个日期，形式为 YYYYMMDD</p>
+<p><strong>输出</strong>：</p>
+<p>每组数据输出一行，即日期差值</p>
+<p><strong>样例输入</strong>：</p>
+<p>20110412<br><br><br>20110422</p>
+<p><strong>样例输出</strong>：</p>
+<p>11</p>
 <a id="more"></a>
-<h3 id="递归写法"><a href="#递归写法" class="headerlink" title="递归写法"></a>递归写法</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LinkNode* <span class="title">Re_Reverse</span><span class="params">(LinkNode* head)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (head == <span class="literal">NULL</span> || head-&gt;next == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> head; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    LinkNode* newHead = Re_Reverse(head-&gt;next);     <span class="comment">//一直循环到链尾 </span></span><br><span class="line">    head-&gt;next-&gt;next = head;                              <span class="comment">//翻转链表的指向</span></span><br><span class="line">    head-&gt;next = <span class="literal">NULL</span>;                                 <span class="comment">//记得赋值NULL，防止链表错乱</span></span><br><span class="line">    <span class="keyword">return</span> newHead;                                 <span class="comment">//新链表头永远指向的是原链表的链尾</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解题方法"><a href="#解题方法" class="headerlink" title="解题方法"></a>解题方法</h3><p>该题目是求两个日期间的天数差，即求分别以两个特定日期为界的日期区间的长度。解决这类区间问题有一个统一的思想——把原区间问题统一到起点确定的区间问题上去。<br><br><br><br><br>采用预处理手段，即在程序真正开始处理输入数据之前，预处理出所有日期与原点日期之间的天数差并保存起来。再者，预处理也是空间换时间的重要手段（保存预处理所得数据所需的内存来换取实时处理所需要的时间消耗）<br><br><br><br><br>日期类问题有个需要注意的要点——闰年，闰年并不严格按照四年一次的规律出现，在某种情况下也可能出现两个相邻闰年相隔8年的情况（如1896年与1904年）。即应采用该如下代码表示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#define ISYEAP(X) X%100 != 0 &amp;&amp; X%4 == 0 || X%400 == 0 ? 1:0</span><br></pre></td></tr></table></figure></p>
+<p>当需要开辟大量内存空间的情况，必须在函数体外定义，即定义全局变量，或者在函数中使用malloc等函数动态申请变量空间。即下面的代码中的buf[5001][13][32]<br><br><br><br><br>在保存某个特定日期与原点日期的天数差时，使用了三维数组，用年、月、日分别表示该数组下标，便将日期本身与其存储地址联系起来，通过利用它的年月日数字即可找到我们保存的值，即Hash的基本思想。</p>
+<h3 id="解题代码"><a href="#解题代码" class="headerlink" title="解题代码"></a>解题代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ISYEAP(x) x % 100 != 0 &amp;&amp; x % 4 == 0 || x % 400 == 0 ? 1 : 0</span></span><br><span class="line"><span class="comment">//定义宏判断是否是闰年</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> dayOfMonth[<span class="number">13</span>][<span class="number">2</span>] = &#123;</span><br><span class="line">    <span class="number">0</span>, <span class="number">0</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">28</span>, <span class="number">29</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">30</span>, <span class="number">30</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">30</span>, <span class="number">30</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">30</span>, <span class="number">30</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">30</span>, <span class="number">30</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span></span><br><span class="line">&#125;; <span class="comment">// 预存每月的天数，二月配合宏定义做特殊处理</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Date</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> Day;</span><br><span class="line">    <span class="keyword">int</span> Month;</span><br><span class="line">    <span class="keyword">int</span> Year;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">nextDay</span><span class="params">()</span> </span>&#123; <span class="comment">// 计算下一天的日期</span></span><br><span class="line">        ++Day;</span><br><span class="line">        <span class="keyword">if</span> (Day &gt; dayOfMonth[Month][ISYEAP(Year)]) &#123; <span class="comment">// 若日数超过了当月最大日数</span></span><br><span class="line">            Day = <span class="number">1</span>;</span><br><span class="line">            ++Month;</span><br><span class="line">            <span class="keyword">if</span> (Month &gt; <span class="number">12</span>) &#123; <span class="comment">// 若月份超过 12</span></span><br><span class="line">                Month = <span class="number">1</span>;</span><br><span class="line">                ++Year;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> buf[<span class="number">5001</span>][<span class="number">13</span>][<span class="number">32</span>]; <span class="comment">// 保存预处理的天数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Date tmp;</span><br><span class="line">    <span class="keyword">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">    tmp.Day = <span class="number">0</span>;</span><br><span class="line">    tmp.Month = <span class="number">0</span>;</span><br><span class="line">    tmp.Year = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (tmp.Year != <span class="number">5001</span>) &#123;</span><br><span class="line">        buf[tmp.Year][tmp.Month][tmp.Day] = cnt;</span><br><span class="line">        tmp.nextDay();</span><br><span class="line">        ++cnt;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> d1, m1, y1;</span><br><span class="line">    <span class="keyword">int</span> d2, m2, y2;</span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">scanf</span>(<span class="string">"%4d%2d%2d"</span>, &amp;y1, &amp;m1, &amp;d1) != EOF) &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%4d%2d%2d"</span>, &amp;y2, &amp;m2, &amp;d2);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>, <span class="built_in">abs</span>(buf[y1][m1][d1] - buf[y2][m2][d2]) + <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -466,9 +475,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/C/" rel="tag"># C</a>
+            <a href="/tags/C/" rel="tag"># C++</a>
           
-            <a href="/tags/DS，剑指offer/" rel="tag"># DS，剑指offer</a>
+            <a href="/tags/DS/" rel="tag"># DS</a>
           
         </div>
       
@@ -481,8 +490,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/02/01/快速排序递归及非递归实现/" rel="next" title="快速排序递归及非递归实现">
-                <i class="fa fa-chevron-left"></i> 快速排序递归及非递归实现
+              <a href="/2017/07/02/Python中的os.path.dirname(__file__)的使用/" rel="next" title="Python中的os.path.dirname(__file__)的使用">
+                <i class="fa fa-chevron-left"></i> Python中的os.path.dirname(__file__)的使用
               </a>
             
           </div>
@@ -491,8 +500,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/02/01/二叉树非递归遍历/" rel="prev" title="二叉树非递归遍历">
-                二叉树非递归遍历 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/02/01/快速排序递归及非递归实现/" rel="prev" title="快速排序递归及非递归实现">
+                快速排序递归及非递归实现 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -669,7 +678,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#单链表的反转"><span class="nav-number">1.</span> <span class="nav-text">单链表的反转</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#链表的定义"><span class="nav-number">1.1.</span> <span class="nav-text">链表的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非递归写法"><span class="nav-number">1.2.</span> <span class="nav-text">非递归写法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#递归写法"><span class="nav-number">1.3.</span> <span class="nav-text">递归写法</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#计算任意两个日期差"><span class="nav-number">1.</span> <span class="nav-text">计算任意两个日期差</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#题目描述"><span class="nav-number">1.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解题方法"><span class="nav-number">1.2.</span> <span class="nav-text">解题方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解题代码"><span class="nav-number">1.3.</span> <span class="nav-text">解题代码</span></a></li></ol></li></ol></div>
             
 
           </div>
