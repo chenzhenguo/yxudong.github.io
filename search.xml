@@ -23,8 +23,8 @@
       <tags>
         <tag>C++</tag>
         <tag>DS</tag>
-        <tag>二叉树</tag>
         <tag>剑指offer</tag>
+        <tag>二叉树</tag>
       </tags>
   </entry>
   <entry>
@@ -51,19 +51,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[二叉树非递归遍历]]></title>
-    <url>%2F2019%2F02%2F01%2F%E4%BA%8C%E5%8F%89%E6%A0%91%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86%2F</url>
-    <content type="text"><![CDATA[二叉树非递归遍历 二叉树定义1234typedef struct BiTNode&#123; ElemType data; struct BiTNode *lchild, *rchild;&#125;BiTNode, *BiTree; 先序遍历12345678910111213141516void PreOrder(BiTree T)&#123; InitStack(S); BiTNode *p; p = T; while(p || isEmpty(s))&#123; if(p)&#123; Push(S, p); visit(p); p = p-&gt;lchild; &#125; else&#123; Pop(S, p); p = p-&gt;rchild; &#125; &#125;&#125; 中序遍历12345678910111213141516void InOrder(BiTree T)&#123; InitStack(S); BiTNode *p; p = T; while(p || isEmpty(s))&#123; if(p)&#123; Push(S, p); p = p-&gt;lchild; &#125; else&#123; Pop(S, p); visit(p); p = p-&gt;rchild; &#125; &#125;&#125; 后序遍历1234567891011121314151617181920212223242526void PostOrder(BiTree T)&#123; InitStack(S); BiTNode *p; p = T; r = NULL; while(p || isEmpty(s))&#123; if(p)&#123; Push(S, p); p = p-&gt;lchild; &#125; else&#123; GetTop(S, p); if(p-&gt;rchild &amp;&amp; p-&gt;rchild != r)&#123; p = p-&gt;rchild; Push(S, p); p = p-&gt;lchild; &#125; else&#123; Pop(S, p); visit(p); r = p; p = NULL; &#125; &#125; &#125;&#125;]]></content>
-      <categories>
-        <category>DS</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-        <tag>DS</tag>
-        <tag>二叉树</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[单链表的反转]]></title>
     <url>%2F2019%2F02%2F01%2F%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC%2F</url>
     <content type="text"><![CDATA[单链表的反转 链表的定义1234typedef struct LinkNode&#123; int val; struct LinkNode *next;&#125; LinkNode; 非递归写法123456789101112131415161718LinkNode* Reverse(LinkNode *head)&#123; if(head == NULL || head-&gt;next == NULL)&#123; return head; &#125; LinkNode* pre = head; LinkNode* cur = head-&gt;next; LinkNode* temp = head-&gt;next-&gt;next; while(cur)&#123; temp = cur-&gt;next; cur-&gt;next = pre; pre = cur; cur = temp; &#125; head-&gt;next = NULL; return pre;&#125; 递归写法1234567891011LinkNode* Re_Reverse(LinkNode* head)&#123; if (head == NULL || head-&gt;next == NULL)&#123; return head; &#125; LinkNode* newHead = Re_Reverse(head-&gt;next); //一直循环到链尾 head-&gt;next-&gt;next = head; //翻转链表的指向 head-&gt;next = NULL; //记得赋值NULL，防止链表错乱 return newHead; //新链表头永远指向的是原链表的链尾&#125;]]></content>
@@ -74,6 +61,19 @@
         <tag>C++</tag>
         <tag>DS</tag>
         <tag>剑指offer</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[二叉树非递归遍历]]></title>
+    <url>%2F2019%2F02%2F01%2F%E4%BA%8C%E5%8F%89%E6%A0%91%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86%2F</url>
+    <content type="text"><![CDATA[二叉树非递归遍历 二叉树定义1234typedef struct BiTNode&#123; ElemType data; struct BiTNode *lchild, *rchild;&#125;BiTNode, *BiTree; 先序遍历12345678910111213141516void PreOrder(BiTree T)&#123; InitStack(S); BiTNode *p; p = T; while(p || isEmpty(s))&#123; if(p)&#123; Push(S, p); visit(p); p = p-&gt;lchild; &#125; else&#123; Pop(S, p); p = p-&gt;rchild; &#125; &#125;&#125; 中序遍历12345678910111213141516void InOrder(BiTree T)&#123; InitStack(S); BiTNode *p; p = T; while(p || isEmpty(s))&#123; if(p)&#123; Push(S, p); p = p-&gt;lchild; &#125; else&#123; Pop(S, p); visit(p); p = p-&gt;rchild; &#125; &#125;&#125; 后序遍历1234567891011121314151617181920212223242526void PostOrder(BiTree T)&#123; InitStack(S); BiTNode *p; p = T; r = NULL; while(p || isEmpty(s))&#123; if(p)&#123; Push(S, p); p = p-&gt;lchild; &#125; else&#123; GetTop(S, p); if(p-&gt;rchild &amp;&amp; p-&gt;rchild != r)&#123; p = p-&gt;rchild; Push(S, p); p = p-&gt;lchild; &#125; else&#123; Pop(S, p); visit(p); r = p; p = NULL; &#125; &#125; &#125;&#125;]]></content>
+      <categories>
+        <category>DS</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>DS</tag>
+        <tag>二叉树</tag>
       </tags>
   </entry>
   <entry>
