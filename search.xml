@@ -14,6 +14,19 @@
       </tags>
   </entry>
   <entry>
+    <title><![CDATA[求 1 + 2 + 3 + ... + n]]></title>
+    <url>%2F2019%2F02%2F24%2F%E6%B1%82%201%20%2B%202%20%2B%203%20%2B%20...%20%2B%20n%2F</url>
+    <content type="text"><![CDATA[求 1 + 2 + 3 + … + n 题目描述求 1 + 2 + 3 + … + n，要求不能使用乘除法、for、while、if、else、switch、case 等关键字及条件判断语句（ A ? B : C）。 解题思路 利用逻辑与的短路特性实现递归终止； 当 n == 0 时，(n &gt; 0) &amp;&amp; ((sum += Sum_Solution(n - 1)) &gt; 0) 只执行前面的判断，为 false，然后直接返回 0； 当 n &gt; 0 时，执行 sum += Sum_Solution(n - 1)，实现递归计算 Sum_Solution(n)。 解题代码12345678class Solution &#123; public: int Sum_Solution(int n) &#123; int sum = n; (n &gt; 0) &amp;&amp; (sum += Sum_Solution(n - 1)); return sum; &#125;&#125;;]]></content>
+      <categories>
+        <category>DS</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>DS</tag>
+        <tag>剑指offer</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[包含 min 函数的栈]]></title>
     <url>%2F2019%2F02%2F23%2F%E5%8C%85%E5%90%AB%20min%20%E5%87%BD%E6%95%B0%E7%9A%84%E6%A0%88%2F</url>
     <content type="text"><![CDATA[包含 min 函数的栈 题目描述定义栈的数据结构，请在该类型中实现一个能够得到栈中所含最小元素的min函数（时间复杂度应为 O（1））。 解题代码12345678910111213141516171819202122232425262728293031323334class Solution &#123; public: // s 为常规的栈 // smin 为保存最小值的栈，其中顶部永远为最小值 stack&lt;int&gt; s, smin; void push(int value) &#123; s.push(value); // s 正常压栈 if (smin.empty())&#123; smin.push(value); // smin 为空，直接进栈 &#125; else if (value &lt;= smin.top())&#123; smin.push(value); // 待进栈元素小于最小值时，才会进入 smin 栈 &#125; &#125; void pop() &#123; int n = s.top(); s.pop(); // s 正常弹出 if (n == smin.top())&#123; smin.pop(); // 如果弹出元素为最小值，smin 顶部也弹出 &#125; &#125; int top() &#123; // 直接返回顶部即可 return s.top(); &#125; int min() &#123; // 返回 smin 顶部 return smin.top(); &#125;&#125;;]]></content>
