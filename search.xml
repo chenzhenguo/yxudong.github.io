@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[数组中出现次数超过一半的数字]]></title>
+    <url>%2F2019%2F02%2F24%2F%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97%2F</url>
+    <content type="text"><![CDATA[数组中出现次数超过一半的数字 题目描述数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。 思路一 题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多。我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数。当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1。 解题代码一123456789101112131415161718192021222324252627class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; int r = numbers[0]; int count = 1; for (int i = 1; i &lt; numbers.size(); ++i)&#123; if (count == 0)&#123; r = numbers[i]; count = 1; &#125; else if (numbers[i] == r)&#123; ++count; &#125; else &#123; --count; &#125; &#125; // 看最后一个元素个数是否超过长度一半 count = 0; for (int i = 0; i &lt; numbers.size(); ++i)&#123; if (numbers[i] == r)&#123; ++count; &#125; &#125; return count &gt; numbers.size() / 2 ? r : 0; &#125;&#125;; 思路二首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置 解题代码二123456789101112131415class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; sort(numbers.begin(),numbers.end()); int half = numbers.size() / 2; int count = 0; for(int i = 0; i &lt; numbers.size(); ++i)&#123; if(numbers[i]==numbers[half])&#123; ++count; &#125; &#125; return count &gt; half ? numbers[half] : 0; &#125;&#125;; 思路三利用 map 把每个数字出现的次数储存起来 解题代码三12345678910111213141516171819class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; map&lt;int,int&gt; numbersMap; for(int i = 0; i &lt; numbers.size(); ++i)&#123; numbersMap[numbers[i]] += 1; &#125; int half = numbers.size() / 2; int number = 0; for(map&lt;int,int&gt;::iterator it = numbersMap.begin(); it != numbersMap.end(); ++it)&#123; if(it-&gt;second &gt; half)&#123; number = it-&gt;first; break; &#125; &#125; return number; &#125;&#125;;]]></content>
+      <categories>
+        <category>DS</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>DS</tag>
+        <tag>剑指offer</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[包含 min 函数的栈]]></title>
     <url>%2F2019%2F02%2F23%2F%E5%8C%85%E5%90%AB%20min%20%E5%87%BD%E6%95%B0%E7%9A%84%E6%A0%88%2F</url>
     <content type="text"><![CDATA[包含 min 函数的栈 题目描述定义栈的数据结构，请在该类型中实现一个能够得到栈中所含最小元素的min函数（时间复杂度应为 O（1））。 解题代码12345678910111213141516171819202122232425262728293031323334class Solution &#123; public: // s 为常规的栈 // smin 为保存最小值的栈，其中顶部永远为最小值 stack&lt;int&gt; s, smin; void push(int value) &#123; s.push(value); // s 正常压栈 if (smin.empty())&#123; smin.push(value); // smin 为空，直接进栈 &#125; else if (value &lt;= smin.top())&#123; smin.push(value); // 待进栈元素小于最小值时，才会进入 smin 栈 &#125; &#125; void pop() &#123; int n = s.top(); s.pop(); // s 正常弹出 if (n == smin.top())&#123; smin.pop(); // 如果弹出元素为最小值，smin 顶部也弹出 &#125; &#125; int top() &#123; // 直接返回顶部即可 return s.top(); &#125; int min() &#123; // 返回 smin 顶部 return smin.top(); &#125;&#125;;]]></content>
