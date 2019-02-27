@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[顺时针打印矩阵]]></title>
+    <url>%2F2019%2F02%2F27%2F%E9%A1%BA%E6%97%B6%E9%92%88%E6%89%93%E5%8D%B0%E7%9F%A9%E9%98%B5%2F</url>
+    <content type="text"><![CDATA[顺时针打印矩阵 题目描述输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字，例如，如果输入如下 4 X 4 矩阵：1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 则依次打印出数字 1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10. 解题思路 每次都是一个圈，所以定义四个变量限定每次循环的界限：startRow, endRow, startCol, endCol； 分别把首行，末列，末行，首列的数据依次加入 vector； 为了不重复加入元素，每次走完一圈后重新限定界限 解题代码123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051class Solution &#123; public: vector&lt;int&gt; printMatrix(vector&lt;vector&lt;int&gt; &gt; matrix) &#123; vector&lt;int&gt; v; if (matrix.size() == 0)&#123; return v; &#125; if (matrix[0].size() == 0)&#123; return v; &#125; // 起始的四个界限 int startRow = 0; int endRow = matrix.size() - 1; int startCol = 0; int endCol = matrix[0].size() - 1; while(startRow &lt;= endRow &amp;&amp; startCol &lt;= endCol)&#123; // 矩阵最终可能会剩下一行或一列，如果不这么处理，会重复加入元素 // 如果就剩下一行 if(startRow == endRow)&#123; for(int i = startCol;i &lt;= endCol; ++i) v.push_back(matrix[startRow][i]); return v; &#125; // 如果就剩下一列 if(startCol == endCol)&#123; for(int i = startRow; i &lt;= endRow; ++i) v.push_back(matrix[i][startCol]); return v; &#125; // 首行 for(int i = startCol; i &lt;= endCol; ++i) v.push_back(matrix[startRow][i]); // 末列 for(int i = startRow + 1; i &lt;= endRow; ++i) v.push_back(matrix[i][endCol]); // 末行 for(int i = endCol - 1; i &gt;= startCol; --i) v.push_back(matrix[endRow][i]); // 首列 for(int i = endRow-1; i &gt;= startRow + 1; --i) v.push_back(matrix[i][startCol]); startRow = startRow + 1; endRow = endRow - 1; startCol = startCol + 1; endCol = endCol - 1; &#125; return v; &#125;&#125;;]]></content>
+      <categories>
+        <category>DS</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>DS</tag>
+        <tag>剑指offer</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[数组中出现次数超过一半的数字]]></title>
     <url>%2F2019%2F02%2F24%2F%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97%2F</url>
-    <content type="text"><![CDATA[数组中出现次数超过一半的数字 题目描述数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。 思路一 题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多。我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数。当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1。 解题代码一123456789101112131415161718192021222324252627class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; int r = numbers[0]; int count = 1; for (int i = 1; i &lt; numbers.size(); ++i)&#123; if (count == 0)&#123; r = numbers[i]; count = 1; &#125; else if (numbers[i] == r)&#123; ++count; &#125; else &#123; --count; &#125; &#125; // 看最后一个元素个数是否超过长度一半 count = 0; for (int i = 0; i &lt; numbers.size(); ++i)&#123; if (numbers[i] == r)&#123; ++count; &#125; &#125; return count &gt; numbers.size() / 2 ? r : 0; &#125;&#125;; 思路二首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置 解题代码二123456789101112131415class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; sort(numbers.begin(),numbers.end()); int half = numbers.size() / 2; int count = 0; for(int i = 0; i &lt; numbers.size(); ++i)&#123; if(numbers[i]==numbers[half])&#123; ++count; &#125; &#125; return count &gt; half ? numbers[half] : 0; &#125;&#125;; 思路三利用 map 把每个数字出现的次数储存起来 解题代码三12345678910111213141516171819class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; map&lt;int,int&gt; numbersMap; for(int i = 0; i &lt; numbers.size(); ++i)&#123; numbersMap[numbers[i]] += 1; &#125; int half = numbers.size() / 2; int number = 0; for(map&lt;int,int&gt;::iterator it = numbersMap.begin(); it != numbersMap.end(); ++it)&#123; if(it-&gt;second &gt; half)&#123; number = it-&gt;first; break; &#125; &#125; return number; &#125;&#125;;]]></content>
+    <content type="text"><![CDATA[数组中出现次数超过一半的数字 题目描述数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。 思路一 题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多。 我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数。 当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1。 解题代码一123456789101112131415161718192021222324252627class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; int r = numbers[0]; int count = 1; for (int i = 1; i &lt; numbers.size(); ++i)&#123; if (count == 0)&#123; r = numbers[i]; count = 1; &#125; else if (numbers[i] == r)&#123; ++count; &#125; else &#123; --count; &#125; &#125; // 看最后一个元素个数是否超过长度一半 count = 0; for (int i = 0; i &lt; numbers.size(); ++i)&#123; if (numbers[i] == r)&#123; ++count; &#125; &#125; return count &gt; numbers.size() / 2 ? r : 0; &#125;&#125;; 思路二首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置 解题代码二123456789101112131415class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; sort(numbers.begin(),numbers.end()); int half = numbers.size() / 2; int count = 0; for(int i = 0; i &lt; numbers.size(); ++i)&#123; if(numbers[i]==numbers[half])&#123; ++count; &#125; &#125; return count &gt; half ? numbers[half] : 0; &#125;&#125;; 思路三利用 map 把每个数字出现的次数储存起来 解题代码三12345678910111213141516171819class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; map&lt;int,int&gt; numbersMap; for(int i = 0; i &lt; numbers.size(); ++i)&#123; numbersMap[numbers[i]] += 1; &#125; int half = numbers.size() / 2; int number = 0; for(map&lt;int,int&gt;::iterator it = numbersMap.begin(); it != numbersMap.end(); ++it)&#123; if(it-&gt;second &gt; half)&#123; number = it-&gt;first; break; &#125; &#125; return number; &#125;&#125;;]]></content>
       <categories>
         <category>DS</category>
       </categories>
@@ -16,7 +29,7 @@
   <entry>
     <title><![CDATA[求 1 + 2 + 3 + ... + n]]></title>
     <url>%2F2019%2F02%2F24%2F%E6%B1%82%201%20%2B%202%20%2B%203%20%2B%20...%20%2B%20n%2F</url>
-    <content type="text"><![CDATA[求 1 + 2 + 3 + … + n 题目描述求 1 + 2 + 3 + … + n，要求不能使用乘除法、for、while、if、else、switch、case 等关键字及条件判断语句（ A ? B : C）。 解题思路 利用逻辑与的短路特性实现递归终止； 当 n == 0 时，(n &gt; 0) &amp;&amp; ((sum += Sum_Solution(n - 1)) &gt; 0) 只执行前面的判断，为 false，然后直接返回 0； 当 n &gt; 0 时，执行 sum += Sum_Solution(n - 1)，实现递归计算 Sum_Solution(n)。 解题代码12345678class Solution &#123; public: int Sum_Solution(int n) &#123; int sum = n; (n &gt; 0) &amp;&amp; (sum += Sum_Solution(n - 1)); return sum; &#125;&#125;;]]></content>
+    <content type="text"><![CDATA[求 1 + 2 + 3 + … + n 题目描述求 1 + 2 + 3 + … + n，要求不能使用乘除法、for、while、if、else、switch、case 等关键字及条件判断语句（ A ? B : C）。 解题思路 利用逻辑与的短路特性实现递归终止； 当 n == 0 时，(n &gt; 0) &amp;&amp; ((sum += Sum_Solution(n - 1)) &gt; 0) 只执行前面的判断，为 false，然后直接返回 0； 当 n &gt; 0 时，执行 sum += Sum_Solution(n - 1)，实现递归计算 Sum_Solution(n) 解题代码12345678class Solution &#123; public: int Sum_Solution(int n) &#123; int sum = n; (n &gt; 0) &amp;&amp; (sum += Sum_Solution(n - 1)); return sum; &#125;&#125;;]]></content>
       <categories>
         <category>DS</category>
       </categories>
@@ -54,17 +67,15 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[先序和中序确定二叉树]]></title>
-    <url>%2F2019%2F02%2F23%2F%E5%85%88%E5%BA%8F%E5%92%8C%E4%B8%AD%E5%BA%8F%E7%A1%AE%E5%AE%9A%E4%BA%8C%E5%8F%89%E6%A0%91%2F</url>
-    <content type="text"><![CDATA[先序和中序确定二叉树 题目描述输入某二叉树的前序遍历和中序遍历的结果，请重建出该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。例如输入前序遍历序列 {1,2,4,7,3,5,6,8} 和中序遍历序列 {4,7,2,1,5,3,8,6}，则重建二叉树并返回。 解题代码12345678910111213141516171819202122232425262728293031323334353637383940414243/** * Definition for binary tree * struct TreeNode &#123; * int val; * TreeNode *left; * TreeNode *right; * TreeNode(int x) : val(x), left(NULL), right(NULL) &#123;&#125; * &#125;; */ class Solution &#123; public: TreeNode *reConstructBinaryTree(vector&lt;int&gt; pre, vector&lt;int&gt; vin) &#123; // l1, h1 为先序序列的第一个和最后一个结点下标，l2, h2 为中序序列的第一个和最后一个结点下标 // 初始调用时，l1 = l2 = 0，h1 = h2 = size() - 1 int l1 = 0, h1 = pre.size() - 1, l2 = 0, h2 = vin.size() - 1; TreeNode *root = reConstructBinaryTree_recursion(pre, l1, h1, vin, l2, h2); return root; &#125; TreeNode *reConstructBinaryTree_recursion(vector&lt;int&gt; pre, int l1, int h1, vector&lt;int&gt; vin, int l2, int h2) &#123; TreeNode *root = new TreeNode(pre[l1]); // 根节点 int i = l2, llen, rlen; while (vin[i] != pre[l1])&#123; ++i; &#125; // 根节点在中序序列中位置 llen = i - l2; // 左子树长度 rlen = h2 - i; // 右子树长度 if (llen)&#123; root-&gt;left = reConstructBinaryTree_recursion(pre, l1 + 1, l1 + llen, vin, l2, l2 + llen - 1); &#125; // 递归建立左子树 else&#123; root-&gt;left = NULL; &#125; // 左子树为空 if (rlen)&#123; root-&gt;right = reConstructBinaryTree_recursion(pre, h1 - rlen + 1 , h1, vin, h2 - rlen + 1, h2); &#125; // 递归建立右子树 else&#123; root-&gt;right = NULL; &#125; // 右子树为空 return root; // 返回根节点指针 &#125;&#125;;]]></content>
+    <title><![CDATA[计算日期差]]></title>
+    <url>%2F2019%2F02%2F23%2F%E8%AE%A1%E7%AE%97%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E6%97%A5%E6%9C%9F%E5%B7%AE%2F</url>
+    <content type="text"><![CDATA[计算任意两个日期差 题目描述有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天 输入： 有多组数据，每组数据有两行，分别表示两个日期，形式为 YYYYMMDD 输出： 每组数据输出一行，即日期差值 样例输入： 2011041220110422 样例输出： 11 解题方法该题目是求两个日期间的天数差，即求分别以两个特定日期为界的日期区间的长度。解决这类区间问题有一个统一的思想——把原区间问题统一到起点确定的区间问题上去。采用预处理手段，即在程序真正开始处理输入数据之前，预处理出所有日期与原点日期之间的天数差并保存起来。再者，预处理也是空间换时间的重要手段（保存预处理所得数据所需的内存来换取实时处理所需要的时间消耗）日期类问题有个需要注意的要点——闰年，闰年并不严格按照四年一次的规律出现，在某种情况下也可能出现两个相邻闰年相隔8年的情况（如1896年与1904年）。即应采用该如下代码表示： 1#define ISYEAP(X) X%100 != 0 &amp;&amp; X%4 == 0 || X%400 == 0 ? 1:0 当需要开辟大量内存空间的情况，必须在函数体外定义，即定义全局变量，或者在函数中使用malloc等函数动态申请变量空间。即下面的代码中的buf[5001][13][32]在保存某个特定日期与原点日期的天数差时，使用了三维数组，用年、月、日分别表示该数组下标，便将日期本身与其存储地址联系起来，通过利用它的年月日数字即可找到我们保存的值，即Hash的基本思想。 解题代码123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960#include &lt;stdio.h&gt;#include &lt;cmath&gt;#define ISYEAP(x) x % 100 != 0 &amp;&amp; x % 4 == 0 || x % 400 == 0 ? 1 : 0// 定义宏判断是否是闰年int dayOfMonth[13][2] = &#123; 0, 0, 31, 31, 28, 29, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31&#125;; // 预存每月的天数，二月配合宏定义做特殊处理struct Date &#123; int Day; int Month; int Year; void nextDay() &#123; // 计算下一天的日期 ++Day; if (Day &gt; dayOfMonth[Month][ISYEAP(Year)]) &#123; // 若日数超过了当月最大日数 Day = 1; ++Month; if (Month &gt; 12) &#123; // 若月份超过 12 Month = 1; ++Year; &#125; &#125; &#125;&#125;;int buf[5001][13][32]; // 保存预处理的天数int main() &#123; Date tmp; int cnt = 0; tmp.Day = 0; tmp.Month = 0; tmp.Year = 0; while (tmp.Year != 5001) &#123; buf[tmp.Year][tmp.Month][tmp.Day] = cnt; tmp.nextDay(); ++cnt; &#125; int d1, m1, y1; int d2, m2, y2; while (scanf("%4d%2d%2d", &amp;y1, &amp;m1, &amp;d1) != EOF) &#123; scanf("%4d%2d%2d", &amp;y2, &amp;m2, &amp;d2); printf("%d\n", abs(buf[y1][m1][d1] - buf[y2][m2][d2]) + 1); &#125; return 0;&#125;]]></content>
       <categories>
         <category>DS</category>
       </categories>
       <tags>
         <tag>C++</tag>
         <tag>DS</tag>
-        <tag>二叉树</tag>
-        <tag>剑指offer</tag>
       </tags>
   </entry>
   <entry>
@@ -81,15 +92,17 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[计算日期差]]></title>
-    <url>%2F2019%2F02%2F23%2F%E8%AE%A1%E7%AE%97%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E6%97%A5%E6%9C%9F%E5%B7%AE%2F</url>
-    <content type="text"><![CDATA[计算任意两个日期差 题目描述有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天 输入： 有多组数据，每组数据有两行，分别表示两个日期，形式为 YYYYMMDD 输出： 每组数据输出一行，即日期差值 样例输入： 2011041220110422 样例输出： 11 解题方法该题目是求两个日期间的天数差，即求分别以两个特定日期为界的日期区间的长度。解决这类区间问题有一个统一的思想——把原区间问题统一到起点确定的区间问题上去。采用预处理手段，即在程序真正开始处理输入数据之前，预处理出所有日期与原点日期之间的天数差并保存起来。再者，预处理也是空间换时间的重要手段（保存预处理所得数据所需的内存来换取实时处理所需要的时间消耗）日期类问题有个需要注意的要点——闰年，闰年并不严格按照四年一次的规律出现，在某种情况下也可能出现两个相邻闰年相隔8年的情况（如1896年与1904年）。即应采用该如下代码表示： 1#define ISYEAP(X) X%100 != 0 &amp;&amp; X%4 == 0 || X%400 == 0 ? 1:0 当需要开辟大量内存空间的情况，必须在函数体外定义，即定义全局变量，或者在函数中使用malloc等函数动态申请变量空间。即下面的代码中的buf[5001][13][32]在保存某个特定日期与原点日期的天数差时，使用了三维数组，用年、月、日分别表示该数组下标，便将日期本身与其存储地址联系起来，通过利用它的年月日数字即可找到我们保存的值，即Hash的基本思想。 解题代码123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960#include &lt;stdio.h&gt;#include &lt;cmath&gt;#define ISYEAP(x) x % 100 != 0 &amp;&amp; x % 4 == 0 || x % 400 == 0 ? 1 : 0// 定义宏判断是否是闰年int dayOfMonth[13][2] = &#123; 0, 0, 31, 31, 28, 29, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31&#125;; // 预存每月的天数，二月配合宏定义做特殊处理struct Date &#123; int Day; int Month; int Year; void nextDay() &#123; // 计算下一天的日期 ++Day; if (Day &gt; dayOfMonth[Month][ISYEAP(Year)]) &#123; // 若日数超过了当月最大日数 Day = 1; ++Month; if (Month &gt; 12) &#123; // 若月份超过 12 Month = 1; ++Year; &#125; &#125; &#125;&#125;;int buf[5001][13][32]; // 保存预处理的天数int main() &#123; Date tmp; int cnt = 0; tmp.Day = 0; tmp.Month = 0; tmp.Year = 0; while (tmp.Year != 5001) &#123; buf[tmp.Year][tmp.Month][tmp.Day] = cnt; tmp.nextDay(); ++cnt; &#125; int d1, m1, y1; int d2, m2, y2; while (scanf("%4d%2d%2d", &amp;y1, &amp;m1, &amp;d1) != EOF) &#123; scanf("%4d%2d%2d", &amp;y2, &amp;m2, &amp;d2); printf("%d\n", abs(buf[y1][m1][d1] - buf[y2][m2][d2]) + 1); &#125; return 0;&#125;]]></content>
+    <title><![CDATA[先序和中序确定二叉树]]></title>
+    <url>%2F2019%2F02%2F23%2F%E5%85%88%E5%BA%8F%E5%92%8C%E4%B8%AD%E5%BA%8F%E7%A1%AE%E5%AE%9A%E4%BA%8C%E5%8F%89%E6%A0%91%2F</url>
+    <content type="text"><![CDATA[先序和中序确定二叉树 题目描述输入某二叉树的前序遍历和中序遍历的结果，请重建出该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。例如输入前序遍历序列 {1,2,4,7,3,5,6,8} 和中序遍历序列 {4,7,2,1,5,3,8,6}，则重建二叉树并返回。 解题代码12345678910111213141516171819202122232425262728293031323334353637383940414243/** * Definition for binary tree * struct TreeNode &#123; * int val; * TreeNode *left; * TreeNode *right; * TreeNode(int x) : val(x), left(NULL), right(NULL) &#123;&#125; * &#125;; */ class Solution &#123; public: TreeNode *reConstructBinaryTree(vector&lt;int&gt; pre, vector&lt;int&gt; vin) &#123; // l1, h1 为先序序列的第一个和最后一个结点下标，l2, h2 为中序序列的第一个和最后一个结点下标 // 初始调用时，l1 = l2 = 0，h1 = h2 = size() - 1 int l1 = 0, h1 = pre.size() - 1, l2 = 0, h2 = vin.size() - 1; TreeNode *root = reConstructBinaryTree_recursion(pre, l1, h1, vin, l2, h2); return root; &#125; TreeNode *reConstructBinaryTree_recursion(vector&lt;int&gt; pre, int l1, int h1, vector&lt;int&gt; vin, int l2, int h2) &#123; TreeNode *root = new TreeNode(pre[l1]); // 根节点 int i = l2, llen, rlen; while (vin[i] != pre[l1])&#123; ++i; &#125; // 根节点在中序序列中位置 llen = i - l2; // 左子树长度 rlen = h2 - i; // 右子树长度 if (llen)&#123; root-&gt;left = reConstructBinaryTree_recursion(pre, l1 + 1, l1 + llen, vin, l2, l2 + llen - 1); &#125; // 递归建立左子树 else&#123; root-&gt;left = NULL; &#125; // 左子树为空 if (rlen)&#123; root-&gt;right = reConstructBinaryTree_recursion(pre, h1 - rlen + 1 , h1, vin, h2 - rlen + 1, h2); &#125; // 递归建立右子树 else&#123; root-&gt;right = NULL; &#125; // 右子树为空 return root; // 返回根节点指针 &#125;&#125;;]]></content>
       <categories>
         <category>DS</category>
       </categories>
       <tags>
         <tag>C++</tag>
         <tag>DS</tag>
+        <tag>二叉树</tag>
+        <tag>剑指offer</tag>
       </tags>
   </entry>
   <entry>
@@ -104,19 +117,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[二叉树非递归遍历]]></title>
-    <url>%2F2019%2F02%2F01%2F%E4%BA%8C%E5%8F%89%E6%A0%91%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86%2F</url>
-    <content type="text"><![CDATA[二叉树非递归遍历 二叉树定义1234typedef struct BiTNode&#123; ElemType data; struct BiTNode *lchild, *rchild;&#125;BiTNode, *BiTree; 先序遍历12345678910111213141516void PreOrder(BiTree T)&#123; InitStack(S); BiTNode *p; p = T; while(p || isEmpty(s))&#123; if(p)&#123; Push(S, p); visit(p); p = p-&gt;lchild; &#125; else&#123; Pop(S, p); p = p-&gt;rchild; &#125; &#125;&#125; 中序遍历12345678910111213141516void InOrder(BiTree T)&#123; InitStack(S); BiTNode *p; p = T; while(p || isEmpty(s))&#123; if(p)&#123; Push(S, p); p = p-&gt;lchild; &#125; else&#123; Pop(S, p); visit(p); p = p-&gt;rchild; &#125; &#125;&#125; 后序遍历1234567891011121314151617181920212223242526void PostOrder(BiTree T)&#123; InitStack(S); BiTNode *p; p = T; r = NULL; while(p || isEmpty(s))&#123; if(p)&#123; Push(S, p); p = p-&gt;lchild; &#125; else&#123; GetTop(S, p); if(p-&gt;rchild &amp;&amp; p-&gt;rchild != r)&#123; p = p-&gt;rchild; Push(S, p); p = p-&gt;lchild; &#125; else&#123; Pop(S, p); visit(p); r = p; p = NULL; &#125; &#125; &#125;&#125;]]></content>
-      <categories>
-        <category>DS</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-        <tag>DS</tag>
-        <tag>二叉树</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[单链表的反转]]></title>
     <url>%2F2019%2F02%2F01%2F%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC%2F</url>
     <content type="text"><![CDATA[单链表的反转 链表的定义1234typedef struct LinkNode&#123; int val; struct LinkNode *next;&#125; LinkNode; 非递归写法123456789101112131415161718LinkNode *Reverse(LinkNode *head)&#123; if(head == NULL || head-&gt;next == NULL)&#123; return head; &#125; LinkNode *pre = head; LinkNode *cur = head-&gt;next; LinkNode *temp = head-&gt;next-&gt;next; while(cur)&#123; temp = cur-&gt;next; cur-&gt;next = pre; pre = cur; cur = temp; &#125; head-&gt;next = NULL; return pre;&#125; 递归写法123456789101112131415LinkNode *Re_Reverse(LinkNode *head)&#123; if (head == NULL || head-&gt;next == NULL)&#123; return head; &#125; // 一直循环到链尾 LinkNode *newHead = Re_Reverse(head-&gt;next); // 翻转链表的指向 head-&gt;next-&gt;next = head; // 记得赋值NULL，防止链表错乱 head-&gt;next = NULL; // 新链表头永远指向的是原链表的链尾 return newHead;&#125;]]></content>
@@ -127,6 +127,19 @@
         <tag>C++</tag>
         <tag>DS</tag>
         <tag>剑指offer</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[二叉树非递归遍历]]></title>
+    <url>%2F2019%2F02%2F01%2F%E4%BA%8C%E5%8F%89%E6%A0%91%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86%2F</url>
+    <content type="text"><![CDATA[二叉树非递归遍历 二叉树定义1234typedef struct BiTNode&#123; ElemType data; struct BiTNode *lchild, *rchild;&#125;BiTNode, *BiTree; 先序遍历12345678910111213141516void PreOrder(BiTree T)&#123; InitStack(S); BiTNode *p; p = T; while(p || isEmpty(s))&#123; if(p)&#123; Push(S, p); visit(p); p = p-&gt;lchild; &#125; else&#123; Pop(S, p); p = p-&gt;rchild; &#125; &#125;&#125; 中序遍历12345678910111213141516void InOrder(BiTree T)&#123; InitStack(S); BiTNode *p; p = T; while(p || isEmpty(s))&#123; if(p)&#123; Push(S, p); p = p-&gt;lchild; &#125; else&#123; Pop(S, p); visit(p); p = p-&gt;rchild; &#125; &#125;&#125; 后序遍历1234567891011121314151617181920212223242526void PostOrder(BiTree T)&#123; InitStack(S); BiTNode *p; p = T; r = NULL; while(p || isEmpty(s))&#123; if(p)&#123; Push(S, p); p = p-&gt;lchild; &#125; else&#123; GetTop(S, p); if(p-&gt;rchild &amp;&amp; p-&gt;rchild != r)&#123; p = p-&gt;rchild; Push(S, p); p = p-&gt;lchild; &#125; else&#123; Pop(S, p); visit(p); r = p; p = NULL; &#125; &#125; &#125;&#125;]]></content>
+      <categories>
+        <category>DS</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>DS</tag>
+        <tag>二叉树</tag>
       </tags>
   </entry>
   <entry>
