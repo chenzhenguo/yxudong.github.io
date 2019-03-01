@@ -96,18 +96,18 @@
 
 
 
-  <meta name="description" content="顺时针打印矩阵 题目描述输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字，例如，如果输入如下 4 X 4 矩阵：1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 则依次打印出数字 1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10.">
+  <meta name="description" content="顺时针打印矩阵 题目描述输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字，例如，如果输入如下 4X4 矩阵：1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 则依次打印出数字 1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10.">
 <meta name="keywords" content="C++,DS,剑指offer">
 <meta property="og:type" content="article">
 <meta property="og:title" content="顺时针打印矩阵">
 <meta property="og:url" content="http://yxudong.github.io/2019/02/27/顺时针打印矩阵/index.html">
 <meta property="og:site_name" content="Yxd&#39;s Blog">
-<meta property="og:description" content="顺时针打印矩阵 题目描述输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字，例如，如果输入如下 4 X 4 矩阵：1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 则依次打印出数字 1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10.">
+<meta property="og:description" content="顺时针打印矩阵 题目描述输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字，例如，如果输入如下 4X4 矩阵：1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 则依次打印出数字 1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10.">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-02-27T14:28:48.975Z">
+<meta property="og:updated_time" content="2019-02-27T14:39:03.007Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="顺时针打印矩阵">
-<meta name="twitter:description" content="顺时针打印矩阵 题目描述输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字，例如，如果输入如下 4 X 4 矩阵：1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 则依次打印出数字 1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10.">
+<meta name="twitter:description" content="顺时针打印矩阵 题目描述输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字，例如，如果输入如下 4X4 矩阵：1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 则依次打印出数字 1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10.">
 
 
 
@@ -399,7 +399,7 @@
                 
               
 
-              <time title="创建时间：2019-02-27 21:31:35 / 修改时间：22:28:48" itemprop="dateCreated datePublished" datetime="2019-02-27T21:31:35+08:00">2019-02-27</time>
+              <time title="创建时间：2019-02-27 21:31:35 / 修改时间：22:39:03" itemprop="dateCreated datePublished" datetime="2019-02-27T21:31:35+08:00">2019-02-27</time>
             
 
             
@@ -464,7 +464,7 @@
 
       
         <h2 id="顺时针打印矩阵"><a href="#顺时针打印矩阵" class="headerlink" title="顺时针打印矩阵"></a>顺时针打印矩阵</h2><hr>
-<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字，例如，如果输入如下 4 X 4 矩阵：1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 则依次打印出数字 1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10.</p>
+<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字，例如，如果输入如下 4X4 矩阵：1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 则依次打印出数字 1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10.</p>
 <a id="more"></a>
 <h3 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h3><ol>
 <li>每次都是一个圈，所以定义四个变量限定每次循环的界限：startRow, endRow, startCol, endCol；</li>
@@ -511,8 +511,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/02/24/数组中出现次数超过一半的数字/" rel="next" title="数组中出现次数超过一半的数字">
-                <i class="fa fa-chevron-left"></i> 数组中出现次数超过一半的数字
+              <a href="/2019/02/24/求 1 + 2 + 3 + ... + n/" rel="next" title="求 1 + 2 + 3 + ... + n">
+                <i class="fa fa-chevron-left"></i> 求 1 + 2 + 3 + ... + n
               </a>
             
           </div>
@@ -520,6 +520,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/28/栈的压入、弹出序列/" rel="prev" title="栈的压入、弹出序列">
+                栈的压入、弹出序列 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -591,7 +595,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-count">16</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

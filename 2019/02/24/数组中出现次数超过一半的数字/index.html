@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="Yxd&#39;s Blog">
 <meta property="og:description" content="数组中出现次数超过一半的数字 题目描述数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。 思路一">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-02-27T14:18:46.464Z">
+<meta property="og:updated_time" content="2019-03-01T07:27:45.252Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="数组中出现次数超过一半的数字">
 <meta name="twitter:description" content="数组中出现次数超过一半的数字 题目描述数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。 思路一">
@@ -416,7 +416,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-02-27 22:18:46" itemprop="dateModified" datetime="2019-02-27T22:18:46+08:00">2019-02-27</time>
+                <time title="修改时间：2019-03-01 15:27:45" itemprop="dateModified" datetime="2019-03-01T15:27:45+08:00">2019-03-01</time>
               
             
           </span>
@@ -479,9 +479,9 @@
 <h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。</p>
 <h3 id="思路一"><a href="#思路一" class="headerlink" title="思路一"></a>思路一</h3><a id="more"></a>
 <ol>
-<li>题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多。</li>
-<li>我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数。</li>
-<li>当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1。</li>
+<li>题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多；</li>
+<li>我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数；</li>
+<li>当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1</li>
 </ol>
 <h3 id="解题代码一"><a href="#解题代码一" class="headerlink" title="解题代码一"></a>解题代码一</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">MoreThanHalfNum_Solution</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; numbers)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> r = numbers[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">int</span> count = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; numbers.size(); ++i)&#123;</span><br><span class="line">                <span class="keyword">if</span> (count == <span class="number">0</span>)&#123;</span><br><span class="line">                    r = numbers[i];</span><br><span class="line">                    count = <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (numbers[i] == r)&#123;</span><br><span class="line">                    ++count;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    --count;</span><br><span class="line">                &#125; </span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 看最后一个元素个数是否超过长度一半</span></span><br><span class="line">            count = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); ++i)&#123;</span><br><span class="line">                <span class="keyword">if</span> (numbers[i] == r)&#123;</span><br><span class="line">                    ++count;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> count &gt; numbers.size() / <span class="number">2</span> ? r : <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <h3 id="思路二"><a href="#思路二" class="headerlink" title="思路二"></a>思路二</h3><p>首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置</p>
@@ -528,8 +528,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/02/24/求 1 + 2 + 3 + ... + n/" rel="next" title="求 1 + 2 + 3 + ... + n">
-                <i class="fa fa-chevron-left"></i> 求 1 + 2 + 3 + ... + n
+              <a href="/2019/02/23/包含 min 函数的栈/" rel="next" title="包含 min 函数的栈">
+                <i class="fa fa-chevron-left"></i> 包含 min 函数的栈
               </a>
             
           </div>
@@ -538,8 +538,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/02/27/顺时针打印矩阵/" rel="prev" title="顺时针打印矩阵">
-                顺时针打印矩阵 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/02/24/求 1 + 2 + 3 + ... + n/" rel="prev" title="求 1 + 2 + 3 + ... + n">
+                求 1 + 2 + 3 + ... + n <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -612,7 +612,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-count">16</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
