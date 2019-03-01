@@ -96,25 +96,25 @@
 
 
 
-  <meta name="description" content="二叉树的深度 题目描述输入一棵二叉树，求该树的深度。从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的长度为树的深度。">
-<meta name="keywords" content="C++,DS,剑指offer,二叉树">
+  <meta name="description" content="数组中只出现一次的数字 题目描述一个整型数组里除了两个数字之外，其他的数字都出现了偶数次。请写程序找出这两个只出现一次的数字。">
+<meta name="keywords" content="C++,DS,剑指offer">
 <meta property="og:type" content="article">
-<meta property="og:title" content="二叉树的深度">
-<meta property="og:url" content="http://yxudong.github.io/2019/02/23/二叉树的深度/index.html">
+<meta property="og:title" content="数组中只出现一次的数字">
+<meta property="og:url" content="http://yxudong.github.io/2019/03/02/数组中只出现一次的数字/index.html">
 <meta property="og:site_name" content="Yxd&#39;s Blog">
-<meta property="og:description" content="二叉树的深度 题目描述输入一棵二叉树，求该树的深度。从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的长度为树的深度。">
+<meta property="og:description" content="数组中只出现一次的数字 题目描述一个整型数组里除了两个数字之外，其他的数字都出现了偶数次。请写程序找出这两个只出现一次的数字。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-02-23T12:21:36.182Z">
+<meta property="og:updated_time" content="2019-03-01T20:18:22.197Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="二叉树的深度">
-<meta name="twitter:description" content="二叉树的深度 题目描述输入一棵二叉树，求该树的深度。从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的长度为树的深度。">
+<meta name="twitter:title" content="数组中只出现一次的数字">
+<meta name="twitter:description" content="数组中只出现一次的数字 题目描述一个整型数组里除了两个数字之外，其他的数字都出现了偶数次。请写程序找出这两个只出现一次的数字。">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yxudong.github.io/2019/02/23/二叉树的深度/">
+  <link rel="canonical" href="http://yxudong.github.io/2019/03/02/数组中只出现一次的数字/">
 
 
 
@@ -124,7 +124,7 @@
   };
 </script>
 
-  <title>二叉树的深度 | Yxd's Blog</title>
+  <title>数组中只出现一次的数字 | Yxd's Blog</title>
   
 
 
@@ -356,7 +356,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2019/02/23/二叉树的深度/">
+    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2019/03/02/数组中只出现一次的数字/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yxd">
@@ -373,7 +373,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">二叉树的深度
+          <h1 class="post-title" itemprop="name headline">数组中只出现一次的数字
 
               
             
@@ -399,7 +399,7 @@
                 
               
 
-              <time title="创建时间：2019-02-23 18:23:35 / 修改时间：20:21:36" itemprop="dateCreated datePublished" datetime="2019-02-23T18:23:35+08:00">2019-02-23</time>
+              <time title="创建时间：2019-03-02 04:18:35 / 修改时间：04:18:22" itemprop="dateCreated datePublished" datetime="2019-03-02T04:18:35+08:00">2019-03-02</time>
             
 
             
@@ -463,11 +463,18 @@
       
 
       
-        <h2 id="二叉树的深度"><a href="#二叉树的深度" class="headerlink" title="二叉树的深度"></a>二叉树的深度</h2><hr>
-<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>输入一棵二叉树，求该树的深度。从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的长度为树的深度。</p>
+        <h2 id="数组中只出现一次的数字"><a href="#数组中只出现一次的数字" class="headerlink" title="数组中只出现一次的数字"></a>数组中只出现一次的数字</h2><hr>
+<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>一个整型数组里除了两个数字之外，其他的数字都出现了偶数次。请写程序找出这两个只出现一次的数字。</p>
 <a id="more"></a>
-<h3 id="递归解法"><a href="#递归解法" class="headerlink" title="递归解法"></a>递归解法</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">struct TreeNode &#123;</span></span><br><span class="line"><span class="comment">	int val;</span></span><br><span class="line"><span class="comment">	struct TreeNode *left;</span></span><br><span class="line"><span class="comment">	struct TreeNode *right;</span></span><br><span class="line"><span class="comment">	TreeNode(int x) :</span></span><br><span class="line"><span class="comment">			val(x), left(NULL), right(NULL) &#123;</span></span><br><span class="line"><span class="comment">	&#125;</span></span><br><span class="line"><span class="comment">&#125;;*/</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">TreeDepth</span><span class="params">(TreeNode *pRoot)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!pRoot)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">// 若为空树，深度为 0 </span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123; <span class="comment">// 采用后序遍历</span></span><br><span class="line">            <span class="keyword">int</span> dl = TreeDepth(pRoot-&gt;left);</span><br><span class="line">            <span class="keyword">int</span> dr = TreeDepth(pRoot-&gt;right);</span><br><span class="line">            <span class="keyword">return</span> (dl &gt; dr? dl : dr) + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="非递归解法"><a href="#非递归解法" class="headerlink" title="非递归解法"></a>非递归解法</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">struct TreeNode &#123;</span></span><br><span class="line"><span class="comment">	int val;</span></span><br><span class="line"><span class="comment">	struct TreeNode *left;</span></span><br><span class="line"><span class="comment">	struct TreeNode *right;</span></span><br><span class="line"><span class="comment">	TreeNode(int x) :</span></span><br><span class="line"><span class="comment">			val(x), left(NULL), right(NULL) &#123;</span></span><br><span class="line"><span class="comment">	&#125;</span></span><br><span class="line"><span class="comment">&#125;;*/</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">TreeDepth</span><span class="params">(TreeNode *pRoot)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!pRoot)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">queue</span>&lt;TreeNode *&gt; q;</span><br><span class="line">        q.push(pRoot);</span><br><span class="line">        <span class="keyword">int</span> level = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(!q.empty())&#123;</span><br><span class="line">            ++level;</span><br><span class="line">            <span class="keyword">int</span> len = q.size();</span><br><span class="line">            <span class="keyword">while</span> (len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">                TreeNode *p = q.front();</span><br><span class="line">                q.pop();</span><br><span class="line">                <span class="keyword">if</span> (p-&gt;left)&#123;</span><br><span class="line">                    q.push(p-&gt;left);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (p-&gt;right)&#123;</span><br><span class="line">                    q.push(p-&gt;right);</span><br><span class="line">                &#125;</span><br><span class="line">                --len;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> level;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h3><ol>
+<li><p>首先，位运算中异或的性质：两个相同数字异或为 0，一个数和 0 异或还是它本身。</p>
+</li>
+<li><p>当只有一个数出现一次时，我们把数组中所有的数，依次异或运算，最后剩下的就是落单的数，因为<strong>成对儿出现的都抵消了</strong>。</p>
+</li>
+<li><p>依照这个思路，我们来看两个数（我们假设是 AB）出现一次的数组。首先还是先异或，剩下的数字肯定是 A、B 异或的结果，这个结果的二进制中的 1，表现的是 A 和 B 的不同的位。我们就取最低位的 1 所在的位数，假设是第 3 位。接着把原数组分成两组，分组标准是第 3 位是否为 1。如此，<strong>相同的数肯定在一个组</strong>，因为相同数字所有位都相同，而<strong>不同的数，肯定不在一组</strong>。然后把这两个组按照最开始的思路，依次异或，剩余的两个结果就是这两个只出现一次的数字。</p>
+</li>
+</ol>
+<h3 id="解题代码"><a href="#解题代码" class="headerlink" title="解题代码"></a>解题代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">FindNumsAppearOnce</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; data,<span class="keyword">int</span>* num1,<span class="keyword">int</span> *num2)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// 首先对所有数依次异或</span></span><br><span class="line">            <span class="keyword">int</span> bitResult = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; data.size(); ++i)&#123;</span><br><span class="line">                bitResult ^= data[i];</span><br><span class="line">            )</span><br><span class="line">            <span class="comment">// 找到最低位为 1 的是第几位</span></span><br><span class="line">            <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> ((bitResult &amp; <span class="number">1</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">                bitResult &gt;&gt;= <span class="number">1</span>; <span class="comment">// 找不到的话右移一位</span></span><br><span class="line">                ++index;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            *num1 = <span class="number">0</span>;</span><br><span class="line">            *num2 = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; data.size(); ++i)&#123;</span><br><span class="line">                <span class="comment">// 分组</span></span><br><span class="line">                <span class="keyword">if</span> (isBit1(data[i], index))&#123;</span><br><span class="line">                    *num1 ^= data[i];</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span>&#123;</span><br><span class="line">                    *num2 ^= data[i];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 判断第 index 位是否为 1</span></span><br><span class="line">        <span class="function"><span class="keyword">bool</span> <span class="title">isBit1</span><span class="params">(<span class="keyword">int</span> num, <span class="keyword">int</span> index)</span></span>&#123;</span><br><span class="line">            <span class="keyword">return</span> ((num &gt;&gt; index) &amp; <span class="number">1</span>) == <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -496,8 +503,6 @@
           
             <a href="/tags/剑指offer/" rel="tag"># 剑指offer</a>
           
-            <a href="/tags/二叉树/" rel="tag"># 二叉树</a>
-          
         </div>
       
 
@@ -509,8 +514,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/02/23/计算任意两个日期差/" rel="next" title="计算日期差">
-                <i class="fa fa-chevron-left"></i> 计算日期差
+              <a href="/2019/03/02/二叉搜索树的后序遍历序列/" rel="next" title="二叉搜索树的后序遍历序列">
+                <i class="fa fa-chevron-left"></i> 二叉搜索树的后序遍历序列
               </a>
             
           </div>
@@ -518,10 +523,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/02/23/包含 min 函数的栈/" rel="prev" title="包含 min 函数的栈">
-                包含 min 函数的栈 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -697,7 +698,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#二叉树的深度"><span class="nav-number">1.</span> <span class="nav-text">二叉树的深度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#题目描述"><span class="nav-number">1.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#递归解法"><span class="nav-number">1.2.</span> <span class="nav-text">递归解法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非递归解法"><span class="nav-number">1.3.</span> <span class="nav-text">非递归解法</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数组中只出现一次的数字"><span class="nav-number">1.</span> <span class="nav-text">数组中只出现一次的数字</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#题目描述"><span class="nav-number">1.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解题思路"><span class="nav-number">1.2.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解题代码"><span class="nav-number">1.3.</span> <span class="nav-text">解题代码</span></a></li></ol></li></ol></div>
             
 
           </div>

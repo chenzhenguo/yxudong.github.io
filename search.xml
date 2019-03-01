@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[数组中只出现一次的数字]]></title>
+    <url>%2F2019%2F03%2F02%2F%E6%95%B0%E7%BB%84%E4%B8%AD%E5%8F%AA%E5%87%BA%E7%8E%B0%E4%B8%80%E6%AC%A1%E7%9A%84%E6%95%B0%E5%AD%97%2F</url>
+    <content type="text"><![CDATA[数组中只出现一次的数字 题目描述一个整型数组里除了两个数字之外，其他的数字都出现了偶数次。请写程序找出这两个只出现一次的数字。 解题思路 首先，位运算中异或的性质：两个相同数字异或为 0，一个数和 0 异或还是它本身。 当只有一个数出现一次时，我们把数组中所有的数，依次异或运算，最后剩下的就是落单的数，因为成对儿出现的都抵消了。 依照这个思路，我们来看两个数（我们假设是 AB）出现一次的数组。首先还是先异或，剩下的数字肯定是 A、B 异或的结果，这个结果的二进制中的 1，表现的是 A 和 B 的不同的位。我们就取最低位的 1 所在的位数，假设是第 3 位。接着把原数组分成两组，分组标准是第 3 位是否为 1。如此，相同的数肯定在一个组，因为相同数字所有位都相同，而不同的数，肯定不在一组。然后把这两个组按照最开始的思路，依次异或，剩余的两个结果就是这两个只出现一次的数字。 解题代码123456789101112131415161718192021222324252627282930313233class Solution &#123; public: void FindNumsAppearOnce(vector&lt;int&gt; data,int* num1,int *num2) &#123; // 首先对所有数依次异或 int bitResult = 0; for (int i = 0; i &lt; data.size(); ++i)&#123; bitResult ^= data[i]; ) // 找到最低位为 1 的是第几位 int index = 0; while ((bitResult &amp; 1) == 0)&#123; bitResult &gt;&gt;= 1; // 找不到的话右移一位 ++index; &#125; *num1 = 0; *num2 = 0; for (int i = 0; i &lt; data.size(); ++i)&#123; // 分组 if (isBit1(data[i], index))&#123; *num1 ^= data[i]; &#125; else&#123; *num2 ^= data[i]; &#125; &#125; &#125; // 判断第 index 位是否为 1 bool isBit1(int num, int index)&#123; return ((num &gt;&gt; index) &amp; 1) == 1; &#125;&#125;;]]></content>
+      <categories>
+        <category>DS</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>DS</tag>
+        <tag>剑指offer</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[二叉搜索树的后序遍历序列]]></title>
     <url>%2F2019%2F03%2F02%2F%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E7%9A%84%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%2F</url>
     <content type="text"><![CDATA[二叉搜索树的后序遍历序列 题目描述输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。如果是则输出 Yes,否则输出 No。假设输入的数组的任意两个数字都互不相同。 解题思路 后序遍历的序列中，最后一个数字是树的根节点 数组中前面的数字可以分为两部分：第一部分是左子树节点的值，都比根节点的值小；第二部分是右子树节点的值，都比根节点的值大 后面用递归分别判断左右两部分是否符合以上原则 解题代码1234567891011121314151617181920212223242526272829303132class Solution &#123; public: bool VerifySquenceOfBST(vector&lt;int&gt; sequence) &#123; if (sequence.size() == 0)&#123; return false; &#125; // 初始边界值为数组最初左右边界 int left = 0, right = sequence.size() - 1; return judge(sequence, left, right); &#125; bool judge(vector&lt;int&gt; sequence, int left, int right)&#123; if (left &gt;= right)&#123; return true; &#125; // 左边界大于等于右边界返回 true int root = sequence[right]; // 根节点 int i, j; for (i = left; i &lt; right; ++i)&#123; if (sequence[i] &gt; root)&#123; break; &#125; &#125; // 左半子树都小于根节点，寻找到右半子树起始位置 for (j = i; j &lt; right; ++j)&#123; if (sequence[j] &lt; root)&#123; return false; &#125; &#125; // 右半子树都大于根节点，否则 false // 递归处理左右子树 return judge(sequence, left, i - 1) &amp;&amp; judge(sequence, i, right - 1); &#125;&#125;;]]></content>
@@ -106,6 +119,18 @@
       </tags>
   </entry>
   <entry>
+    <title><![CDATA[计算日期差]]></title>
+    <url>%2F2019%2F02%2F23%2F%E8%AE%A1%E7%AE%97%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E6%97%A5%E6%9C%9F%E5%B7%AE%2F</url>
+    <content type="text"><![CDATA[计算任意两个日期差 题目描述有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天 输入： 有多组数据，每组数据有两行，分别表示两个日期，形式为 YYYYMMDD 输出： 每组数据输出一行，即日期差值 样例输入： 2011041220110422 样例输出： 11 解题方法该题目是求两个日期间的天数差，即求分别以两个特定日期为界的日期区间的长度。解决这类区间问题有一个统一的思想——把原区间问题统一到起点确定的区间问题上去。采用预处理手段，即在程序真正开始处理输入数据之前，预处理出所有日期与原点日期之间的天数差并保存起来。再者，预处理也是空间换时间的重要手段（保存预处理所得数据所需的内存来换取实时处理所需要的时间消耗）日期类问题有个需要注意的要点——闰年，闰年并不严格按照四年一次的规律出现，在某种情况下也可能出现两个相邻闰年相隔8年的情况（如1896年与1904年）。即应采用该如下代码表示： 1#define ISYEAP(X) X%100 != 0 &amp;&amp; X%4 == 0 || X%400 == 0 ? 1:0 当需要开辟大量内存空间的情况，必须在函数体外定义，即定义全局变量，或者在函数中使用malloc等函数动态申请变量空间。即下面的代码中的buf[5001][13][32]在保存某个特定日期与原点日期的天数差时，使用了三维数组，用年、月、日分别表示该数组下标，便将日期本身与其存储地址联系起来，通过利用它的年月日数字即可找到我们保存的值，即Hash的基本思想。 解题代码123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960#include &lt;stdio.h&gt;#include &lt;cmath&gt;#define ISYEAP(x) x % 100 != 0 &amp;&amp; x % 4 == 0 || x % 400 == 0 ? 1 : 0// 定义宏判断是否是闰年int dayOfMonth[13][2] = &#123; 0, 0, 31, 31, 28, 29, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31&#125;; // 预存每月的天数，二月配合宏定义做特殊处理struct Date &#123; int Day; int Month; int Year; void nextDay() &#123; // 计算下一天的日期 ++Day; if (Day &gt; dayOfMonth[Month][ISYEAP(Year)]) &#123; // 若日数超过了当月最大日数 Day = 1; ++Month; if (Month &gt; 12) &#123; // 若月份超过 12 Month = 1; ++Year; &#125; &#125; &#125;&#125;;int buf[5001][13][32]; // 保存预处理的天数int main() &#123; Date tmp; int cnt = 0; tmp.Day = 0; tmp.Month = 0; tmp.Year = 0; while (tmp.Year != 5001) &#123; buf[tmp.Year][tmp.Month][tmp.Day] = cnt; tmp.nextDay(); ++cnt; &#125; int d1, m1, y1; int d2, m2, y2; while (scanf("%4d%2d%2d", &amp;y1, &amp;m1, &amp;d1) != EOF) &#123; scanf("%4d%2d%2d", &amp;y2, &amp;m2, &amp;d2); printf("%d\n", abs(buf[y1][m1][d1] - buf[y2][m2][d2]) + 1); &#125; return 0;&#125;]]></content>
+      <categories>
+        <category>DS</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>DS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[先序和中序确定二叉树]]></title>
     <url>%2F2019%2F02%2F23%2F%E5%85%88%E5%BA%8F%E5%92%8C%E4%B8%AD%E5%BA%8F%E7%A1%AE%E5%AE%9A%E4%BA%8C%E5%8F%89%E6%A0%91%2F</url>
     <content type="text"><![CDATA[先序和中序确定二叉树 题目描述输入某二叉树的前序遍历和中序遍历的结果，请重建出该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。例如输入前序遍历序列 {1,2,4,7,3,5,6,8} 和中序遍历序列 {4,7,2,1,5,3,8,6}，则重建二叉树并返回。 解题代码12345678910111213141516171819202122232425262728293031323334353637383940414243/** * Definition for binary tree * struct TreeNode &#123; * int val; * TreeNode *left; * TreeNode *right; * TreeNode(int x) : val(x), left(NULL), right(NULL) &#123;&#125; * &#125;; */ class Solution &#123; public: TreeNode *reConstructBinaryTree(vector&lt;int&gt; pre, vector&lt;int&gt; vin) &#123; // l1, h1 为先序序列的第一个和最后一个结点下标，l2, h2 为中序序列的第一个和最后一个结点下标 // 初始调用时，l1 = l2 = 0，h1 = h2 = size() - 1 int l1 = 0, h1 = pre.size() - 1, l2 = 0, h2 = vin.size() - 1; TreeNode *root = reConstructBinaryTree_recursion(pre, l1, h1, vin, l2, h2); return root; &#125; TreeNode *reConstructBinaryTree_recursion(vector&lt;int&gt; pre, int l1, int h1, vector&lt;int&gt; vin, int l2, int h2) &#123; TreeNode *root = new TreeNode(pre[l1]); // 根节点 int i = l2, llen, rlen; while (vin[i] != pre[l1])&#123; ++i; &#125; // 根节点在中序序列中位置 llen = i - l2; // 左子树长度 rlen = h2 - i; // 右子树长度 if (llen)&#123; root-&gt;left = reConstructBinaryTree_recursion(pre, l1 + 1, l1 + llen, vin, l2, l2 + llen - 1); &#125; // 递归建立左子树 else&#123; root-&gt;left = NULL; &#125; // 左子树为空 if (rlen)&#123; root-&gt;right = reConstructBinaryTree_recursion(pre, h1 - rlen + 1 , h1, vin, h2 - rlen + 1, h2); &#125; // 递归建立右子树 else&#123; root-&gt;right = NULL; &#125; // 右子树为空 return root; // 返回根节点指针 &#125;&#125;;]]></content>
@@ -117,18 +142,6 @@
         <tag>DS</tag>
         <tag>剑指offer</tag>
         <tag>二叉树</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[计算日期差]]></title>
-    <url>%2F2019%2F02%2F23%2F%E8%AE%A1%E7%AE%97%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E6%97%A5%E6%9C%9F%E5%B7%AE%2F</url>
-    <content type="text"><![CDATA[计算任意两个日期差 题目描述有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天 输入： 有多组数据，每组数据有两行，分别表示两个日期，形式为 YYYYMMDD 输出： 每组数据输出一行，即日期差值 样例输入： 2011041220110422 样例输出： 11 解题方法该题目是求两个日期间的天数差，即求分别以两个特定日期为界的日期区间的长度。解决这类区间问题有一个统一的思想——把原区间问题统一到起点确定的区间问题上去。采用预处理手段，即在程序真正开始处理输入数据之前，预处理出所有日期与原点日期之间的天数差并保存起来。再者，预处理也是空间换时间的重要手段（保存预处理所得数据所需的内存来换取实时处理所需要的时间消耗）日期类问题有个需要注意的要点——闰年，闰年并不严格按照四年一次的规律出现，在某种情况下也可能出现两个相邻闰年相隔8年的情况（如1896年与1904年）。即应采用该如下代码表示： 1#define ISYEAP(X) X%100 != 0 &amp;&amp; X%4 == 0 || X%400 == 0 ? 1:0 当需要开辟大量内存空间的情况，必须在函数体外定义，即定义全局变量，或者在函数中使用malloc等函数动态申请变量空间。即下面的代码中的buf[5001][13][32]在保存某个特定日期与原点日期的天数差时，使用了三维数组，用年、月、日分别表示该数组下标，便将日期本身与其存储地址联系起来，通过利用它的年月日数字即可找到我们保存的值，即Hash的基本思想。 解题代码123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960#include &lt;stdio.h&gt;#include &lt;cmath&gt;#define ISYEAP(x) x % 100 != 0 &amp;&amp; x % 4 == 0 || x % 400 == 0 ? 1 : 0// 定义宏判断是否是闰年int dayOfMonth[13][2] = &#123; 0, 0, 31, 31, 28, 29, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31&#125;; // 预存每月的天数，二月配合宏定义做特殊处理struct Date &#123; int Day; int Month; int Year; void nextDay() &#123; // 计算下一天的日期 ++Day; if (Day &gt; dayOfMonth[Month][ISYEAP(Year)]) &#123; // 若日数超过了当月最大日数 Day = 1; ++Month; if (Month &gt; 12) &#123; // 若月份超过 12 Month = 1; ++Year; &#125; &#125; &#125;&#125;;int buf[5001][13][32]; // 保存预处理的天数int main() &#123; Date tmp; int cnt = 0; tmp.Day = 0; tmp.Month = 0; tmp.Year = 0; while (tmp.Year != 5001) &#123; buf[tmp.Year][tmp.Month][tmp.Day] = cnt; tmp.nextDay(); ++cnt; &#125; int d1, m1, y1; int d2, m2, y2; while (scanf("%4d%2d%2d", &amp;y1, &amp;m1, &amp;d1) != EOF) &#123; scanf("%4d%2d%2d", &amp;y2, &amp;m2, &amp;d2); printf("%d\n", abs(buf[y1][m1][d1] - buf[y2][m2][d2]) + 1); &#125; return 0;&#125;]]></content>
-      <categories>
-        <category>DS</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-        <tag>DS</tag>
       </tags>
   </entry>
   <entry>
@@ -156,19 +169,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[单链表的反转]]></title>
-    <url>%2F2019%2F02%2F01%2F%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC%2F</url>
-    <content type="text"><![CDATA[单链表的反转 链表的定义1234typedef struct LinkNode&#123; int val; struct LinkNode *next;&#125; LinkNode; 非递归写法123456789101112131415161718LinkNode *Reverse(LinkNode *head)&#123; if(head == NULL || head-&gt;next == NULL)&#123; return head; &#125; LinkNode *pre = head; LinkNode *cur = head-&gt;next; LinkNode *temp = head-&gt;next-&gt;next; while(cur)&#123; temp = cur-&gt;next; cur-&gt;next = pre; pre = cur; cur = temp; &#125; head-&gt;next = NULL; return pre;&#125; 递归写法123456789101112131415LinkNode *Re_Reverse(LinkNode *head)&#123; if (head == NULL || head-&gt;next == NULL)&#123; return head; &#125; // 一直循环到链尾 LinkNode *newHead = Re_Reverse(head-&gt;next); // 翻转链表的指向 head-&gt;next-&gt;next = head; // 记得赋值 NULL，防止链表错乱 head-&gt;next = NULL; // 新链表头永远指向的是原链表的链尾 return newHead;&#125;]]></content>
-      <categories>
-        <category>DS</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-        <tag>DS</tag>
-        <tag>剑指offer</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[快速排序递归及非递归实现]]></title>
     <url>%2F2019%2F02%2F01%2F%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E9%80%92%E5%BD%92%E5%8F%8A%E9%9D%9E%E9%80%92%E5%BD%92%E5%AE%9E%E7%8E%B0%2F</url>
     <content type="text"><![CDATA[快速排序递归及非递归实现 递归1234567891011121314151617181920212223void QuickSort(int A[], int low, int high)&#123; if(low &lt; high)&#123; int pivotpos = Partition(A, low, high); QuickSort(A, low, pivotpos - 1); QuickSort(A, pivotpos + 1, high); &#125;&#125;int Partition(int A [], int low, int high)&#123; int pivot = A[low]; while(low &lt; high)&#123; while(low &lt; high &amp;&amp; A[high] &gt;= pivot)&#123; --high; &#125; A[low] = A[high]; while(low &lt; high &amp;&amp; A [low] &gt;= pivot)&#123; ++low; &#125; A[high] = A[low]; &#125; A[low] = pivot; return low;&#125; 非递归12345678910111213141516171819202122232425262728293031323334353637383940414243void QuickSort(int *array, int left, int right)&#123; stack&lt;int&gt; s; s.push(left); s.push(right); // 后入的 right，所以要先拿 right // 其实就是用栈保存每一个待排序子串的首尾元素下标，下一次 while 循环时取出这个范围，对这段子序列进行 partition 操作 while(!s.empty)&#123; int right = s.top(); s.pop(); int left = s.top(); s.pop(); int index = Partition(array, left, right); if(index-1 &gt; left)&#123; s.push(left); s.push(index - 1); &#125; if(index+1 &lt; right)&#123; s.push(index + 1); s.push(right); &#125; &#125;&#125;int PartSort(int *array,int left,int right)&#123; int key = array[right]; while(left &lt; right) &#123; while(left &lt; right &amp;&amp; array[left] &lt;= key) &#123; ++left; &#125; array[right] = array[left]; while(left &lt; right &amp;&amp; array[right] &gt;= key) &#123; --right; &#125; array[left] = array[right]; &#125; array[right] = key; return right;&#125;]]></content>
@@ -191,6 +191,19 @@
         <tag>C++</tag>
         <tag>DS</tag>
         <tag>二叉树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[单链表的反转]]></title>
+    <url>%2F2019%2F02%2F01%2F%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC%2F</url>
+    <content type="text"><![CDATA[单链表的反转 链表的定义1234typedef struct LinkNode&#123; int val; struct LinkNode *next;&#125; LinkNode; 非递归写法123456789101112131415161718LinkNode *Reverse(LinkNode *head)&#123; if(head == NULL || head-&gt;next == NULL)&#123; return head; &#125; LinkNode *pre = head; LinkNode *cur = head-&gt;next; LinkNode *temp = head-&gt;next-&gt;next; while(cur)&#123; temp = cur-&gt;next; cur-&gt;next = pre; pre = cur; cur = temp; &#125; head-&gt;next = NULL; return pre;&#125; 递归写法123456789101112131415LinkNode *Re_Reverse(LinkNode *head)&#123; if (head == NULL || head-&gt;next == NULL)&#123; return head; &#125; // 一直循环到链尾 LinkNode *newHead = Re_Reverse(head-&gt;next); // 翻转链表的指向 head-&gt;next-&gt;next = head; // 记得赋值 NULL，防止链表错乱 head-&gt;next = NULL; // 新链表头永远指向的是原链表的链尾 return newHead;&#125;]]></content>
+      <categories>
+        <category>DS</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>DS</tag>
+        <tag>剑指offer</tag>
       </tags>
   </entry>
   <entry>
