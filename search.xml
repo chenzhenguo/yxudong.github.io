@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[二叉搜索树的后序遍历序列]]></title>
     <url>%2F2019%2F03%2F02%2F%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E7%9A%84%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%2F</url>
-    <content type="text"><![CDATA[二叉搜索树的后序遍历序列 题目描述输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。如果是则输出 Yes,否则输出 No。假设输入的数组的任意两个数字都互不相同。 解题思路 后序遍历的序列中，最后一个数字是树的根节点 数组中前面的数字可以分为两部分：第一部分是左子树节点的值，都比根节点的值小；第二部分是右子树节点的值，都比根 节点的值大 后面用递归分别判断前后两部分是否符合以上原则 解题代码1234567891011121314151617181920212223242526272829303132class Solution &#123; public: bool VerifySquenceOfBST(vector&lt;int&gt; sequence) &#123; if (sequence.size() == 0)&#123; return false; &#125; // 初始边界值为数组最初左右边界 int left = 0, right = sequence.size() - 1; return judge(sequence, left, right); &#125; bool judge(vector&lt;int&gt; sequence, int left, int right)&#123; if (left &gt;= right)&#123; return true; &#125; // 左边界大于等于右边界返回 true int root = sequence[right]; // 根节点 int i, j; for (i = left; i &lt; right; ++i)&#123; if (sequence[i] &gt; root)&#123; break; &#125; &#125; // 左半子树都小于跟节点，寻找到右半子树起始位置 for (j = i; j &lt; right; ++j)&#123; if (sequence[j] &lt; root)&#123; return false; &#125; &#125; // 右半子树都大于根节点，否则 false // 递归处理左右子树 return judge(sequence, left, i - 1) &amp;&amp; judge(sequence, i, right - 1); &#125;&#125;;]]></content>
+    <content type="text"><![CDATA[二叉搜索树的后序遍历序列 题目描述输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。如果是则输出 Yes,否则输出 No。假设输入的数组的任意两个数字都互不相同。 解题思路 后序遍历的序列中，最后一个数字是树的根节点 数组中前面的数字可以分为两部分：第一部分是左子树节点的值，都比根节点的值小；第二部分是右子树节点的值，都比根节点的值大 后面用递归分别判断左右两部分是否符合以上原则 解题代码1234567891011121314151617181920212223242526272829303132class Solution &#123; public: bool VerifySquenceOfBST(vector&lt;int&gt; sequence) &#123; if (sequence.size() == 0)&#123; return false; &#125; // 初始边界值为数组最初左右边界 int left = 0, right = sequence.size() - 1; return judge(sequence, left, right); &#125; bool judge(vector&lt;int&gt; sequence, int left, int right)&#123; if (left &gt;= right)&#123; return true; &#125; // 左边界大于等于右边界返回 true int root = sequence[right]; // 根节点 int i, j; for (i = left; i &lt; right; ++i)&#123; if (sequence[i] &gt; root)&#123; break; &#125; &#125; // 左半子树都小于跟节点，寻找到右半子树起始位置 for (j = i; j &lt; right; ++j)&#123; if (sequence[j] &lt; root)&#123; return false; &#125; &#125; // 右半子树都大于根节点，否则 false // 递归处理左右子树 return judge(sequence, left, i - 1) &amp;&amp; judge(sequence, i, right - 1); &#125;&#125;;]]></content>
       <categories>
         <category>DS</category>
       </categories>
@@ -53,9 +53,9 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[数组中出现次数超过一半的数字]]></title>
-    <url>%2F2019%2F02%2F24%2F%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97%2F</url>
-    <content type="text"><![CDATA[数组中出现次数超过一半的数字 题目描述数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。 思路一 题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多； 我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数； 当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1 解题代码一123456789101112131415161718192021222324252627class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; int r = numbers[0]; int count = 1; for (int i = 1; i &lt; numbers.size(); ++i)&#123; if (count == 0)&#123; r = numbers[i]; count = 1; &#125; else if (numbers[i] == r)&#123; ++count; &#125; else &#123; --count; &#125; &#125; // 看最后一个元素个数是否超过长度一半 count = 0; for (int i = 0; i &lt; numbers.size(); ++i)&#123; if (numbers[i] == r)&#123; ++count; &#125; &#125; return count &gt; numbers.size() / 2 ? r : 0; &#125;&#125;; 思路二首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置 解题代码二123456789101112131415class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; sort(numbers.begin(),numbers.end()); int half = numbers.size() / 2; int count = 0; for(int i = 0; i &lt; numbers.size(); ++i)&#123; if(numbers[i]==numbers[half])&#123; ++count; &#125; &#125; return count &gt; half ? numbers[half] : 0; &#125;&#125;; 思路三利用 map 把每个数字出现的次数储存起来 解题代码三12345678910111213141516171819class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; map&lt;int,int&gt; numbersMap; for(int i = 0; i &lt; numbers.size(); ++i)&#123; numbersMap[numbers[i]] += 1; &#125; int half = numbers.size() / 2; int number = 0; for(map&lt;int,int&gt;::iterator it = numbersMap.begin(); it != numbersMap.end(); ++it)&#123; if(it-&gt;second &gt; half)&#123; number = it-&gt;first; break; &#125; &#125; return number; &#125;&#125;;]]></content>
+    <title><![CDATA[求 1 + 2 + 3 + ... + n]]></title>
+    <url>%2F2019%2F02%2F24%2F%E6%B1%82%201%20%2B%202%20%2B%203%20%2B%20...%20%2B%20n%2F</url>
+    <content type="text"><![CDATA[求 1 + 2 + 3 + … + n 题目描述求 1 + 2 + 3 + … + n，要求不能使用乘除法、for、while、if、else、switch、case 等关键字及条件判断语句（ A ? B : C）。 解题思路 利用逻辑与的短路特性实现递归终止； 当 n == 0 时，(n &gt; 0) &amp;&amp; ((sum += Sum_Solution(n - 1)) &gt; 0) 只执行前面的判断，为 false，然后直接返回 0； 当 n &gt; 0 时，执行 sum += Sum_Solution(n - 1)，实现递归计算 Sum_Solution(n) 解题代码12345678class Solution &#123; public: int Sum_Solution(int n) &#123; int sum = n; (n &gt; 0) &amp;&amp; (sum += Sum_Solution(n - 1)); return sum; &#125;&#125;;]]></content>
       <categories>
         <category>DS</category>
       </categories>
@@ -66,9 +66,9 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[求 1 + 2 + 3 + ... + n]]></title>
-    <url>%2F2019%2F02%2F24%2F%E6%B1%82%201%20%2B%202%20%2B%203%20%2B%20...%20%2B%20n%2F</url>
-    <content type="text"><![CDATA[求 1 + 2 + 3 + … + n 题目描述求 1 + 2 + 3 + … + n，要求不能使用乘除法、for、while、if、else、switch、case 等关键字及条件判断语句（ A ? B : C）。 解题思路 利用逻辑与的短路特性实现递归终止； 当 n == 0 时，(n &gt; 0) &amp;&amp; ((sum += Sum_Solution(n - 1)) &gt; 0) 只执行前面的判断，为 false，然后直接返回 0； 当 n &gt; 0 时，执行 sum += Sum_Solution(n - 1)，实现递归计算 Sum_Solution(n) 解题代码12345678class Solution &#123; public: int Sum_Solution(int n) &#123; int sum = n; (n &gt; 0) &amp;&amp; (sum += Sum_Solution(n - 1)); return sum; &#125;&#125;;]]></content>
+    <title><![CDATA[数组中出现次数超过一半的数字]]></title>
+    <url>%2F2019%2F02%2F24%2F%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97%2F</url>
+    <content type="text"><![CDATA[数组中出现次数超过一半的数字 题目描述数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。 思路一 题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多； 我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数； 当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1 解题代码一123456789101112131415161718192021222324252627class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; int r = numbers[0]; int count = 1; for (int i = 1; i &lt; numbers.size(); ++i)&#123; if (count == 0)&#123; r = numbers[i]; count = 1; &#125; else if (numbers[i] == r)&#123; ++count; &#125; else &#123; --count; &#125; &#125; // 看最后一个元素个数是否超过长度一半 count = 0; for (int i = 0; i &lt; numbers.size(); ++i)&#123; if (numbers[i] == r)&#123; ++count; &#125; &#125; return count &gt; numbers.size() / 2 ? r : 0; &#125;&#125;; 思路二首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置 解题代码二123456789101112131415class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; sort(numbers.begin(),numbers.end()); int half = numbers.size() / 2; int count = 0; for(int i = 0; i &lt; numbers.size(); ++i)&#123; if(numbers[i]==numbers[half])&#123; ++count; &#125; &#125; return count &gt; half ? numbers[half] : 0; &#125;&#125;; 思路三利用 map 把每个数字出现的次数储存起来 解题代码三12345678910111213141516171819class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; map&lt;int,int&gt; numbersMap; for(int i = 0; i &lt; numbers.size(); ++i)&#123; numbersMap[numbers[i]] += 1; &#125; int half = numbers.size() / 2; int number = 0; for(map&lt;int,int&gt;::iterator it = numbersMap.begin(); it != numbersMap.end(); ++it)&#123; if(it-&gt;second &gt; half)&#123; number = it-&gt;first; break; &#125; &#125; return number; &#125;&#125;;]]></content>
       <categories>
         <category>DS</category>
       </categories>
@@ -101,8 +101,8 @@
       <tags>
         <tag>C++</tag>
         <tag>DS</tag>
-        <tag>剑指offer</tag>
         <tag>二叉树</tag>
+        <tag>剑指offer</tag>
       </tags>
   </entry>
   <entry>
@@ -115,8 +115,8 @@
       <tags>
         <tag>C++</tag>
         <tag>DS</tag>
-        <tag>剑指offer</tag>
         <tag>二叉树</tag>
+        <tag>剑指offer</tag>
       </tags>
   </entry>
   <entry>
