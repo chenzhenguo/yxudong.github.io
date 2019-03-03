@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="Yxd&#39;s Blog">
 <meta property="og:description" content="连续子数组的最大和 题目描述HZ 偶尔会拿些专业问题来忽悠那些非计算机专业的同学。今天测试组开完会后,他又发话了：在古老的一维模式识别中，常常需要计算连续子向量的最大和,当向量全为正数的时候，问题很好解决。但是，如果向量中包含负数，是否应该包含某个负数，并期望旁边的正数会弥补它呢？例如：{6, -3, -2, 7, -15, 1, 2, 2}，连续子向量的最大和为 8（从第 0 个开始，到第 3">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-02T02:48:47.803Z">
+<meta property="og:updated_time" content="2019-03-03T09:28:53.180Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="连续子数组的最大和">
 <meta name="twitter:description" content="连续子数组的最大和 题目描述HZ 偶尔会拿些专业问题来忽悠那些非计算机专业的同学。今天测试组开完会后,他又发话了：在古老的一维模式识别中，常常需要计算连续子向量的最大和,当向量全为正数的时候，问题很好解决。但是，如果向量中包含负数，是否应该包含某个负数，并期望旁边的正数会弥补它呢？例如：{6, -3, -2, 7, -15, 1, 2, 2}，连续子向量的最大和为 8（从第 0 个开始，到第 3">
@@ -399,12 +399,24 @@
                 
               
 
-              <time title="创建时间：2019-03-02 10:23:35 / 修改时间：10:48:47" itemprop="dateCreated datePublished" datetime="2019-03-02T10:23:35+08:00">2019-03-02</time>
+              <time title="创建时间：2019-03-02 10:23:35" itemprop="dateCreated datePublished" datetime="2019-03-02T10:23:35+08:00">2019-03-02</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-03 17:28:53" itemprop="dateModified" datetime="2019-03-03T17:28:53+08:00">2019-03-03</time>
               
             
           </span>
@@ -471,7 +483,7 @@
 <li>对于一个数 A，若是 A 的左边累计数非负，那么加上 A 能使得值不小于 A，则认为累计值对整体和是有贡献的；</li>
 <li>如果前几项累计值负数，则认为有害于总和，total 变为当前值。每次改变 total 后，若大于 maxSum，则 maxSum<br>等于 total</li>
 </ol>
-<h3 id="解题代码"><a href="#解题代码" class="headerlink" title="解题代码"></a>解题代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">FindGreatestSumOfSubArray</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="built_in">array</span>)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// 用 total 记录累计值，maxSum 记录最大和，初始值为第一个元素</span></span><br><span class="line">            <span class="keyword">int</span> total = <span class="built_in">array</span>[<span class="number">0</span>], maxSum = <span class="built_in">array</span>[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; <span class="built_in">array</span>.size(); ++i)&#123;</span><br><span class="line">                <span class="keyword">if</span> (total &gt;= <span class="number">0</span>)&#123;</span><br><span class="line">                    total += <span class="built_in">array</span>[i];</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span>&#123;</span><br><span class="line">                    total = <span class="built_in">array</span>[i];</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (total &gt; maxSum)&#123;</span><br><span class="line">                    maxSum = total;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> maxSum;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="解题代码"><a href="#解题代码" class="headerlink" title="解题代码"></a>解题代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">FindGreatestSumOfSubArray</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="built_in">array</span>)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// 用 total 记录累计值，maxSum 记录最大和，初始值为第一个元素</span></span><br><span class="line">            <span class="keyword">int</span> total = <span class="built_in">array</span>[<span class="number">0</span>], maxSum = <span class="built_in">array</span>[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; <span class="built_in">array</span>.size(); ++i)&#123;</span><br><span class="line">                <span class="keyword">if</span> (total &gt;= <span class="number">0</span>)&#123;</span><br><span class="line">                    total += <span class="built_in">array</span>[i];</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    total = <span class="built_in">array</span>[i];</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (total &gt; maxSum)&#123;</span><br><span class="line">                    maxSum = total;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> maxSum;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -595,7 +607,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">20</span>
+                    <span class="site-state-item-count">21</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
