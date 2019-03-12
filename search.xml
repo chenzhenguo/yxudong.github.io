@@ -129,9 +129,9 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[求 1 + 2 + 3 + ... + n]]></title>
-    <url>%2F2019%2F02%2F24%2F%E6%B1%82%201%20%2B%202%20%2B%203%20%2B%20...%20%2B%20n%2F</url>
-    <content type="text"><![CDATA[求 1 + 2 + 3 + … + n 题目描述求 1 + 2 + 3 + … + n，要求不能使用乘除法、for、while、if、else、switch、case 等关键字及条件判断语句（ A ? B : C）。 解题思路 利用逻辑与的短路特性实现递归终止； 当 n == 0 时，(n &gt; 0) &amp;&amp; ((sum += Sum_Solution(n - 1)) &gt; 0) 只执行前面的判断，为 false，然后直接返回 0； 当 n &gt; 0 时，执行 sum += Sum_Solution(n - 1)，实现递归计算 Sum_Solution(n) 解题代码12345678class Solution &#123; public: int Sum_Solution(int n) &#123; int sum = n; (n &gt; 0) &amp;&amp; (sum += Sum_Solution(n - 1)); return sum; &#125;&#125;;]]></content>
+    <title><![CDATA[数组中出现次数超过一半的数字]]></title>
+    <url>%2F2019%2F02%2F24%2F%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97%2F</url>
+    <content type="text"><![CDATA[数组中出现次数超过一半的数字 题目描述数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。 思路一 题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多； 我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数； 当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1 解题代码一123456789101112131415161718192021222324252627class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; int r = numbers[0]; int count = 1; for (int i = 1; i &lt; numbers.size(); ++i) &#123; if (count == 0) &#123; r = numbers[i]; count = 1; &#125; else if (numbers[i] == r) &#123; ++count; &#125; else &#123; --count; &#125; &#125; // 看最后一个元素个数是否超过长度一半 count = 0; for (int i = 0; i &lt; numbers.size(); ++i) &#123; if (numbers[i] == r) &#123; ++count; &#125; &#125; return count &gt; numbers.size() / 2 ? r : 0; &#125;&#125;; 思路二首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置 解题代码二123456789101112131415class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; sort(numbers.begin(),numbers.end()); int half = numbers.size() / 2; int count = 0; for (int i = 0; i &lt; numbers.size(); ++i) &#123; if (numbers[i]==numbers[half]) &#123; ++count; &#125; &#125; return count &gt; half ? numbers[half] : 0; &#125;&#125;; 思路三利用 map 把每个数字出现的次数储存起来 解题代码三12345678910111213141516171819class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; map&lt;int, int&gt; numbersMap; for (int i = 0; i &lt; numbers.size(); ++i) &#123; numbersMap[numbers[i]] += 1; &#125; int half = numbers.size() / 2; int number = 0; for (map&lt;int, int&gt;::iterator it = numbersMap.begin(); it != numbersMap.end(); ++it) &#123; if (it-&gt;second &gt; half) &#123; number = it-&gt;first; break; &#125; &#125; return number; &#125;&#125;;]]></content>
       <categories>
         <category>DS</category>
       </categories>
@@ -142,9 +142,9 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[数组中出现次数超过一半的数字]]></title>
-    <url>%2F2019%2F02%2F24%2F%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97%2F</url>
-    <content type="text"><![CDATA[数组中出现次数超过一半的数字 题目描述数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。 思路一 题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多； 我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数； 当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1 解题代码一123456789101112131415161718192021222324252627class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; int r = numbers[0]; int count = 1; for (int i = 1; i &lt; numbers.size(); ++i) &#123; if (count == 0) &#123; r = numbers[i]; count = 1; &#125; else if (numbers[i] == r) &#123; ++count; &#125; else &#123; --count; &#125; &#125; // 看最后一个元素个数是否超过长度一半 count = 0; for (int i = 0; i &lt; numbers.size(); ++i) &#123; if (numbers[i] == r) &#123; ++count; &#125; &#125; return count &gt; numbers.size() / 2 ? r : 0; &#125;&#125;; 思路二首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置 解题代码二123456789101112131415class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; sort(numbers.begin(),numbers.end()); int half = numbers.size() / 2; int count = 0; for (int i = 0; i &lt; numbers.size(); ++i) &#123; if (numbers[i]==numbers[half]) &#123; ++count; &#125; &#125; return count &gt; half ? numbers[half] : 0; &#125;&#125;; 思路三利用 map 把每个数字出现的次数储存起来 解题代码三12345678910111213141516171819class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; map&lt;int, int&gt; numbersMap; for (int i = 0; i &lt; numbers.size(); ++i) &#123; numbersMap[numbers[i]] += 1; &#125; int half = numbers.size() / 2; int number = 0; for (map&lt;int, int&gt;::iterator it = numbersMap.begin(); it != numbersMap.end(); ++it) &#123; if (it-&gt;second &gt; half) &#123; number = it-&gt;first; break; &#125; &#125; return number; &#125;&#125;;]]></content>
+    <title><![CDATA[求 1 + 2 + 3 + ... + n]]></title>
+    <url>%2F2019%2F02%2F24%2F%E6%B1%82%201%20%2B%202%20%2B%203%20%2B%20...%20%2B%20n%2F</url>
+    <content type="text"><![CDATA[求 1 + 2 + 3 + … + n 题目描述求 1 + 2 + 3 + … + n，要求不能使用乘除法、for、while、if、else、switch、case 等关键字及条件判断语句（ A ? B : C）。 解题思路 利用逻辑与的短路特性实现递归终止； 当 n == 0 时，(n &gt; 0) &amp;&amp; ((sum += Sum_Solution(n - 1)) &gt; 0) 只执行前面的判断，为 false，然后直接返回 0； 当 n &gt; 0 时，执行 sum += Sum_Solution(n - 1)，实现递归计算 Sum_Solution(n) 解题代码12345678class Solution &#123; public: int Sum_Solution(int n) &#123; int sum = n; (n &gt; 0) &amp;&amp; (sum += Sum_Solution(n - 1)); return sum; &#125;&#125;;]]></content>
       <categories>
         <category>DS</category>
       </categories>
@@ -182,17 +182,16 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[先序和中序确定二叉树]]></title>
-    <url>%2F2019%2F02%2F23%2F%E5%85%88%E5%BA%8F%E5%92%8C%E4%B8%AD%E5%BA%8F%E7%A1%AE%E5%AE%9A%E4%BA%8C%E5%8F%89%E6%A0%91%2F</url>
-    <content type="text"><![CDATA[先序和中序确定二叉树 题目描述输入某二叉树的前序遍历和中序遍历的结果，请重建出该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。例如输入前序遍历序列 {1, 2, 4, 7, 3, 5, 6, 8} 和中序遍历序列 {4, 7, 2, 1, 5, 3, 8, 6}，则重建二叉树并返回。 解题代码12345678910111213141516171819202122232425262728293031323334353637383940414243/** * Definition for binary tree * struct TreeNode &#123; * int val; * TreeNode *left; * TreeNode *right; * TreeNode(int x) : val(x), left(NULL), right(NULL) &#123;&#125; * &#125;; */ class Solution &#123; public: TreeNode *reConstructBinaryTree(vector&lt;int&gt; pre, vector&lt;int&gt; vin) &#123; // l1, h1 为先序序列的第一个和最后一个结点下标，l2, h2 为中序序列的第一个和最后一个结点下标 // 初始调用时，l1 = l2 = 0，h1 = h2 = size() - 1 int l1 = 0, h1 = pre.size() - 1, l2 = 0, h2 = vin.size() - 1; TreeNode *root = reConstructBinaryTree_recursion(pre, l1, h1, vin, l2, h2); return root; &#125; TreeNode *reConstructBinaryTree_recursion(vector&lt;int&gt; pre, int l1, int h1, vector&lt;int&gt; vin, int l2, int h2) &#123; TreeNode *root = new TreeNode(pre[l1]); // 根节点 int i = l2, llen, rlen; while (vin[i] != pre[l1]) &#123; ++i; &#125; // 根节点在中序序列中位置 llen = i - l2; // 左子树长度 rlen = h2 - i; // 右子树长度 if (llen) &#123; root-&gt;left = reConstructBinaryTree_recursion(pre, l1 + 1, l1 + llen, vin, l2, l2 + llen - 1); &#125; // 递归建立左子树 else &#123; root-&gt;left = NULL; &#125; // 左子树为空 if (rlen) &#123; root-&gt;right = reConstructBinaryTree_recursion(pre, h1 - rlen + 1 , h1, vin, h2 - rlen + 1, h2); &#125; // 递归建立右子树 else &#123; root-&gt;right = NULL; &#125; // 右子树为空 return root; // 返回根节点指针 &#125;&#125;;]]></content>
+    <title><![CDATA[LintCode 20. 骰子求和]]></title>
+    <url>%2F2019%2F02%2F23%2FLintCode%2020.%20%E9%AA%B0%E5%AD%90%E6%B1%82%E5%92%8C%2F</url>
+    <content type="text"><![CDATA[LintCode 20. 骰子求和 题目描述扔 n 个骰子，向上面的数字之和为 S。给定 Given n，请列出所有可能的 S 值及其相应的概率。 样例给定 n = 1，返回 [[1, 0.17], [2, 0.17], [3, 0.17], [4, 0.17], [5, 0.17], [6, 0.17]]。 注意事项你不需要关心结果的准确性，我们会帮你输出结果。 思路递归求解，dicesSum(n) 可以用 dicesSum(n-1) 和 dicesSum(1) 来求解。利用 map 存放向上的数字之和与概率。 解题代码123456789101112131415161718192021222324252627282930313233343536class Solution &#123; public: /** * @param n an integer * @return a list of pair&lt;sum, probability&gt; */ // 递归求骰子的概率 map&lt;int, double&gt; get_next(int n) &#123; map&lt;int, double&gt; m; for (int i = 1; i &lt;= 6; ++i) &#123; m[i] = (double)1 / 6; &#125; // m 为一次的概率 if (n == 1) &#123; return m; &#125; map&lt;int, double&gt; chance = get_next(n - 1); // 递归获取 n-1 的概率 map&lt;int, double&gt; r; for (auto i : m) &#123; for (auto c : chance) &#123; r[i.first + c.first] += i.second*c.second; // 循环遍历，相加和共 6 种情况，存在对应的 key 中 &#125; &#125; return r; &#125; vector&lt;pair&lt;int, double&gt;&gt; dicesSum(int n) &#123; vector&lt;pair&lt;int, double&gt;&gt; vec; map&lt;int, double&gt; m = get_next(n); for (auto i : m) &#123; vec.push_back(make_pair(i.first, i.second)); &#125; return vec; &#125;&#125;;]]></content>
       <categories>
         <category>DS</category>
       </categories>
       <tags>
         <tag>DS</tag>
         <tag>C++</tag>
-        <tag>剑指offer</tag>
-        <tag>二叉树</tag>
+        <tag>LintCode</tag>
       </tags>
   </entry>
   <entry>
@@ -208,16 +207,17 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[LintCode 20. 骰子求和]]></title>
-    <url>%2F2019%2F02%2F23%2FLintCode%2020.%20%E9%AA%B0%E5%AD%90%E6%B1%82%E5%92%8C%2F</url>
-    <content type="text"><![CDATA[LintCode 20. 骰子求和 题目描述扔 n 个骰子，向上面的数字之和为 S。给定 Given n，请列出所有可能的 S 值及其相应的概率。 样例给定 n = 1，返回 [[1, 0.17], [2, 0.17], [3, 0.17], [4, 0.17], [5, 0.17], [6, 0.17]]。 注意事项你不需要关心结果的准确性，我们会帮你输出结果。 思路递归求解，dicesSum(n) 可以用 dicesSum(n-1) 和 dicesSum(1) 来求解。利用 map 存放向上的数字之和与概率。 解题代码123456789101112131415161718192021222324252627282930313233343536class Solution &#123; public: /** * @param n an integer * @return a list of pair&lt;sum, probability&gt; */ // 递归求骰子的概率 map&lt;int, double&gt; get_next(int n) &#123; map&lt;int, double&gt; m; for (int i = 1; i &lt;= 6; ++i) &#123; m[i] = (double)1 / 6; &#125; // m 为一次的概率 if (n == 1) &#123; return m; &#125; map&lt;int, double&gt; chance = get_next(n - 1); // 递归获取 n-1 的概率 map&lt;int, double&gt; r; for (auto i : m) &#123; for (auto c : chance) &#123; r[i.first + c.first] += i.second*c.second; // 循环遍历，相加和共 6 种情况，存在对应的 key 中 &#125; &#125; return r; &#125; vector&lt;pair&lt;int, double&gt;&gt; dicesSum(int n) &#123; vector&lt;pair&lt;int, double&gt;&gt; vec; map&lt;int, double&gt; m = get_next(n); for (auto i : m) &#123; vec.push_back(make_pair(i.first, i.second)); &#125; return vec; &#125;&#125;;]]></content>
+    <title><![CDATA[先序和中序确定二叉树]]></title>
+    <url>%2F2019%2F02%2F23%2F%E5%85%88%E5%BA%8F%E5%92%8C%E4%B8%AD%E5%BA%8F%E7%A1%AE%E5%AE%9A%E4%BA%8C%E5%8F%89%E6%A0%91%2F</url>
+    <content type="text"><![CDATA[先序和中序确定二叉树 题目描述输入某二叉树的前序遍历和中序遍历的结果，请重建出该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。例如输入前序遍历序列 {1, 2, 4, 7, 3, 5, 6, 8} 和中序遍历序列 {4, 7, 2, 1, 5, 3, 8, 6}，则重建二叉树并返回。 解题代码12345678910111213141516171819202122232425262728293031323334353637383940414243/** * Definition for binary tree * struct TreeNode &#123; * int val; * TreeNode *left; * TreeNode *right; * TreeNode(int x) : val(x), left(NULL), right(NULL) &#123;&#125; * &#125;; */ class Solution &#123; public: TreeNode *reConstructBinaryTree(vector&lt;int&gt; pre, vector&lt;int&gt; vin) &#123; // l1, h1 为先序序列的第一个和最后一个结点下标，l2, h2 为中序序列的第一个和最后一个结点下标 // 初始调用时，l1 = l2 = 0，h1 = h2 = size() - 1 int l1 = 0, h1 = pre.size() - 1, l2 = 0, h2 = vin.size() - 1; TreeNode *root = reConstructBinaryTree_recursion(pre, l1, h1, vin, l2, h2); return root; &#125; TreeNode *reConstructBinaryTree_recursion(vector&lt;int&gt; pre, int l1, int h1, vector&lt;int&gt; vin, int l2, int h2) &#123; TreeNode *root = new TreeNode(pre[l1]); // 根节点 int i = l2, llen, rlen; while (vin[i] != pre[l1]) &#123; ++i; &#125; // 根节点在中序序列中位置 llen = i - l2; // 左子树长度 rlen = h2 - i; // 右子树长度 if (llen) &#123; root-&gt;left = reConstructBinaryTree_recursion(pre, l1 + 1, l1 + llen, vin, l2, l2 + llen - 1); &#125; // 递归建立左子树 else &#123; root-&gt;left = NULL; &#125; // 左子树为空 if (rlen) &#123; root-&gt;right = reConstructBinaryTree_recursion(pre, h1 - rlen + 1 , h1, vin, h2 - rlen + 1, h2); &#125; // 递归建立右子树 else &#123; root-&gt;right = NULL; &#125; // 右子树为空 return root; // 返回根节点指针 &#125;&#125;;]]></content>
       <categories>
         <category>DS</category>
       </categories>
       <tags>
         <tag>DS</tag>
         <tag>C++</tag>
-        <tag>LintCode</tag>
+        <tag>剑指offer</tag>
+        <tag>二叉树</tag>
       </tags>
   </entry>
   <entry>
@@ -232,18 +232,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[快速排序递归及非递归实现]]></title>
-    <url>%2F2019%2F02%2F01%2F%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E9%80%92%E5%BD%92%E5%8F%8A%E9%9D%9E%E9%80%92%E5%BD%92%E5%AE%9E%E7%8E%B0%2F</url>
-    <content type="text"><![CDATA[快速排序递归及非递归实现 递归1234567891011121314151617181920212223void QuickSort(int A[], int low, int high) &#123; if (low &lt; high) &#123; int pivotpos = Partition(A, low, high); QuickSort(A, low, pivotpos - 1); QuickSort(A, pivotpos + 1, high); &#125;&#125;int Partition(int A [], int low, int high) &#123; int pivot = A[low]; while (low &lt; high) &#123; while (low &lt; high &amp;&amp; A[high] &gt;= pivot) &#123; --high; &#125; A[low] = A[high]; while (low &lt; high &amp;&amp; A [low] &gt;= pivot) &#123; ++low; &#125; A[high] = A[low]; &#125; A[low] = pivot; return low;&#125; 非递归123456789101112131415161718192021222324252627282930313233343536373839void QuickSort(int *array, int left, int right) &#123; stack&lt;int&gt; s; s.push(left); s.push(right); // 后入的 right，所以要先拿 right // 其实就是用栈保存每一个待排序子串的首尾元素下标，下一次 while 循环时取出这个范围，对这段子序列进行 partition 操作 while (!s.empty) &#123; int right = s.top(); s.pop(); int left = s.top(); s.pop(); int index = Partition(array, left, right); if (index-1 &gt; left) &#123; s.push(left); s.push(index - 1); &#125; if (index+1 &lt; right) &#123; s.push(index + 1); s.push(right); &#125; &#125;&#125;int PartSort(int *array,int left,int right) &#123; int key = array[right]; while (left &lt; right) &#123; while (left &lt; right &amp;&amp; array[left] &lt;= key) &#123; ++left; &#125; array[right] = array[left]; while (left &lt; right &amp;&amp; array[right] &gt;= key) &#123; --right; &#125; array[left] = array[right]; &#125; array[right] = key; return right;&#125;]]></content>
-      <categories>
-        <category>DS</category>
-      </categories>
-      <tags>
-        <tag>DS</tag>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[二叉树非递归遍历]]></title>
     <url>%2F2019%2F02%2F01%2F%E4%BA%8C%E5%8F%89%E6%A0%91%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86%2F</url>
     <content type="text"><![CDATA[二叉树非递归遍历 二叉树定义1234typedef struct BiTNode &#123; ElemType data; struct BiTNode *lchild, *rchild;&#125; BiTNode, *BiTree; 先序遍历12345678910111213141516void PreOrder(BiTree T) &#123; InitStack(S); BiTNode *p; p = T; while (p || isEmpty(s)) &#123; if (p) &#123; Push(S, p); visit(p); p = p-&gt;lchild; &#125; else &#123; Pop(S, p); p = p-&gt;rchild; &#125; &#125;&#125; 中序遍历12345678910111213141516void InOrder(BiTree T) &#123; InitStack(S); BiTNode *p; p = T; while (p || isEmpty(s)) &#123; if (p) &#123; Push(S, p); p = p-&gt;lchild; &#125; else &#123; Pop(S, p); visit(p); p = p-&gt;rchild; &#125; &#125;&#125; 后序遍历1234567891011121314151617181920212223242526void PostOrder(BiTree T) &#123; InitStack(S); BiTNode *p; p = T; r = NULL; while (p || isEmpty(s)) &#123; if (p) &#123; Push(S, p); p = p-&gt;lchild; &#125; else &#123; GetTop(S, p); if (p-&gt;rchild &amp;&amp; p-&gt;rchild != r) &#123; p = p-&gt;rchild; Push(S, p); p = p-&gt;lchild; &#125; else &#123; Pop(S, p); visit(p); r = p; p = NULL; &#125; &#125; &#125;&#125;]]></content>
@@ -254,6 +242,18 @@
         <tag>DS</tag>
         <tag>C++</tag>
         <tag>二叉树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[快速排序递归及非递归实现]]></title>
+    <url>%2F2019%2F02%2F01%2F%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E9%80%92%E5%BD%92%E5%8F%8A%E9%9D%9E%E9%80%92%E5%BD%92%E5%AE%9E%E7%8E%B0%2F</url>
+    <content type="text"><![CDATA[快速排序递归及非递归实现 递归1234567891011121314151617181920212223void QuickSort(int A[], int low, int high) &#123; if (low &lt; high) &#123; int pivotpos = Partition(A, low, high); QuickSort(A, low, pivotpos - 1); QuickSort(A, pivotpos + 1, high); &#125;&#125;int Partition(int A [], int low, int high) &#123; int pivot = A[low]; while (low &lt; high) &#123; while (low &lt; high &amp;&amp; A[high] &gt;= pivot) &#123; --high; &#125; A[low] = A[high]; while (low &lt; high &amp;&amp; A [low] &gt;= pivot) &#123; ++low; &#125; A[high] = A[low]; &#125; A[low] = pivot; return low;&#125; 非递归123456789101112131415161718192021222324252627282930313233343536373839void QuickSort(int *array, int left, int right) &#123; stack&lt;int&gt; s; s.push(left); s.push(right); // 后入的 right，所以要先拿 right // 其实就是用栈保存每一个待排序子串的首尾元素下标，下一次 while 循环时取出这个范围，对这段子序列进行 partition 操作 while (!s.empty) &#123; int right = s.top(); s.pop(); int left = s.top(); s.pop(); int index = Partition(array, left, right); if (index-1 &gt; left) &#123; s.push(left); s.push(index - 1); &#125; if (index+1 &lt; right) &#123; s.push(index + 1); s.push(right); &#125; &#125;&#125;int PartSort(int *array,int left,int right) &#123; int key = array[right]; while (left &lt; right) &#123; while (left &lt; right &amp;&amp; array[left] &lt;= key) &#123; ++left; &#125; array[right] = array[left]; while (left &lt; right &amp;&amp; array[right] &gt;= key) &#123; --right; &#125; array[left] = array[right]; &#125; array[right] = key; return right;&#125;]]></content>
+      <categories>
+        <category>DS</category>
+      </categories>
+      <tags>
+        <tag>DS</tag>
+        <tag>C++</tag>
       </tags>
   </entry>
   <entry>
