@@ -74,9 +74,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -103,9 +103,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -132,9 +132,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -161,9 +161,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -190,9 +190,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -219,9 +219,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -248,9 +248,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -277,38 +277,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
             
-            <tag> 剑指offer </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>数组中出现次数超过一半的数字</title>
-      <link href="/2019/02/24/%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97/"/>
-      <url>/2019/02/24/%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97/</url>
-      
-        <content type="html"><![CDATA[<h2 id="数组中出现次数超过一半的数字"><a href="#数组中出现次数超过一半的数字" class="headerlink" title="数组中出现次数超过一半的数字"></a>数组中出现次数超过一半的数字</h2><hr><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。</p><h3 id="思路一"><a href="#思路一" class="headerlink" title="思路一"></a>思路一</h3><a id="more"></a><ol><li>题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多；</li><li>我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数；</li><li>当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1</li></ol><h3 id="解题代码一"><a href="#解题代码一" class="headerlink" title="解题代码一"></a>解题代码一</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">MoreThanHalfNum_Solution</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; numbers)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> r = numbers[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">int</span> count = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (count == <span class="number">0</span>) &#123;</span><br><span class="line">                    r = numbers[i];</span><br><span class="line">                    count = <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (numbers[i] == r) &#123;</span><br><span class="line">                    ++count;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    --count;</span><br><span class="line">                &#125; </span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 看最后一个元素个数是否超过长度一半</span></span><br><span class="line">            count = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (numbers[i] == r) &#123;</span><br><span class="line">                    ++count;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> count &gt; numbers.size() / <span class="number">2</span> ? r : <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><h3 id="思路二"><a href="#思路二" class="headerlink" title="思路二"></a>思路二</h3><p>首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置</p><h3 id="解题代码二"><a href="#解题代码二" class="headerlink" title="解题代码二"></a>解题代码二</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">MoreThanHalfNum_Solution</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; numbers)</span> </span>&#123;</span><br><span class="line">            sort(numbers.begin(),numbers.end());</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">int</span> half = numbers.size() / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (numbers[i]==numbers[half]) &#123;</span><br><span class="line">                    ++count; </span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> count &gt; half ? numbers[half] : <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><h3 id="思路三"><a href="#思路三" class="headerlink" title="思路三"></a>思路三</h3><p>利用 map 把每个数字出现的次数储存起来</p><h3 id="解题代码三"><a href="#解题代码三" class="headerlink" title="解题代码三"></a>解题代码三</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">MoreThanHalfNum_Solution</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; numbers)</span> </span>&#123;</span><br><span class="line">            <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; numbersMap;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                numbersMap[numbers[i]] += <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">int</span> half = numbers.size() / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">int</span> number = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;::iterator it = numbersMap.begin(); it != numbersMap.end(); ++it) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it-&gt;second &gt; half) &#123;</span><br><span class="line">                    number = it-&gt;first;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> number;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
-      <categories>
-          
-          <category> DS </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
             <tag> DS </tag>
-            
-            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -335,9 +306,38 @@
       
         <tags>
             
+            <tag> C++ </tag>
+            
             <tag> DS </tag>
             
+            <tag> 剑指offer </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>数组中出现次数超过一半的数字</title>
+      <link href="/2019/02/24/%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97/"/>
+      <url>/2019/02/24/%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97/</url>
+      
+        <content type="html"><![CDATA[<h2 id="数组中出现次数超过一半的数字"><a href="#数组中出现次数超过一半的数字" class="headerlink" title="数组中出现次数超过一半的数字"></a>数组中出现次数超过一半的数字</h2><hr><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。</p><h3 id="思路一"><a href="#思路一" class="headerlink" title="思路一"></a>思路一</h3><a id="more"></a><ol><li>题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多；</li><li>我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数；</li><li>当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1</li></ol><h3 id="解题代码一"><a href="#解题代码一" class="headerlink" title="解题代码一"></a>解题代码一</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">MoreThanHalfNum_Solution</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; numbers)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> r = numbers[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">int</span> count = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (count == <span class="number">0</span>) &#123;</span><br><span class="line">                    r = numbers[i];</span><br><span class="line">                    count = <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (numbers[i] == r) &#123;</span><br><span class="line">                    ++count;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    --count;</span><br><span class="line">                &#125; </span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 看最后一个元素个数是否超过长度一半</span></span><br><span class="line">            count = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (numbers[i] == r) &#123;</span><br><span class="line">                    ++count;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> count &gt; numbers.size() / <span class="number">2</span> ? r : <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><h3 id="思路二"><a href="#思路二" class="headerlink" title="思路二"></a>思路二</h3><p>首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置</p><h3 id="解题代码二"><a href="#解题代码二" class="headerlink" title="解题代码二"></a>解题代码二</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">MoreThanHalfNum_Solution</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; numbers)</span> </span>&#123;</span><br><span class="line">            sort(numbers.begin(),numbers.end());</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">int</span> half = numbers.size() / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (numbers[i]==numbers[half]) &#123;</span><br><span class="line">                    ++count; </span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> count &gt; half ? numbers[half] : <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><h3 id="思路三"><a href="#思路三" class="headerlink" title="思路三"></a>思路三</h3><p>利用 map 把每个数字出现的次数储存起来</p><h3 id="解题代码三"><a href="#解题代码三" class="headerlink" title="解题代码三"></a>解题代码三</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">MoreThanHalfNum_Solution</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; numbers)</span> </span>&#123;</span><br><span class="line">            <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; numbersMap;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                numbersMap[numbers[i]] += <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">int</span> half = numbers.size() / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">int</span> number = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;::iterator it = numbersMap.begin(); it != numbersMap.end(); ++it) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it-&gt;second &gt; half) &#123;</span><br><span class="line">                    number = it-&gt;first;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> number;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> DS </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -364,9 +364,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -393,9 +393,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -424,38 +424,11 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> LintCode </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>计算日期差</title>
-      <link href="/2019/02/23/%E8%AE%A1%E7%AE%97%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E6%97%A5%E6%9C%9F%E5%B7%AE/"/>
-      <url>/2019/02/23/%E8%AE%A1%E7%AE%97%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E6%97%A5%E6%9C%9F%E5%B7%AE/</url>
-      
-        <content type="html"><![CDATA[<h2 id="计算任意两个日期差"><a href="#计算任意两个日期差" class="headerlink" title="计算任意两个日期差"></a>计算任意两个日期差</h2><hr><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天</p><p><strong>输入</strong>：</p><p>有多组数据，每组数据有两行，分别表示两个日期，形式为 YYYYMMDD</p><p><strong>输出</strong>：</p><p>每组数据输出一行，即日期差值</p><p><strong>样例输入</strong>：</p><p>20110412<br>20110422</p><p><strong>样例输出</strong>：</p><p>11</p><a id="more"></a><h3 id="解题方法"><a href="#解题方法" class="headerlink" title="解题方法"></a>解题方法</h3><p>该题目是求两个日期间的天数差，即求分别以两个特定日期为界的日期区间的长度。解决这类区间问题有一个统一的思想——把原区间问题统一到起点确定的区间问题上去。<br>采用预处理手段，即在程序真正开始处理输入数据之前，预处理出所有日期与原点日期之间的天数差并保存起来。再者，预处理也是空间换时间的重要手段（保存预处理所得数据所需的内存来换取实时处理所需要的时间消耗）<br>日期类问题有个需要注意的要点——闰年，闰年并不严格按照四年一次的规律出现，在某种情况下也可能出现两个相邻闰年相隔8年的情况（如1896年与1904年）。即应采用该如下代码表示：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#define ISYEAP(X) X%100 != 0 &amp;&amp; X%4 == 0 || X%400 == 0 ? 1:0</span><br></pre></td></tr></table></figure><p>当需要开辟大量内存空间的情况，必须在函数体外定义，即定义全局变量，或者在函数中使用malloc等函数动态申请变量空间。即下面的代码中的buf[5001][13][32]<br>在保存某个特定日期与原点日期的天数差时，使用了三维数组，用年、月、日分别表示该数组下标，便将日期本身与其存储地址联系起来，通过利用它的年月日数字即可找到我们保存的值，即Hash的基本思想。</p><h3 id="解题代码"><a href="#解题代码" class="headerlink" title="解题代码"></a>解题代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="comment">// 定义宏判断是否是闰年</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ISYEAP(x) x % 100 != 0 &amp;&amp; x % 4 == 0 || x % 400 == 0 ? 1 : 0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> dayOfMonth[<span class="number">13</span>][<span class="number">2</span>] = &#123;</span><br><span class="line">    <span class="number">0</span>, <span class="number">0</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">28</span>, <span class="number">29</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">30</span>, <span class="number">30</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">30</span>, <span class="number">30</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">30</span>, <span class="number">30</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">30</span>, <span class="number">30</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span></span><br><span class="line">&#125;; <span class="comment">// 预存每月的天数，二月配合宏定义做特殊处理</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Date</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> Day;</span><br><span class="line">    <span class="keyword">int</span> Month;</span><br><span class="line">    <span class="keyword">int</span> Year;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">nextDay</span><span class="params">()</span> </span>&#123; <span class="comment">// 计算下一天的日期</span></span><br><span class="line">        ++Day;</span><br><span class="line">        <span class="keyword">if</span> (Day &gt; dayOfMonth[Month][ISYEAP(Year)]) &#123; <span class="comment">// 若日数超过了当月最大日数</span></span><br><span class="line">            Day = <span class="number">1</span>;</span><br><span class="line">            ++Month;</span><br><span class="line">            <span class="keyword">if</span> (Month &gt; <span class="number">12</span>) &#123; <span class="comment">// 若月份超过 12</span></span><br><span class="line">                Month = <span class="number">1</span>;</span><br><span class="line">                ++Year;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> buf[<span class="number">5001</span>][<span class="number">13</span>][<span class="number">32</span>]; <span class="comment">// 保存预处理的天数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Date tmp;</span><br><span class="line">    <span class="keyword">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">    tmp.Day = <span class="number">0</span>;</span><br><span class="line">    tmp.Month = <span class="number">0</span>;</span><br><span class="line">    tmp.Year = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (tmp.Year != <span class="number">5001</span>) &#123;</span><br><span class="line">        buf[tmp.Year][tmp.Month][tmp.Day] = cnt;</span><br><span class="line">        tmp.nextDay();</span><br><span class="line">        ++cnt;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> d1, m1, y1;</span><br><span class="line">    <span class="keyword">int</span> d2, m2, y2;</span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">scanf</span>(<span class="string">"%4d%2d%2d"</span>, &amp;y1, &amp;m1, &amp;d1) != EOF) &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%4d%2d%2d"</span>, &amp;y2, &amp;m2, &amp;d2);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>, <span class="built_in">abs</span>(buf[y1][m1][d1] - buf[y2][m2][d2]) + <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
-      <categories>
-          
-          <category> DS </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> DS </tag>
-            
-            <tag> C++ </tag>
             
         </tags>
       
@@ -480,13 +453,40 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
             <tag> 二叉树 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>计算日期差</title>
+      <link href="/2019/02/23/%E8%AE%A1%E7%AE%97%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E6%97%A5%E6%9C%9F%E5%B7%AE/"/>
+      <url>/2019/02/23/%E8%AE%A1%E7%AE%97%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E6%97%A5%E6%9C%9F%E5%B7%AE/</url>
+      
+        <content type="html"><![CDATA[<h2 id="计算任意两个日期差"><a href="#计算任意两个日期差" class="headerlink" title="计算任意两个日期差"></a>计算任意两个日期差</h2><hr><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天</p><p><strong>输入</strong>：</p><p>有多组数据，每组数据有两行，分别表示两个日期，形式为 YYYYMMDD</p><p><strong>输出</strong>：</p><p>每组数据输出一行，即日期差值</p><p><strong>样例输入</strong>：</p><p>20110412<br>20110422</p><p><strong>样例输出</strong>：</p><p>11</p><a id="more"></a><h3 id="解题方法"><a href="#解题方法" class="headerlink" title="解题方法"></a>解题方法</h3><p>该题目是求两个日期间的天数差，即求分别以两个特定日期为界的日期区间的长度。解决这类区间问题有一个统一的思想——把原区间问题统一到起点确定的区间问题上去。<br>采用预处理手段，即在程序真正开始处理输入数据之前，预处理出所有日期与原点日期之间的天数差并保存起来。再者，预处理也是空间换时间的重要手段（保存预处理所得数据所需的内存来换取实时处理所需要的时间消耗）<br>日期类问题有个需要注意的要点——闰年，闰年并不严格按照四年一次的规律出现，在某种情况下也可能出现两个相邻闰年相隔8年的情况（如1896年与1904年）。即应采用该如下代码表示：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#define ISYEAP(X) X%100 != 0 &amp;&amp; X%4 == 0 || X%400 == 0 ? 1:0</span><br></pre></td></tr></table></figure><p>当需要开辟大量内存空间的情况，必须在函数体外定义，即定义全局变量，或者在函数中使用malloc等函数动态申请变量空间。即下面的代码中的buf[5001][13][32]<br>在保存某个特定日期与原点日期的天数差时，使用了三维数组，用年、月、日分别表示该数组下标，便将日期本身与其存储地址联系起来，通过利用它的年月日数字即可找到我们保存的值，即Hash的基本思想。</p><h3 id="解题代码"><a href="#解题代码" class="headerlink" title="解题代码"></a>解题代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="comment">// 定义宏判断是否是闰年</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ISYEAP(x) x % 100 != 0 &amp;&amp; x % 4 == 0 || x % 400 == 0 ? 1 : 0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> dayOfMonth[<span class="number">13</span>][<span class="number">2</span>] = &#123;</span><br><span class="line">    <span class="number">0</span>, <span class="number">0</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">28</span>, <span class="number">29</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">30</span>, <span class="number">30</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">30</span>, <span class="number">30</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">30</span>, <span class="number">30</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span>,</span><br><span class="line">    <span class="number">30</span>, <span class="number">30</span>,</span><br><span class="line">    <span class="number">31</span>, <span class="number">31</span></span><br><span class="line">&#125;; <span class="comment">// 预存每月的天数，二月配合宏定义做特殊处理</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Date</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> Day;</span><br><span class="line">    <span class="keyword">int</span> Month;</span><br><span class="line">    <span class="keyword">int</span> Year;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">nextDay</span><span class="params">()</span> </span>&#123; <span class="comment">// 计算下一天的日期</span></span><br><span class="line">        ++Day;</span><br><span class="line">        <span class="keyword">if</span> (Day &gt; dayOfMonth[Month][ISYEAP(Year)]) &#123; <span class="comment">// 若日数超过了当月最大日数</span></span><br><span class="line">            Day = <span class="number">1</span>;</span><br><span class="line">            ++Month;</span><br><span class="line">            <span class="keyword">if</span> (Month &gt; <span class="number">12</span>) &#123; <span class="comment">// 若月份超过 12</span></span><br><span class="line">                Month = <span class="number">1</span>;</span><br><span class="line">                ++Year;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> buf[<span class="number">5001</span>][<span class="number">13</span>][<span class="number">32</span>]; <span class="comment">// 保存预处理的天数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Date tmp;</span><br><span class="line">    <span class="keyword">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">    tmp.Day = <span class="number">0</span>;</span><br><span class="line">    tmp.Month = <span class="number">0</span>;</span><br><span class="line">    tmp.Year = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (tmp.Year != <span class="number">5001</span>) &#123;</span><br><span class="line">        buf[tmp.Year][tmp.Month][tmp.Day] = cnt;</span><br><span class="line">        tmp.nextDay();</span><br><span class="line">        ++cnt;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> d1, m1, y1;</span><br><span class="line">    <span class="keyword">int</span> d2, m2, y2;</span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">scanf</span>(<span class="string">"%4d%2d%2d"</span>, &amp;y1, &amp;m1, &amp;d1) != EOF) &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%4d%2d%2d"</span>, &amp;y2, &amp;m2, &amp;d2);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>, <span class="built_in">abs</span>(buf[y1][m1][d1] - buf[y2][m2][d2]) + <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> DS </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
         </tags>
       
@@ -520,11 +520,11 @@
     
     
     <entry>
-      <title>二叉树非递归遍历</title>
-      <link href="/2019/02/01/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86/"/>
-      <url>/2019/02/01/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86/</url>
+      <title>单链表的反转</title>
+      <link href="/2019/02/01/%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC/"/>
+      <url>/2019/02/01/%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC/</url>
       
-        <content type="html"><![CDATA[<h2 id="二叉树非递归遍历"><a href="#二叉树非递归遍历" class="headerlink" title="二叉树非递归遍历"></a>二叉树非递归遍历</h2><hr><h3 id="二叉树定义"><a href="#二叉树定义" class="headerlink" title="二叉树定义"></a>二叉树定义</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">BiTNode</span> &#123;</span></span><br><span class="line">    ElemType data;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">BiTNode</span> *<span class="title">lchild</span>, *<span class="title">rchild</span>;</span></span><br><span class="line">&#125; BiTNode, *BiTree;</span><br></pre></td></tr></table></figure><h3 id="先序遍历"><a href="#先序遍历" class="headerlink" title="先序遍历"></a>先序遍历</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PreOrder</span><span class="params">(BiTree T)</span> </span>&#123;</span><br><span class="line">    InitStack(S);</span><br><span class="line">    BiTNode *p;</span><br><span class="line">    p = T;</span><br><span class="line">    <span class="keyword">while</span> (p || isEmpty(s)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (p) &#123;</span><br><span class="line">            Push(S, p);</span><br><span class="line">            visit(p);</span><br><span class="line">            p = p-&gt;lchild;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            Pop(S, p);</span><br><span class="line">            p = p-&gt;rchild;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><a id="more"></a><h3 id="中序遍历"><a href="#中序遍历" class="headerlink" title="中序遍历"></a>中序遍历</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">InOrder</span><span class="params">(BiTree T)</span> </span>&#123;</span><br><span class="line">    InitStack(S);</span><br><span class="line">    BiTNode *p;</span><br><span class="line">    p = T;</span><br><span class="line">    <span class="keyword">while</span> (p || isEmpty(s)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (p) &#123;</span><br><span class="line">            Push(S, p);</span><br><span class="line">            p = p-&gt;lchild;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            Pop(S, p);</span><br><span class="line">            visit(p);</span><br><span class="line">            p = p-&gt;rchild;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="后序遍历"><a href="#后序遍历" class="headerlink" title="后序遍历"></a>后序遍历</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PostOrder</span><span class="params">(BiTree T)</span> </span>&#123;</span><br><span class="line">    InitStack(S);</span><br><span class="line">    BiTNode *p;</span><br><span class="line">    p = T;</span><br><span class="line">    r = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">while</span> (p || isEmpty(s)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (p) &#123;</span><br><span class="line">            Push(S, p);</span><br><span class="line">            p = p-&gt;lchild;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            GetTop(S, p);</span><br><span class="line">            <span class="keyword">if</span> (p-&gt;rchild &amp;&amp; p-&gt;rchild != r) &#123;</span><br><span class="line">                p = p-&gt;rchild;</span><br><span class="line">                Push(S, p);</span><br><span class="line">                p = p-&gt;lchild;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                Pop(S, p);</span><br><span class="line">                visit(p);</span><br><span class="line">                r = p;</span><br><span class="line">                p = <span class="literal">NULL</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+        <content type="html"><![CDATA[<h2 id="单链表的反转"><a href="#单链表的反转" class="headerlink" title="单链表的反转"></a>单链表的反转</h2><hr><h3 id="链表的定义"><a href="#链表的定义" class="headerlink" title="链表的定义"></a>链表的定义</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">LinkNode</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> val;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">LinkNode</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; LinkNode;</span><br></pre></td></tr></table></figure><h3 id="非递归写法"><a href="#非递归写法" class="headerlink" title="非递归写法"></a>非递归写法</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LinkNode *<span class="title">Reverse</span><span class="params">(LinkNode *head)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (head == <span class="literal">NULL</span> || head-&gt;next == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    LinkNode *pre = head;</span><br><span class="line">    LinkNode *cur = head-&gt;next;</span><br><span class="line">    LinkNode *temp = head-&gt;next-&gt;next;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (cur) &#123;</span><br><span class="line">        temp = cur-&gt;next;</span><br><span class="line">        cur-&gt;next = pre;</span><br><span class="line">        pre = cur;</span><br><span class="line">        cur = temp;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    head-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> pre;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><a id="more"></a><h3 id="递归写法"><a href="#递归写法" class="headerlink" title="递归写法"></a>递归写法</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LinkNode *<span class="title">Re_Reverse</span><span class="params">(LinkNode *head)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (head == <span class="literal">NULL</span> || head-&gt;next == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> head; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 一直循环到链尾</span></span><br><span class="line">    LinkNode *newHead = Re_Reverse(head-&gt;next);</span><br><span class="line">    <span class="comment">// 翻转链表的指向</span></span><br><span class="line">    head-&gt;next-&gt;next = head;</span><br><span class="line">    <span class="comment">// 记得赋值 NULL，防止链表错乱</span></span><br><span class="line">    head-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="comment">// 新链表头永远指向的是原链表的链尾</span></span><br><span class="line">    <span class="keyword">return</span> newHead;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       
       
       <categories>
@@ -536,11 +536,11 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
             
-            <tag> 二叉树 </tag>
+            <tag> DS </tag>
+            
+            <tag> 剑指offer </tag>
             
         </tags>
       
@@ -565,9 +565,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
         </tags>
       
@@ -576,11 +576,11 @@
     
     
     <entry>
-      <title>单链表的反转</title>
-      <link href="/2019/02/01/%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC/"/>
-      <url>/2019/02/01/%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC/</url>
+      <title>二叉树非递归遍历</title>
+      <link href="/2019/02/01/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86/"/>
+      <url>/2019/02/01/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86/</url>
       
-        <content type="html"><![CDATA[<h2 id="单链表的反转"><a href="#单链表的反转" class="headerlink" title="单链表的反转"></a>单链表的反转</h2><hr><h3 id="链表的定义"><a href="#链表的定义" class="headerlink" title="链表的定义"></a>链表的定义</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">LinkNode</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> val;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">LinkNode</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; LinkNode;</span><br></pre></td></tr></table></figure><h3 id="非递归写法"><a href="#非递归写法" class="headerlink" title="非递归写法"></a>非递归写法</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LinkNode *<span class="title">Reverse</span><span class="params">(LinkNode *head)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (head == <span class="literal">NULL</span> || head-&gt;next == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    LinkNode *pre = head;</span><br><span class="line">    LinkNode *cur = head-&gt;next;</span><br><span class="line">    LinkNode *temp = head-&gt;next-&gt;next;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (cur) &#123;</span><br><span class="line">        temp = cur-&gt;next;</span><br><span class="line">        cur-&gt;next = pre;</span><br><span class="line">        pre = cur;</span><br><span class="line">        cur = temp;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    head-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> pre;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><a id="more"></a><h3 id="递归写法"><a href="#递归写法" class="headerlink" title="递归写法"></a>递归写法</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LinkNode *<span class="title">Re_Reverse</span><span class="params">(LinkNode *head)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (head == <span class="literal">NULL</span> || head-&gt;next == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> head; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 一直循环到链尾</span></span><br><span class="line">    LinkNode *newHead = Re_Reverse(head-&gt;next);</span><br><span class="line">    <span class="comment">// 翻转链表的指向</span></span><br><span class="line">    head-&gt;next-&gt;next = head;</span><br><span class="line">    <span class="comment">// 记得赋值 NULL，防止链表错乱</span></span><br><span class="line">    head-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="comment">// 新链表头永远指向的是原链表的链尾</span></span><br><span class="line">    <span class="keyword">return</span> newHead;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+        <content type="html"><![CDATA[<h2 id="二叉树非递归遍历"><a href="#二叉树非递归遍历" class="headerlink" title="二叉树非递归遍历"></a>二叉树非递归遍历</h2><hr><h3 id="二叉树定义"><a href="#二叉树定义" class="headerlink" title="二叉树定义"></a>二叉树定义</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">BiTNode</span> &#123;</span></span><br><span class="line">    ElemType data;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">BiTNode</span> *<span class="title">lchild</span>, *<span class="title">rchild</span>;</span></span><br><span class="line">&#125; BiTNode, *BiTree;</span><br></pre></td></tr></table></figure><h3 id="先序遍历"><a href="#先序遍历" class="headerlink" title="先序遍历"></a>先序遍历</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PreOrder</span><span class="params">(BiTree T)</span> </span>&#123;</span><br><span class="line">    InitStack(S);</span><br><span class="line">    BiTNode *p;</span><br><span class="line">    p = T;</span><br><span class="line">    <span class="keyword">while</span> (p || isEmpty(s)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (p) &#123;</span><br><span class="line">            Push(S, p);</span><br><span class="line">            visit(p);</span><br><span class="line">            p = p-&gt;lchild;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            Pop(S, p);</span><br><span class="line">            p = p-&gt;rchild;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><a id="more"></a><h3 id="中序遍历"><a href="#中序遍历" class="headerlink" title="中序遍历"></a>中序遍历</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">InOrder</span><span class="params">(BiTree T)</span> </span>&#123;</span><br><span class="line">    InitStack(S);</span><br><span class="line">    BiTNode *p;</span><br><span class="line">    p = T;</span><br><span class="line">    <span class="keyword">while</span> (p || isEmpty(s)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (p) &#123;</span><br><span class="line">            Push(S, p);</span><br><span class="line">            p = p-&gt;lchild;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            Pop(S, p);</span><br><span class="line">            visit(p);</span><br><span class="line">            p = p-&gt;rchild;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="后序遍历"><a href="#后序遍历" class="headerlink" title="后序遍历"></a>后序遍历</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PostOrder</span><span class="params">(BiTree T)</span> </span>&#123;</span><br><span class="line">    InitStack(S);</span><br><span class="line">    BiTNode *p;</span><br><span class="line">    p = T;</span><br><span class="line">    r = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">while</span> (p || isEmpty(s)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (p) &#123;</span><br><span class="line">            Push(S, p);</span><br><span class="line">            p = p-&gt;lchild;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            GetTop(S, p);</span><br><span class="line">            <span class="keyword">if</span> (p-&gt;rchild &amp;&amp; p-&gt;rchild != r) &#123;</span><br><span class="line">                p = p-&gt;rchild;</span><br><span class="line">                Push(S, p);</span><br><span class="line">                p = p-&gt;lchild;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                Pop(S, p);</span><br><span class="line">                visit(p);</span><br><span class="line">                r = p;</span><br><span class="line">                p = <span class="literal">NULL</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       
       
       <categories>
@@ -592,11 +592,11 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
             
-            <tag> 剑指offer </tag>
+            <tag> DS </tag>
+            
+            <tag> 二叉树 </tag>
             
         </tags>
       
