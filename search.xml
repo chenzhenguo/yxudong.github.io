@@ -20,9 +20,9 @@
       
         <tags>
             
-            <tag> Python </tag>
-            
             <tag> DS </tag>
+            
+            <tag> Python </tag>
             
             <tag> LeetCode </tag>
             
@@ -74,9 +74,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -103,9 +103,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -132,9 +132,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -161,9 +161,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -190,9 +190,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -219,9 +219,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -248,9 +248,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -277,38 +277,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
             
-            <tag> 剑指offer </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>数组中出现次数超过一半的数字</title>
-      <link href="/2019/02/24/%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97/"/>
-      <url>/2019/02/24/%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97/</url>
-      
-        <content type="html"><![CDATA[<h2 id="数组中出现次数超过一半的数字"><a href="#数组中出现次数超过一半的数字" class="headerlink" title="数组中出现次数超过一半的数字"></a>数组中出现次数超过一半的数字</h2><hr><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。</p><h3 id="思路一"><a href="#思路一" class="headerlink" title="思路一"></a>思路一</h3><a id="more"></a><ol><li>题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多；</li><li>我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数；</li><li>当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1</li></ol><h3 id="解题代码一"><a href="#解题代码一" class="headerlink" title="解题代码一"></a>解题代码一</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">MoreThanHalfNum_Solution</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; numbers)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> r = numbers[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">int</span> count = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (count == <span class="number">0</span>) &#123;</span><br><span class="line">                    r = numbers[i];</span><br><span class="line">                    count = <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (numbers[i] == r) &#123;</span><br><span class="line">                    ++count;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    --count;</span><br><span class="line">                &#125; </span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 看最后一个元素个数是否超过长度一半</span></span><br><span class="line">            count = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (numbers[i] == r) &#123;</span><br><span class="line">                    ++count;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> count &gt; numbers.size() / <span class="number">2</span> ? r : <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><h3 id="思路二"><a href="#思路二" class="headerlink" title="思路二"></a>思路二</h3><p>首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置</p><h3 id="解题代码二"><a href="#解题代码二" class="headerlink" title="解题代码二"></a>解题代码二</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">MoreThanHalfNum_Solution</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; numbers)</span> </span>&#123;</span><br><span class="line">            sort(numbers.begin(),numbers.end());</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">int</span> half = numbers.size() / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (numbers[i]==numbers[half]) &#123;</span><br><span class="line">                    ++count; </span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> count &gt; half ? numbers[half] : <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><h3 id="思路三"><a href="#思路三" class="headerlink" title="思路三"></a>思路三</h3><p>利用 map 把每个数字出现的次数储存起来</p><h3 id="解题代码三"><a href="#解题代码三" class="headerlink" title="解题代码三"></a>解题代码三</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">MoreThanHalfNum_Solution</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; numbers)</span> </span>&#123;</span><br><span class="line">            <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; numbersMap;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                numbersMap[numbers[i]] += <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">int</span> half = numbers.size() / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">int</span> number = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;::iterator it = numbersMap.begin(); it != numbersMap.end(); ++it) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it-&gt;second &gt; half) &#123;</span><br><span class="line">                    number = it-&gt;first;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> number;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
-      <categories>
-          
-          <category> DS </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
             <tag> DS </tag>
-            
-            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -335,9 +306,38 @@
       
         <tags>
             
+            <tag> C++ </tag>
+            
             <tag> DS </tag>
             
+            <tag> 剑指offer </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>数组中出现次数超过一半的数字</title>
+      <link href="/2019/02/24/%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97/"/>
+      <url>/2019/02/24/%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97/</url>
+      
+        <content type="html"><![CDATA[<h2 id="数组中出现次数超过一半的数字"><a href="#数组中出现次数超过一半的数字" class="headerlink" title="数组中出现次数超过一半的数字"></a>数组中出现次数超过一半的数字</h2><hr><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。</p><h3 id="思路一"><a href="#思路一" class="headerlink" title="思路一"></a>思路一</h3><a id="more"></a><ol><li>题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多；</li><li>我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数；</li><li>当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1</li></ol><h3 id="解题代码一"><a href="#解题代码一" class="headerlink" title="解题代码一"></a>解题代码一</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">MoreThanHalfNum_Solution</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; numbers)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> r = numbers[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">int</span> count = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (count == <span class="number">0</span>) &#123;</span><br><span class="line">                    r = numbers[i];</span><br><span class="line">                    count = <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (numbers[i] == r) &#123;</span><br><span class="line">                    ++count;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    --count;</span><br><span class="line">                &#125; </span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 看最后一个元素个数是否超过长度一半</span></span><br><span class="line">            count = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (numbers[i] == r) &#123;</span><br><span class="line">                    ++count;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> count &gt; numbers.size() / <span class="number">2</span> ? r : <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><h3 id="思路二"><a href="#思路二" class="headerlink" title="思路二"></a>思路二</h3><p>首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置</p><h3 id="解题代码二"><a href="#解题代码二" class="headerlink" title="解题代码二"></a>解题代码二</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">MoreThanHalfNum_Solution</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; numbers)</span> </span>&#123;</span><br><span class="line">            sort(numbers.begin(),numbers.end());</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">int</span> half = numbers.size() / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (numbers[i]==numbers[half]) &#123;</span><br><span class="line">                    ++count; </span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> count &gt; half ? numbers[half] : <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><h3 id="思路三"><a href="#思路三" class="headerlink" title="思路三"></a>思路三</h3><p>利用 map 把每个数字出现的次数储存起来</p><h3 id="解题代码三"><a href="#解题代码三" class="headerlink" title="解题代码三"></a>解题代码三</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">MoreThanHalfNum_Solution</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; numbers)</span> </span>&#123;</span><br><span class="line">            <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; numbersMap;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.size(); ++i) &#123;</span><br><span class="line">                numbersMap[numbers[i]] += <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">int</span> half = numbers.size() / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">int</span> number = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;::iterator it = numbersMap.begin(); it != numbersMap.end(); ++it) &#123;</span><br><span class="line">                <span class="keyword">if</span> (it-&gt;second &gt; half) &#123;</span><br><span class="line">                    number = it-&gt;first;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> number;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> DS </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -364,9 +364,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -393,9 +393,40 @@
       
         <tags>
             
+            <tag> C++ </tag>
+            
             <tag> DS </tag>
             
+            <tag> 剑指offer </tag>
+            
+            <tag> 二叉树 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>先序和中序确定二叉树</title>
+      <link href="/2019/02/23/%E5%85%88%E5%BA%8F%E5%92%8C%E4%B8%AD%E5%BA%8F%E7%A1%AE%E5%AE%9A%E4%BA%8C%E5%8F%89%E6%A0%91/"/>
+      <url>/2019/02/23/%E5%85%88%E5%BA%8F%E5%92%8C%E4%B8%AD%E5%BA%8F%E7%A1%AE%E5%AE%9A%E4%BA%8C%E5%8F%89%E6%A0%91/</url>
+      
+        <content type="html"><![CDATA[<h2 id="先序和中序确定二叉树"><a href="#先序和中序确定二叉树" class="headerlink" title="先序和中序确定二叉树"></a>先序和中序确定二叉树</h2><hr><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>输入某二叉树的前序遍历和中序遍历的结果，请重建出该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。<br>例如输入前序遍历序列 {1, 2, 4, 7, 3, 5, 6, 8} 和中序遍历序列 {4, 7, 2, 1, 5, 3, 8, 6}，则重建二叉树并返回。</p><a id="more"></a><h3 id="解题代码"><a href="#解题代码" class="headerlink" title="解题代码"></a>解题代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for binary tree</span></span><br><span class="line"><span class="comment"> * struct TreeNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     TreeNode *left;</span></span><br><span class="line"><span class="comment"> *     TreeNode *right;</span></span><br><span class="line"><span class="comment"> *     TreeNode(int x) : val(x), left(NULL), right(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function">TreeNode *<span class="title">reConstructBinaryTree</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; pre, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; vin)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// l1, h1 为先序序列的第一个和最后一个结点下标，l2, h2 为中序序列的第一个和最后一个结点下标</span></span><br><span class="line">            <span class="comment">// 初始调用时，l1 = l2 = 0，h1 = h2 = size() - 1</span></span><br><span class="line">            <span class="keyword">int</span> l1 = <span class="number">0</span>, h1 = pre.size() - <span class="number">1</span>, l2 = <span class="number">0</span>, h2 = vin.size() - <span class="number">1</span>;</span><br><span class="line">            TreeNode *root = reConstructBinaryTree_recursion(pre, l1, h1, vin, l2, h2);</span><br><span class="line">            <span class="keyword">return</span> root;</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">        <span class="function">TreeNode *<span class="title">reConstructBinaryTree_recursion</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; pre, <span class="keyword">int</span> l1, <span class="keyword">int</span> h1, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; vin, <span class="keyword">int</span> l2, <span class="keyword">int</span> h2)</span> </span>&#123;</span><br><span class="line">            TreeNode *root = <span class="keyword">new</span> TreeNode(pre[l1]); <span class="comment">// 根节点</span></span><br><span class="line">            <span class="keyword">int</span> i = l2, llen, rlen;</span><br><span class="line">            <span class="keyword">while</span> (vin[i] != pre[l1]) &#123;</span><br><span class="line">                ++i;</span><br><span class="line">            &#125; <span class="comment">// 根节点在中序序列中位置</span></span><br><span class="line">            llen = i - l2; <span class="comment">// 左子树长度</span></span><br><span class="line">            rlen = h2 - i; <span class="comment">// 右子树长度</span></span><br><span class="line">            <span class="keyword">if</span> (llen) &#123;</span><br><span class="line">                root-&gt;left = reConstructBinaryTree_recursion(pre, l1 + <span class="number">1</span>, l1 + llen, vin, l2, l2 + llen - <span class="number">1</span>);</span><br><span class="line">            &#125; <span class="comment">// 递归建立左子树</span></span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                root-&gt;left = <span class="literal">NULL</span>;</span><br><span class="line">            &#125; <span class="comment">// 左子树为空</span></span><br><span class="line">            <span class="keyword">if</span> (rlen) &#123;</span><br><span class="line">                root-&gt;right = reConstructBinaryTree_recursion(pre, h1 - rlen + <span class="number">1</span> , h1, vin, h2 - rlen + <span class="number">1</span>, h2);</span><br><span class="line">            &#125; <span class="comment">// 递归建立右子树</span></span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                root-&gt;right = <span class="literal">NULL</span>;</span><br><span class="line">            &#125; <span class="comment">// 右子树为空</span></span><br><span class="line">            <span class="keyword">return</span> root; <span class="comment">// 返回根节点指针</span></span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> DS </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 剑指offer </tag>
             
@@ -424,9 +455,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
         </tags>
       
@@ -451,42 +482,11 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> LintCode </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>先序和中序确定二叉树</title>
-      <link href="/2019/02/23/%E5%85%88%E5%BA%8F%E5%92%8C%E4%B8%AD%E5%BA%8F%E7%A1%AE%E5%AE%9A%E4%BA%8C%E5%8F%89%E6%A0%91/"/>
-      <url>/2019/02/23/%E5%85%88%E5%BA%8F%E5%92%8C%E4%B8%AD%E5%BA%8F%E7%A1%AE%E5%AE%9A%E4%BA%8C%E5%8F%89%E6%A0%91/</url>
-      
-        <content type="html"><![CDATA[<h2 id="先序和中序确定二叉树"><a href="#先序和中序确定二叉树" class="headerlink" title="先序和中序确定二叉树"></a>先序和中序确定二叉树</h2><hr><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>输入某二叉树的前序遍历和中序遍历的结果，请重建出该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。<br>例如输入前序遍历序列 {1, 2, 4, 7, 3, 5, 6, 8} 和中序遍历序列 {4, 7, 2, 1, 5, 3, 8, 6}，则重建二叉树并返回。</p><a id="more"></a><h3 id="解题代码"><a href="#解题代码" class="headerlink" title="解题代码"></a>解题代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for binary tree</span></span><br><span class="line"><span class="comment"> * struct TreeNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     TreeNode *left;</span></span><br><span class="line"><span class="comment"> *     TreeNode *right;</span></span><br><span class="line"><span class="comment"> *     TreeNode(int x) : val(x), left(NULL), right(NULL) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function">TreeNode *<span class="title">reConstructBinaryTree</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; pre, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; vin)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// l1, h1 为先序序列的第一个和最后一个结点下标，l2, h2 为中序序列的第一个和最后一个结点下标</span></span><br><span class="line">            <span class="comment">// 初始调用时，l1 = l2 = 0，h1 = h2 = size() - 1</span></span><br><span class="line">            <span class="keyword">int</span> l1 = <span class="number">0</span>, h1 = pre.size() - <span class="number">1</span>, l2 = <span class="number">0</span>, h2 = vin.size() - <span class="number">1</span>;</span><br><span class="line">            TreeNode *root = reConstructBinaryTree_recursion(pre, l1, h1, vin, l2, h2);</span><br><span class="line">            <span class="keyword">return</span> root;</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">        <span class="function">TreeNode *<span class="title">reConstructBinaryTree_recursion</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; pre, <span class="keyword">int</span> l1, <span class="keyword">int</span> h1, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; vin, <span class="keyword">int</span> l2, <span class="keyword">int</span> h2)</span> </span>&#123;</span><br><span class="line">            TreeNode *root = <span class="keyword">new</span> TreeNode(pre[l1]); <span class="comment">// 根节点</span></span><br><span class="line">            <span class="keyword">int</span> i = l2, llen, rlen;</span><br><span class="line">            <span class="keyword">while</span> (vin[i] != pre[l1]) &#123;</span><br><span class="line">                ++i;</span><br><span class="line">            &#125; <span class="comment">// 根节点在中序序列中位置</span></span><br><span class="line">            llen = i - l2; <span class="comment">// 左子树长度</span></span><br><span class="line">            rlen = h2 - i; <span class="comment">// 右子树长度</span></span><br><span class="line">            <span class="keyword">if</span> (llen) &#123;</span><br><span class="line">                root-&gt;left = reConstructBinaryTree_recursion(pre, l1 + <span class="number">1</span>, l1 + llen, vin, l2, l2 + llen - <span class="number">1</span>);</span><br><span class="line">            &#125; <span class="comment">// 递归建立左子树</span></span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                root-&gt;left = <span class="literal">NULL</span>;</span><br><span class="line">            &#125; <span class="comment">// 左子树为空</span></span><br><span class="line">            <span class="keyword">if</span> (rlen) &#123;</span><br><span class="line">                root-&gt;right = reConstructBinaryTree_recursion(pre, h1 - rlen + <span class="number">1</span> , h1, vin, h2 - rlen + <span class="number">1</span>, h2);</span><br><span class="line">            &#125; <span class="comment">// 递归建立右子树</span></span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                root-&gt;right = <span class="literal">NULL</span>;</span><br><span class="line">            &#125; <span class="comment">// 右子树为空</span></span><br><span class="line">            <span class="keyword">return</span> root; <span class="comment">// 返回根节点指针</span></span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
-      <categories>
-          
-          <category> DS </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> DS </tag>
-            
-            <tag> C++ </tag>
-            
-            <tag> 剑指offer </tag>
-            
-            <tag> 二叉树 </tag>
             
         </tags>
       
@@ -520,33 +520,6 @@
     
     
     <entry>
-      <title>快速排序递归及非递归实现</title>
-      <link href="/2019/02/01/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E9%80%92%E5%BD%92%E5%8F%8A%E9%9D%9E%E9%80%92%E5%BD%92%E5%AE%9E%E7%8E%B0/"/>
-      <url>/2019/02/01/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E9%80%92%E5%BD%92%E5%8F%8A%E9%9D%9E%E9%80%92%E5%BD%92%E5%AE%9E%E7%8E%B0/</url>
-      
-        <content type="html"><![CDATA[<h2 id="快速排序递归及非递归实现"><a href="#快速排序递归及非递归实现" class="headerlink" title="快速排序递归及非递归实现"></a>快速排序递归及非递归实现</h2><hr><h3 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QuickSort</span><span class="params">(<span class="keyword">int</span> A[], <span class="keyword">int</span> low, <span class="keyword">int</span> high)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (low &lt; high) &#123;</span><br><span class="line">        <span class="keyword">int</span> pivotpos = Partition(A, low, high);</span><br><span class="line">        QuickSort(A, low, pivotpos - <span class="number">1</span>);</span><br><span class="line">        QuickSort(A, pivotpos + <span class="number">1</span>, high);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Partition</span><span class="params">(<span class="keyword">int</span> A [], <span class="keyword">int</span> low, <span class="keyword">int</span> high)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> pivot = A[low];</span><br><span class="line">    <span class="keyword">while</span> (low &lt; high) &#123;</span><br><span class="line">        <span class="keyword">while</span> (low &lt; high &amp;&amp; A[high] &gt;= pivot) &#123;</span><br><span class="line">            --high;</span><br><span class="line">        &#125;</span><br><span class="line">        A[low] = A[high];</span><br><span class="line">        <span class="keyword">while</span> (low &lt; high &amp;&amp; A [low] &gt;= pivot) &#123;</span><br><span class="line">            ++low;</span><br><span class="line">        &#125;</span><br><span class="line">        A[high] = A[low];</span><br><span class="line">    &#125;</span><br><span class="line">    A[low] = pivot;</span><br><span class="line">    <span class="keyword">return</span> low;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><a id="more"></a><h3 id="非递归"><a href="#非递归" class="headerlink" title="非递归"></a>非递归</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QuickSort</span><span class="params">(<span class="keyword">int</span> *<span class="built_in">array</span>, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">stack</span>&lt;<span class="keyword">int</span>&gt; s;</span><br><span class="line">    s.push(left);</span><br><span class="line">    s.push(right); <span class="comment">// 后入的 right，所以要先拿 right</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 其实就是用栈保存每一个待排序子串的首尾元素下标，下一次 while 循环时取出这个范围，对这段子序列进行 partition 操作</span></span><br><span class="line">    <span class="keyword">while</span> (!s.empty) &#123;</span><br><span class="line">        <span class="keyword">int</span> right = s.top();</span><br><span class="line">        s.pop();</span><br><span class="line">        <span class="keyword">int</span> left = s.top();</span><br><span class="line">        s.pop();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> index = Partition(<span class="built_in">array</span>, left, right);</span><br><span class="line">        <span class="keyword">if</span> (index<span class="number">-1</span> &gt; left) &#123;</span><br><span class="line">            s.push(left);</span><br><span class="line">            s.push(index - <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (index+<span class="number">1</span> &lt; right) &#123;</span><br><span class="line">            s.push(index + <span class="number">1</span>);</span><br><span class="line">            s.push(right);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">PartSort</span><span class="params">(<span class="keyword">int</span> *<span class="built_in">array</span>,<span class="keyword">int</span> left,<span class="keyword">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> key = <span class="built_in">array</span>[right];</span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">while</span> (left &lt; right &amp;&amp; <span class="built_in">array</span>[left] &lt;= key) &#123;</span><br><span class="line">            ++left;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">array</span>[right] = <span class="built_in">array</span>[left];</span><br><span class="line">        <span class="keyword">while</span> (left &lt; right &amp;&amp; <span class="built_in">array</span>[right] &gt;= key) &#123;</span><br><span class="line">            --right;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">array</span>[left] = <span class="built_in">array</span>[right];  </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">array</span>[right] = key;</span><br><span class="line">    <span class="keyword">return</span> right;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
-      <categories>
-          
-          <category> DS </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> DS </tag>
-            
-            <tag> C++ </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>单链表的反转</title>
       <link href="/2019/02/01/%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC/"/>
       <url>/2019/02/01/%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC/</url>
@@ -563,11 +536,38 @@
       
         <tags>
             
+            <tag> C++ </tag>
+            
             <tag> DS </tag>
+            
+            <tag> 剑指offer </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>快速排序递归及非递归实现</title>
+      <link href="/2019/02/01/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E9%80%92%E5%BD%92%E5%8F%8A%E9%9D%9E%E9%80%92%E5%BD%92%E5%AE%9E%E7%8E%B0/"/>
+      <url>/2019/02/01/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E9%80%92%E5%BD%92%E5%8F%8A%E9%9D%9E%E9%80%92%E5%BD%92%E5%AE%9E%E7%8E%B0/</url>
+      
+        <content type="html"><![CDATA[<h2 id="快速排序递归及非递归实现"><a href="#快速排序递归及非递归实现" class="headerlink" title="快速排序递归及非递归实现"></a>快速排序递归及非递归实现</h2><hr><h3 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QuickSort</span><span class="params">(<span class="keyword">int</span> A[], <span class="keyword">int</span> low, <span class="keyword">int</span> high)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (low &lt; high) &#123;</span><br><span class="line">        <span class="keyword">int</span> pivotpos = Partition(A, low, high);</span><br><span class="line">        QuickSort(A, low, pivotpos - <span class="number">1</span>);</span><br><span class="line">        QuickSort(A, pivotpos + <span class="number">1</span>, high);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Partition</span><span class="params">(<span class="keyword">int</span> A [], <span class="keyword">int</span> low, <span class="keyword">int</span> high)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> pivot = A[low];</span><br><span class="line">    <span class="keyword">while</span> (low &lt; high) &#123;</span><br><span class="line">        <span class="keyword">while</span> (low &lt; high &amp;&amp; A[high] &gt;= pivot) &#123;</span><br><span class="line">            --high;</span><br><span class="line">        &#125;</span><br><span class="line">        A[low] = A[high];</span><br><span class="line">        <span class="keyword">while</span> (low &lt; high &amp;&amp; A [low] &gt;= pivot) &#123;</span><br><span class="line">            ++low;</span><br><span class="line">        &#125;</span><br><span class="line">        A[high] = A[low];</span><br><span class="line">    &#125;</span><br><span class="line">    A[low] = pivot;</span><br><span class="line">    <span class="keyword">return</span> low;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><a id="more"></a><h3 id="非递归"><a href="#非递归" class="headerlink" title="非递归"></a>非递归</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QuickSort</span><span class="params">(<span class="keyword">int</span> *<span class="built_in">array</span>, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">stack</span>&lt;<span class="keyword">int</span>&gt; s;</span><br><span class="line">    s.push(left);</span><br><span class="line">    s.push(right); <span class="comment">// 后入的 right，所以要先拿 right</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 其实就是用栈保存每一个待排序子串的首尾元素下标，下一次 while 循环时取出这个范围，对这段子序列进行 partition 操作</span></span><br><span class="line">    <span class="keyword">while</span> (!s.empty) &#123;</span><br><span class="line">        <span class="keyword">int</span> right = s.top();</span><br><span class="line">        s.pop();</span><br><span class="line">        <span class="keyword">int</span> left = s.top();</span><br><span class="line">        s.pop();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> index = Partition(<span class="built_in">array</span>, left, right);</span><br><span class="line">        <span class="keyword">if</span> (index<span class="number">-1</span> &gt; left) &#123;</span><br><span class="line">            s.push(left);</span><br><span class="line">            s.push(index - <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (index+<span class="number">1</span> &lt; right) &#123;</span><br><span class="line">            s.push(index + <span class="number">1</span>);</span><br><span class="line">            s.push(right);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">PartSort</span><span class="params">(<span class="keyword">int</span> *<span class="built_in">array</span>,<span class="keyword">int</span> left,<span class="keyword">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> key = <span class="built_in">array</span>[right];</span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">while</span> (left &lt; right &amp;&amp; <span class="built_in">array</span>[left] &lt;= key) &#123;</span><br><span class="line">            ++left;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">array</span>[right] = <span class="built_in">array</span>[left];</span><br><span class="line">        <span class="keyword">while</span> (left &lt; right &amp;&amp; <span class="built_in">array</span>[right] &gt;= key) &#123;</span><br><span class="line">            --right;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">array</span>[left] = <span class="built_in">array</span>[right];  </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">array</span>[right] = key;</span><br><span class="line">    <span class="keyword">return</span> right;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> DS </category>
+          
+      </categories>
+      
+      
+        <tags>
             
             <tag> C++ </tag>
             
-            <tag> 剑指offer </tag>
+            <tag> DS </tag>
             
         </tags>
       
@@ -592,9 +592,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> DS </tag>
             
             <tag> 二叉树 </tag>
             
