@@ -196,19 +196,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[LintCode 20. 骰子求和]]></title>
-    <url>%2F2019%2F02%2F23%2FLintCode%2020.%20%E9%AA%B0%E5%AD%90%E6%B1%82%E5%92%8C%2F</url>
-    <content type="text"><![CDATA[LintCode 20. 骰子求和 题目描述扔 n 个骰子，向上面的数字之和为 S。给定 Given n，请列出所有可能的 S 值及其相应的概率。 样例给定 n = 1，返回 [[1, 0.17], [2, 0.17], [3, 0.17], [4, 0.17], [5, 0.17], [6, 0.17]]。 注意事项你不需要关心结果的准确性，我们会帮你输出结果。 思路递归求解，dicesSum(n) 可以用 dicesSum(n-1) 和 dicesSum(1) 来求解。利用 map 存放向上的数字之和与概率。 解题代码123456789101112131415161718192021222324252627282930313233343536class Solution &#123; public: /** * @param n an integer * @return a list of pair&lt;sum, probability&gt; */ // 递归求骰子的概率 map&lt;int, double&gt; get_next(int n) &#123; map&lt;int, double&gt; m; for (int i = 1; i &lt;= 6; ++i) &#123; m[i] = (double)1 / 6; &#125; // m 为一次的概率 if (n == 1) &#123; return m; &#125; map&lt;int, double&gt; chance = get_next(n - 1); // 递归获取 n-1 的概率 map&lt;int, double&gt; r; for (auto i : m) &#123; for (auto c : chance) &#123; r[i.first + c.first] += i.second*c.second; // 循环遍历，相加和共 6 种情况，存在对应的 key 中 &#125; &#125; return r; &#125; vector&lt;pair&lt;int, double&gt;&gt; dicesSum(int n) &#123; vector&lt;pair&lt;int, double&gt;&gt; vec; map&lt;int, double&gt; m = get_next(n); for (auto i : m) &#123; vec.push_back(make_pair(i.first, i.second)); &#125; return vec; &#125;&#125;;]]></content>
-      <categories>
-        <category>DS</category>
-      </categories>
-      <tags>
-        <tag>DS</tag>
-        <tag>C++</tag>
-        <tag>LintCode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[计算日期差]]></title>
     <url>%2F2019%2F02%2F23%2F%E8%AE%A1%E7%AE%97%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E6%97%A5%E6%9C%9F%E5%B7%AE%2F</url>
     <content type="text"><![CDATA[计算任意两个日期差 题目描述有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天 输入： 有多组数据，每组数据有两行，分别表示两个日期，形式为 YYYYMMDD 输出： 每组数据输出一行，即日期差值 样例输入： 2011041220110422 样例输出： 11 解题方法该题目是求两个日期间的天数差，即求分别以两个特定日期为界的日期区间的长度。解决这类区间问题有一个统一的思想——把原区间问题统一到起点确定的区间问题上去。采用预处理手段，即在程序真正开始处理输入数据之前，预处理出所有日期与原点日期之间的天数差并保存起来。再者，预处理也是空间换时间的重要手段（保存预处理所得数据所需的内存来换取实时处理所需要的时间消耗）日期类问题有个需要注意的要点——闰年，闰年并不严格按照四年一次的规律出现，在某种情况下也可能出现两个相邻闰年相隔8年的情况（如1896年与1904年）。即应采用该如下代码表示： 1#define ISYEAP(X) X%100 != 0 &amp;&amp; X%4 == 0 || X%400 == 0 ? 1:0 当需要开辟大量内存空间的情况，必须在函数体外定义，即定义全局变量，或者在函数中使用malloc等函数动态申请变量空间。即下面的代码中的buf[5001][13][32]在保存某个特定日期与原点日期的天数差时，使用了三维数组，用年、月、日分别表示该数组下标，便将日期本身与其存储地址联系起来，通过利用它的年月日数字即可找到我们保存的值，即Hash的基本思想。 解题代码123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960#include &lt;stdio.h&gt;#include &lt;cmath&gt;// 定义宏判断是否是闰年#define ISYEAP(x) x % 100 != 0 &amp;&amp; x % 4 == 0 || x % 400 == 0 ? 1 : 0int dayOfMonth[13][2] = &#123; 0, 0, 31, 31, 28, 29, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31&#125;; // 预存每月的天数，二月配合宏定义做特殊处理struct Date &#123; int Day; int Month; int Year; void nextDay() &#123; // 计算下一天的日期 ++Day; if (Day &gt; dayOfMonth[Month][ISYEAP(Year)]) &#123; // 若日数超过了当月最大日数 Day = 1; ++Month; if (Month &gt; 12) &#123; // 若月份超过 12 Month = 1; ++Year; &#125; &#125; &#125;&#125;;int buf[5001][13][32]; // 保存预处理的天数int main() &#123; Date tmp; int cnt = 0; tmp.Day = 0; tmp.Month = 0; tmp.Year = 0; while (tmp.Year != 5001) &#123; buf[tmp.Year][tmp.Month][tmp.Day] = cnt; tmp.nextDay(); ++cnt; &#125; int d1, m1, y1; int d2, m2, y2; while (scanf("%4d%2d%2d", &amp;y1, &amp;m1, &amp;d1) != EOF) &#123; scanf("%4d%2d%2d", &amp;y2, &amp;m2, &amp;d2); printf("%d\n", abs(buf[y1][m1][d1] - buf[y2][m2][d2]) + 1); &#125; return 0;&#125;]]></content>
@@ -244,19 +231,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[单链表的反转]]></title>
-    <url>%2F2019%2F02%2F01%2F%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC%2F</url>
-    <content type="text"><![CDATA[单链表的反转 链表的定义1234typedef struct LinkNode &#123; int val; struct LinkNode *next;&#125; LinkNode; 非递归写法123456789101112131415161718LinkNode *Reverse(LinkNode *head) &#123; if (head == NULL || head-&gt;next == NULL) &#123; return head; &#125; LinkNode *pre = head; LinkNode *cur = head-&gt;next; LinkNode *temp = head-&gt;next-&gt;next; while (cur) &#123; temp = cur-&gt;next; cur-&gt;next = pre; pre = cur; cur = temp; &#125; head-&gt;next = NULL; return pre;&#125; 递归写法1234567891011121314LinkNode *Re_Reverse(LinkNode *head) &#123; if (head == NULL || head-&gt;next == NULL) &#123; return head; &#125; // 一直循环到链尾 LinkNode *newHead = Re_Reverse(head-&gt;next); // 翻转链表的指向 head-&gt;next-&gt;next = head; // 记得赋值 NULL，防止链表错乱 head-&gt;next = NULL; // 新链表头永远指向的是原链表的链尾 return newHead;&#125;]]></content>
-      <categories>
-        <category>DS</category>
-      </categories>
-      <tags>
-        <tag>DS</tag>
-        <tag>C++</tag>
-        <tag>剑指offer</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[二叉树非递归遍历]]></title>
     <url>%2F2019%2F02%2F01%2F%E4%BA%8C%E5%8F%89%E6%A0%91%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86%2F</url>
     <content type="text"><![CDATA[二叉树非递归遍历 二叉树定义1234typedef struct BiTNode &#123; ElemType data; struct BiTNode *lchild, *rchild;&#125; BiTNode, *BiTree; 先序遍历12345678910111213141516void PreOrder(BiTree T) &#123; InitStack(S); BiTNode *p; p = T; while (p || isEmpty(s)) &#123; if (p) &#123; Push(S, p); visit(p); p = p-&gt;lchild; &#125; else &#123; Pop(S, p); p = p-&gt;rchild; &#125; &#125;&#125; 中序遍历12345678910111213141516void InOrder(BiTree T) &#123; InitStack(S); BiTNode *p; p = T; while (p || isEmpty(s)) &#123; if (p) &#123; Push(S, p); p = p-&gt;lchild; &#125; else &#123; Pop(S, p); visit(p); p = p-&gt;rchild; &#125; &#125;&#125; 后序遍历1234567891011121314151617181920212223242526void PostOrder(BiTree T) &#123; InitStack(S); BiTNode *p; p = T; r = NULL; while (p || isEmpty(s)) &#123; if (p) &#123; Push(S, p); p = p-&gt;lchild; &#125; else &#123; GetTop(S, p); if (p-&gt;rchild &amp;&amp; p-&gt;rchild != r) &#123; p = p-&gt;rchild; Push(S, p); p = p-&gt;lchild; &#125; else &#123; Pop(S, p); visit(p); r = p; p = NULL; &#125; &#125; &#125;&#125;]]></content>
@@ -267,6 +241,19 @@
         <tag>DS</tag>
         <tag>C++</tag>
         <tag>二叉树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[单链表的反转]]></title>
+    <url>%2F2019%2F02%2F01%2F%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC%2F</url>
+    <content type="text"><![CDATA[单链表的反转 链表的定义1234typedef struct LinkNode &#123; int val; struct LinkNode *next;&#125; LinkNode; 非递归写法123456789101112131415161718LinkNode *Reverse(LinkNode *head) &#123; if (head == NULL || head-&gt;next == NULL) &#123; return head; &#125; LinkNode *pre = head; LinkNode *cur = head-&gt;next; LinkNode *temp = head-&gt;next-&gt;next; while (cur) &#123; temp = cur-&gt;next; cur-&gt;next = pre; pre = cur; cur = temp; &#125; head-&gt;next = NULL; return pre;&#125; 递归写法1234567891011121314LinkNode *Re_Reverse(LinkNode *head) &#123; if (head == NULL || head-&gt;next == NULL) &#123; return head; &#125; // 一直循环到链尾 LinkNode *newHead = Re_Reverse(head-&gt;next); // 翻转链表的指向 head-&gt;next-&gt;next = head; // 记得赋值 NULL，防止链表错乱 head-&gt;next = NULL; // 新链表头永远指向的是原链表的链尾 return newHead;&#125;]]></content>
+      <categories>
+        <category>DS</category>
+      </categories>
+      <tags>
+        <tag>DS</tag>
+        <tag>C++</tag>
+        <tag>剑指offer</tag>
       </tags>
   </entry>
   <entry>
