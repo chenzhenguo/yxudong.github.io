@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>MySQL 基础架构：一条 SQL 查询语句是如何执行的</title>
+      <link href="/2019/05/21/MySQL-%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84%EF%BC%9A%E4%B8%80%E6%9D%A1-SQL-%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84/"/>
+      <url>/2019/05/21/MySQL-%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84%EF%BC%9A%E4%B8%80%E6%9D%A1-SQL-%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84/</url>
+      
+        <content type="html"><![CDATA[<h2 id="MySQL-基础架构：一条-SQL-查询语句是如何执行的"><a href="#MySQL-基础架构：一条-SQL-查询语句是如何执行的" class="headerlink" title="MySQL 基础架构：一条 SQL 查询语句是如何执行的"></a>MySQL 基础架构：一条 SQL 查询语句是如何执行的</h2><hr><h3 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h3><p>MySQL 可以分为 <strong>Server 层和存储引擎层</strong>两部分</p><p>Server 层包括连接器、查询缓存、分析器、优化器、执行器等，涵盖 MySQL 的大多数核心服务功能，以及所有的内置函数（如日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程、触发器、视图等。</p><p>存储引擎层负责数据的存储和提取。其架构模式是插件式的，支持 InnoDB、MyISAM、Memory 等多个存储引擎。现在最常用的存储引擎是 InnoDB，它从 MySQL 5.5.5 版本开始成为了默认存储引擎。</p><p>从图中可以看出，<strong>不同的存储引擎共用一个 Server 层</strong>，也就是从连接器到执行器的部分。</p><p><img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/MySQL%20%E4%B8%80%E6%9D%A1%20SQL%20%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84_1.png" alt="image"></p><p>比如，有个最简单的表，表里只有一个 ID 字段，在执行下面这个查询语句时：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from T where ID=10；</span><br></pre></td></tr></table></figure><p>过程如下</p><h3 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a>连接器</h3><p>第一步，先连接到这个数据库上，这时候就是连接器。连接器负责跟客户端建立连接、获取权限、维持和管理连接。连接命令一般是这么写的：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -h$ip -P$port -u$user -p</span><br></pre></td></tr></table></figure><p>连接命令中的 mysql 是客户端工具，用来跟服务端建立连接。在完成经典的 TCP 握手后，连接器开始认证身份，这个时候用的就是输入的用户名和密码：</p><ul><li>如果用户名或密码不对，会收到一个”Access denied for user”的错误，然后客户端程序结束执行。</li><li>如果用户名密码认证通过，连接器会到权限表里面查出拥有的权限。之后，这个连接里面的权限判断逻辑，都将依赖于此时读到的权限。</li></ul><p>这就意味着，一个用户成功建立连接后，即使用管理员账号对这个用户的权限做了修改，也不会影响已经存在连接的权限。修改完成后，只有再新建的连接才会使用新的权限设置。</p><a id="more"></a><p>连接完成后，如果没有后续的动作，这个连接就处于空闲状态，可以在 show processlist 命令中看到它。下面的图是 show processlist 的结果，其中的 Command 列显示为“Sleep”的这一行，就表示现在系统里面有一个空闲连接。</p><p><img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/MySQL%20%E4%B8%80%E6%9D%A1%20SQL%20%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84_2.png" alt="image"></p><p>客户端如果太长时间没动静，连接器就会自动将它断开。这个时间是由参数 wait_timeout 控制的，默认值是 8 小时。</p><p>如果在连接被断开之后，客户端再次发送请求的话，就会收到一个错误提醒： Lost connection to MySQL server during query。这时候如果要继续，就需要重连，然后再执行请求了。</p><p>数据库里面，长连接是指连接成功后，如果客户端持续有请求，则一直使用同一个连接。短连接则是指每次执行完很少的几次查询就断开连接，下次查询再重新建立一个。</p><p>建立连接的过程通常是比较复杂的，所以建议在使用中要尽量减少建立连接的动作，也就是尽量使用长连接。</p><p>但是全部使用长连接后，可能会发现，有些时候 MySQL 占用内存涨得特别快，这是因为 MySQL 在执行过程中临时使用的内存是管理在连接对象里面的。这些资源会在连接断开的时候才释放。所以如果长连接累积下来，可能导致内存占用太大，被系统强行杀掉（OOM），从现象看就是 MySQL 异常重启了。</p><p>可以考虑以下两种方案解决这个问题：</p><ol><li>定期断开长连接。使用一段时间，或者程序里面判断执行过一个占用内存的大查询后，断开连接，之后要查询再重连；</li><li>如果是 MySQL 5.7 或更新版本，可以在每次执行一个比较大的操作后，通过执行 mysql_reset_connection 来重新初始化连接资源。这个过程不需要重连和重新做权限验证，但是会将连接恢复到刚刚创建完时的状态</li></ol><h4 id="查询缓存"><a href="#查询缓存" class="headerlink" title="查询缓存"></a>查询缓存</h4><p>连接建立完成后，执行 select 语句了。执行逻辑就会来到第二步：查询缓存。</p><p>MySQL 拿到一个查询请求后，会先到查询缓存看看，之前是不是执行过这条语句。之前执行过的语句及其结果可能会以 key-value 对的形式，被直接缓存在内存中。key 是查询的语句，value 是查询的结果。如果查询能够直接在这个缓存中找到 key，那么这个 value 就会被直接返回给客户端。</p><p>如果语句不在查询缓存中，就会继续后面的执行阶段。执行完成后，执行结果会被存入查询缓存中。可以看到，如果查询命中缓存，MySQL 不需要执行后面的复杂操作，就可以直接返回结果，这个效率会很高。</p><p><strong>但是大多数情况下建议不要使用查询缓存，因为查询缓存往往弊大于利。</strong></p><p>查询缓存的失效非常频繁，只要有对一个表的更新，这个表上所有的查询缓存都会被清空。因此很可能费劲地把结果存起来，还没使用，就被一个更新全清空了。对于更新压力大的数据库来说，查询缓存的命中率会非常低。除非业务就是有一张静态表，很长时间才会更新一次。比如，一个系统配置表，那这张表上的查询才适合使用查询缓存。</p><p>MySQL 提供了这种“按需使用”的方式。可以将参数 query_cache_type 设置成 DEMAND，这样对于默认的 SQL 语句都不使用查询缓存。而对于确定要使用查询缓存的语句，可以用 SQL_CACHE 显式指定，像下面这个语句一样：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select SQL_CACHE * from T where ID=10；</span><br></pre></td></tr></table></figure><p>MySQL 8.0 版本直接将查询缓存的整块功能删掉了，没有这个功能。</p><h4 id="分析器"><a href="#分析器" class="headerlink" title="分析器"></a>分析器</h4><p>如果没有命中查询缓存，就开始真正执行语句。首先，MySQL 需要知道用户想要做什么，因此需要对 SQL 语句做解析。</p><p>分析器先会做“词法分析”。输入的是由多个字符串和空格组成的一条 SQL 语句，MySQL 需要识别出里面的字符串分别是什么，代表什么。</p><p>MySQL 从输入的”select”这个关键字识别出来，这是一个查询语句。它也要把字符串“T”识别成“表名 T”，把字符串“ID”识别成“列 ID”。</p><p>做完了这些识别以后，就要做“语法分析”。根据词法分析的结果，语法分析器会根据语法规则，判断输入的这个 SQL 语句是否满足 MySQL 语法。</p><p>如果语句不对，就会收到“You have an error in your SQL syntax”的错误提醒，比如下面这个语句 select 少打了开头的字母“s”。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; elect * from T where ID=1;</span><br><span class="line"></span><br><span class="line">ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &apos;elect * from t where ID=1&apos; at line 1</span><br></pre></td></tr></table></figure><p>一般语法错误会提示第一个出现错误的位置，所以要关注的是紧接“use near”的内容。</p><p>或者如果表 T 中没有字段 k，而用户执行了这个语句 </p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from T where k = 1</span><br></pre></td></tr></table></figure><p>会得到“不存在这个列”的错误：“Unknown column ‘k’ in ‘where clause’”。这个错误就是在分析器阶段报出来的。</p><h3 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h3><p>经过了分析器，MySQL 就知道用户想要做什么了。在开始执行之前，还要先经过优化器的处理。</p><p>优化器是在表里面有多个索引的时候，决定使用哪个索引；或者在一个语句有多表关联（join）的时候，决定各个表的连接顺序。比如执行下面这样的语句，这个语句是执行两个表的 join：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from t1 join t2 using(ID)  where t1.c=10 and t2.d=20;</span><br></pre></td></tr></table></figure><ul><li>既可以先从表 t1 里面取出 c=10 的记录的 ID 值，再根据 ID 值关联到表 t2，再判断 t2 里面 d 的值是否等于 20；</li><li>也可以先从表 t2 里面取出 d=20 的记录的 ID 值，再根据 ID 值关联到表 t1，再判断 t1 里面 c 的值是否等于 10</li></ul><p>这两种执行方法的逻辑结果是一样的，但是执行的效率会有不同，而优化器的作用就是决定选择使用哪一个方案。</p><p>优化器阶段完成后，这个语句的执行方案就确定下来了，然后进入执行器阶段。</p><h3 id="执行器"><a href="#执行器" class="headerlink" title="执行器"></a>执行器</h3><p>MySQL 通过分析器知道了用户要做什么，通过优化器知道了该怎么做，于是就进入了执行器阶段，开始执行语句。</p><p>开始执行的时候，要先判断一下用户对这个表 T 有没有执行查询的权限，如果没有，就会返回没有权限的错误，如下所示 （在工程实现上，如果命中查询缓存，会在查询缓存返回结果的时候，做权限验证。查询也会在优化器之前调用 precheck 验证权限）。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from T where ID=10;</span><br><span class="line"></span><br><span class="line">ERROR 1142 (42000): SELECT command denied to user &apos;b&apos;@&apos;localhost&apos; for table &apos;T&apos;</span><br></pre></td></tr></table></figure><p>如果有权限，就打开表继续执行。打开表的时候，执行器就会根据表的引擎定义，去使用这个引擎提供的接口。</p><p>比如这个例子中的表 T 中，ID 字段没有索引，那么执行器的执行流程是这样的：</p><ol><li>调用 InnoDB 引擎接口取这个表的第一行，判断 ID 值是不是 10，如果不是则跳过，如果是则将这行存在结果集中；</li><li>调用引擎接口取“下一行”，重复相同的判断逻辑，直到取到这个表的最后一行；</li><li>执行器将上述遍历过程中所有满足条件的行组成的记录集作为结果集返回给客户端</li></ol><p>至此，这个语句就执行完成了。</p><p>对于有索引的表，执行的逻辑也差不多。第一次调用的是“取满足条件的第一行”这个接口，之后循环取“满足条件的下一行”这个接口，这些接口都是引擎中已经定义好的。</p><p>可以在数据库的慢查询日志中看到一个 rows_examined 的字段，表示这个语句执行过程中扫描了多少行。这个值就是在执行器每次调用引擎获取数据行的时候累加的。</p><p>在有些场景下，执行器调用一次，在引擎内部则扫描了多行，因此<strong>引擎扫描行数跟 rows_examined 并不是完全相同的。</strong></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> MySQL </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MySQL </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>LeetCode 14. Longest Common Prefix</title>
       <link href="/2019/03/10/LeetCode%2014.%20Longest%20Common%20Prefix/"/>
       <url>/2019/03/10/LeetCode%2014.%20Longest%20Common%20Prefix/</url>
@@ -20,9 +45,9 @@
       
         <tags>
             
-            <tag> DS </tag>
-            
             <tag> Python </tag>
+            
+            <tag> DS </tag>
             
             <tag> LeetCode </tag>
             
@@ -37,7 +62,7 @@
       <link href="/2019/03/05/MySQL%20%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/"/>
       <url>/2019/03/05/MySQL%20%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</url>
       
-        <content type="html"><![CDATA[<h2 id="MySQL-事务隔离级别"><a href="#MySQL-事务隔离级别" class="headerlink" title="MySQL 事务隔离级别"></a>MySQL 事务隔离级别</h2><hr><h3 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a>事务隔离级别</h3><p>数据库事务的隔离级别有 4 个，由低到高依次为 Read uncommitted 、Read committed 、Repeatable read 、Serializable，这四个级别可以逐个解决脏读 、不可重复读 、幻读 这几类问题。</p><table><thead><tr><th style="text-align:center">&nbsp;</th><th style="text-align:center">脏读</th><th style="text-align:center">不可重复读</th><th style="text-align:center">幻读</th></tr></thead><tbody><tr><td style="text-align:center">READ UNCOMMITTED</td><td style="text-align:center">√</td><td style="text-align:center">√</td><td style="text-align:center">√</td></tr><tr><td style="text-align:center">READ COMMITTED</td><td style="text-align:center">×</td><td style="text-align:center">√</td><td style="text-align:center">√</td></tr><tr><td style="text-align:center">REPEATABLE READ</td><td style="text-align:center">×</td><td style="text-align:center">×</td><td style="text-align:center">√</td></tr><tr><td style="text-align:center">SERIALIZABLE</td><td style="text-align:center">×</td><td style="text-align:center">×</td><td style="text-align:center">×</td></tr></tbody></table><p>MySQL 默认隔离级别为<strong>可重复读</strong></p><h3 id="脏读、不可重复读、幻读"><a href="#脏读、不可重复读、幻读" class="headerlink" title="脏读、不可重复读、幻读"></a>脏读、不可重复读、幻读</h3><h4 id="脏读"><a href="#脏读" class="headerlink" title="脏读"></a>脏读</h4><p>脏读就是指当一个事务正在访问数据，并且对数据进行了修改，而这种修改还没有提交到数据库中，这时，另外一个事务也访问这个数据，然后使用了这个数据。</p><a id="more"></a><h4 id="不可重复读"><a href="#不可重复读" class="headerlink" title="不可重复读"></a>不可重复读</h4><p>是指在一个事务内，多次读同一数据。在这个事务还没有结束时，另外一个事务也访问该同一数据。那么，在第一个事务中的两次读数据之间，由于第二个事务的修改，那么第一个事务两次读到的的数据可能是不一样的。这样就发生了在一个事务内两次读到的数据是不一样的，因此称为是不可重复读。（即不能读到相同的数据内容）<br>例如，一个编辑人员两次读取同一文档，但在两次读取之间，作者重写了该文档。当编辑人员第二次读取文档时，文档已更改。原始读取不可重复。如果只有在作者全部完成编写后编辑人员才可以读取文档，则可以避免该问题。</p><h4 id="幻读"><a href="#幻读" class="headerlink" title="幻读"></a>幻读</h4><p>是指当事务不是独立执行时发生的一种现象，例如第一个事务对一个表中的数据进行了修改，这种修改涉及到表中的全部数据行。同时，第二个事务也修改这个表中的数据，这种修改是向表中插入一行新数据。那么，以后就会发生操作第一个事务的用户发现表中还有没有修改的数据行，就好象发生了幻觉一样。<br>例如，一个编辑人员更改作者提交的文档，但当生产部门将其更改内容合并到该文档的主复本时，发现作者已将未编辑的新材料添加到该文档中。如果在编辑人员和生产部门完成对原始文档的处理之前，任何人都不能将新材料添加到文档中，则可以避免该问题。</p><p><strong>注意：不可重复读和幻读都是指在同一个事务中</strong></p><h4 id="不可重复读和幻读的区别"><a href="#不可重复读和幻读的区别" class="headerlink" title="不可重复读和幻读的区别"></a>不可重复读和幻读的区别</h4><p>很多人容易搞混不可重复读和幻读，确实这两者有些相似。但不可重复读重点在于 update，而幻读的重点在于 insert 和 delete。</p><p>如果使用锁机制来实现这两种隔离级别，在可重复读中，该 sql 第一次读取到数据后，就将这些数据加锁，其它事务无法修改这些数据，就可以实现可重复读了。但这种方法却无法锁住 insert 的数据，所以当事务 A 先前读取了数据，或者修改了全部数据，事务 B 还是可以 insert 数据提交，这时事务 A 就会 发现莫名其妙多了一条之前没有的数据，这就是幻读，不能通过行锁来避免。需要 SERIALIZABLE 隔离级别 ，读用读锁，写用写锁，读锁和写锁互斥，这么做可以有效的避免幻读、不可重复读、脏读等问题，但会极大的降低数据库的并发能力。</p><p>所以说不可重复读和幻读最大的区别，就在于如何通过锁机制来解决他们产生的问题。</p><p>上文说的，是使用悲观锁机制来处理这两种问题，但是 MySQL、Oracle、PostgreSQL 等成熟的数据库，出于性能考虑，都是使用了以乐观锁为理论基础的 MVCC（多版本并发控制）来避免这两种问题。</p><h3 id="悲观锁和乐观锁"><a href="#悲观锁和乐观锁" class="headerlink" title="悲观锁和乐观锁"></a>悲观锁和乐观锁</h3><h4 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h4><p>正如其名，它指的是对数据被外界（包括本系统当前的其他事务，以及来自外部系统的事务处理）修改持保守态度，因此，在整个数据处理过程中，将数据处于锁定状态。悲观锁的实现，往往依靠数据库提供的锁机制（也只有数据库层提供的锁机制才能真正保证数据访问的排他性，否则，即使在本系统中实现了加锁机制，也无法保证外部系统不会修改数据）。</p><p>在悲观锁的情况下，为了保证事务的隔离性，就需要一致性锁定读。读取数据时给加锁，其它事务无法修改这些数据。修改删除数据时也要加锁，其它事务无法读取这些数据。</p><h4 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h4><p>相对悲观锁而言，乐观锁机制采取了更加宽松的加锁机制。悲观锁大多数情况下依靠数据库的锁机制实现，以保证操作最大程度的独占性。但随之而来的就是数据库性能的大量开销，特别是对长事务而言，这样的开销往往无法承受。</p><p>而乐观锁机制在一定程度上解决了这个问题。乐观锁机制下，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在更新的时候会判断一下在此期间别人有没有去更新这个数据，可以使用版本号等机制。乐观锁适用于多读的应用类型，这样可以提高吞吐量，像数据库如果提供类似于 write_condition 机制的其实都是提供的乐观锁。</p><h3 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h3><p>要说明的是，MVCC 的实现没有固定的规范，每个数据库都会有不同的实现方式，这里讨论的是 InnoDB 的 MVCC。</p><p>InnoDB 的 MVCC，通过在每行记录后面保存两个隐藏的列来实现：一个保存了行的创建时间，一个保存行的过期时间（删除时间），当然，这里的时间并不是时间戳，而是系统版本号，每开始一个新的事务，系统版本号就会递增。在 REPEATABLE READ 隔离级别下，MVCC 的操作如下：</p><ul><li>select 操作<ul><li>a. InnoDB 只查找版本早于（包含等于）当前事务版本的数据行。可以确保事务读取的行，要么是事务开始前就已存在，或者事务自身插入或修改的记录。</li><li>b. 行的删除版本要么未定义，要么大于当前事务版本号。可以确保事务读取的行，在事务开始之前未删除。</li></ul></li><li>insert操作<ul><li>将新插入的行保存当前版本号为行版本号。</li></ul></li><li>delete操作<ul><li>将删除的行保存当前版本号为删除标识。</li></ul></li><li>update操作<ul><li>变为 insert 和 delete 操作的组合，insert 的行保存当前版本号为行版本号，delete 则保存当前版本号到原来的行作为删除标识。</li></ul></li></ul><p>由于旧数据并不真正的删除，所以必须对这些数据进行清理，InnoDB 会开启一个后台线程执行清理工作，具体的规则是将删除版本号小于当前系统版本的行删除，这个过程叫做 purge。</p><p>MVCC 只在 READ COMMITTED 和 REPEATABLE READ 两个隔离级别下工作。其他两个隔离级别都和 MVCC 不兼容，因为 READ UNCOMMITTED 总是读取最新的数据行，而不是符合当前事务版本的数据行。而 SERIALIZABLE 则会对所有读取的行都加锁。</p>]]></content>
+        <content type="html"><![CDATA[<h2 id="MySQL-事务隔离级别"><a href="#MySQL-事务隔离级别" class="headerlink" title="MySQL 事务隔离级别"></a>MySQL 事务隔离级别</h2><hr><h3 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a>事务隔离级别</h3><p>数据库事务的隔离级别有 4 个，由低到高依次为 Read uncommitted 、Read committed 、Repeatable read 、Serializable，这四个级别可以逐个解决<strong>脏读 、不可重复读 、幻读</strong>这几类问题。</p><table><thead><tr><th style="text-align:center">&nbsp;</th><th style="text-align:center">脏读</th><th style="text-align:center">不可重复读</th><th style="text-align:center">幻读</th></tr></thead><tbody><tr><td style="text-align:center">READ UNCOMMITTED</td><td style="text-align:center">√</td><td style="text-align:center">√</td><td style="text-align:center">√</td></tr><tr><td style="text-align:center">READ COMMITTED</td><td style="text-align:center">×</td><td style="text-align:center">√</td><td style="text-align:center">√</td></tr><tr><td style="text-align:center">REPEATABLE READ</td><td style="text-align:center">×</td><td style="text-align:center">×</td><td style="text-align:center">√</td></tr><tr><td style="text-align:center">SERIALIZABLE</td><td style="text-align:center">×</td><td style="text-align:center">×</td><td style="text-align:center">×</td></tr></tbody></table><p>MySQL 默认隔离级别为<strong>可重复读</strong></p><h3 id="脏读、不可重复读、幻读"><a href="#脏读、不可重复读、幻读" class="headerlink" title="脏读、不可重复读、幻读"></a>脏读、不可重复读、幻读</h3><h4 id="脏读"><a href="#脏读" class="headerlink" title="脏读"></a>脏读</h4><p>脏读就是指当一个事务正在访问数据，并且对数据进行了修改，而这种修改还没有提交到数据库中，这时，另外一个事务也访问这个数据，然后使用了这个数据。</p><a id="more"></a><h4 id="不可重复读"><a href="#不可重复读" class="headerlink" title="不可重复读"></a>不可重复读</h4><p>是指在一个事务内，多次读同一数据。在这个事务还没有结束时，另外一个事务也访问该同一数据。那么，在第一个事务中的两次读数据之间，由于第二个事务的修改，那么第一个事务两次读到的的数据可能是不一样的。这样就发生了在一个事务内两次读到的数据是不一样的，因此称为是不可重复读。（即不能读到相同的数据内容）<br>例如，一个编辑人员两次读取同一文档，但在两次读取之间，作者重写了该文档。当编辑人员第二次读取文档时，文档已更改。原始读取不可重复。如果只有在作者全部完成编写后编辑人员才可以读取文档，则可以避免该问题。</p><h4 id="幻读"><a href="#幻读" class="headerlink" title="幻读"></a>幻读</h4><p>是指当事务不是独立执行时发生的一种现象，例如第一个事务对一个表中的数据进行了修改，这种修改涉及到表中的全部数据行。同时，第二个事务也修改这个表中的数据，这种修改是向表中插入一行新数据。那么，以后就会发生操作第一个事务的用户发现表中还有没有修改的数据行，就好象发生了幻觉一样。<br>例如，一个编辑人员更改作者提交的文档，但当生产部门将其更改内容合并到该文档的主复本时，发现作者已将未编辑的新材料添加到该文档中。如果在编辑人员和生产部门完成对原始文档的处理之前，任何人都不能将新材料添加到文档中，则可以避免该问题。</p><p><strong>注意：不可重复读和幻读都是指在同一个事务中</strong></p><h4 id="不可重复读和幻读的区别"><a href="#不可重复读和幻读的区别" class="headerlink" title="不可重复读和幻读的区别"></a>不可重复读和幻读的区别</h4><p>不可重复读和幻读两者有些相似，很容易搞混。但不可重复读重点在于 update，而幻读的重点在于 insert 和 delete。</p><p>如果使用锁机制来实现这两种隔离级别，在可重复读中，该 sql 第一次读取到数据后，就将这些数据加锁，其它事务无法修改这些数据，就可以实现可重复读了。但这种方法却无法锁住 insert 的数据，所以当事务 A 先前读取了数据，或者修改了全部数据，事务 B 还是可以 insert 数据提交，这时事务 A 就会 发现莫名其妙多了一条之前没有的数据，这就是幻读，不能通过行锁来避免。需要 SERIALIZABLE 隔离级别 ，读用读锁，写用写锁，读锁和写锁互斥，这么做可以有效的避免幻读、不可重复读、脏读等问题，但会极大的降低数据库的并发能力。</p><p>所以说不可重复读和幻读最大的区别，就在于如何通过锁机制来解决他们产生的问题。</p><p>上文说的，是使用悲观锁机制来处理这两种问题，但是 MySQL、Oracle、PostgreSQL 等成熟的数据库，出于性能考虑，都是使用了以乐观锁为理论基础的 MVCC（多版本并发控制）来避免这两种问题。</p><h3 id="悲观锁和乐观锁"><a href="#悲观锁和乐观锁" class="headerlink" title="悲观锁和乐观锁"></a>悲观锁和乐观锁</h3><h4 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h4><p>正如其名，它指的是对数据被外界（包括本系统当前的其他事务，以及来自外部系统的事务处理）修改持保守态度，因此，在整个数据处理过程中，将数据处于锁定状态。悲观锁的实现，往往依靠数据库提供的锁机制（也只有数据库层提供的锁机制才能真正保证数据访问的排他性，否则，即使在本系统中实现了加锁机制，也无法保证外部系统不会修改数据）。</p><p>在悲观锁的情况下，为了保证事务的隔离性，就需要一致性锁定读。读取数据时给加锁，其它事务无法修改这些数据。修改删除数据时也要加锁，其它事务无法读取这些数据。</p><h4 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h4><p>相对悲观锁而言，乐观锁机制采取了更加宽松的加锁机制。悲观锁大多数情况下依靠数据库的锁机制实现，以保证操作最大程度的独占性。但随之而来的就是数据库性能的大量开销，特别是对长事务而言，这样的开销往往无法承受。</p><p>而乐观锁机制在一定程度上解决了这个问题。乐观锁机制下，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在更新的时候会判断一下在此期间别人有没有去更新这个数据，可以使用版本号等机制。乐观锁适用于多读的应用类型，这样可以提高吞吐量，像数据库如果提供类似于 write_condition 机制的其实都是提供的乐观锁。</p><h3 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h3><p>要说明的是，MVCC 的实现没有固定的规范，每个数据库都会有不同的实现方式，这里讨论的是 InnoDB 的 MVCC。</p><p>InnoDB 的 MVCC，通过在每行记录后面保存两个隐藏的列来实现：一个保存了行的创建时间，一个保存行的过期时间（删除时间），当然，这里的时间并不是时间戳，而是系统版本号，每开始一个新的事务，系统版本号就会递增。在 REPEATABLE READ 隔离级别下，MVCC 的操作如下：</p><ul><li>select 操作<ul><li>a. InnoDB 只查找版本早于（包含等于）当前事务版本的数据行。可以确保事务读取的行，要么是事务开始前就已存在，或者事务自身插入或修改的记录；</li><li>b. 行的删除版本要么未定义，要么大于当前事务版本号。可以确保事务读取的行，在事务开始之前未删除</li></ul></li><li>insert操作<ul><li>将新插入的行保存当前版本号为行版本号</li></ul></li><li>delete操作<ul><li>将删除的行保存当前版本号为删除标识</li></ul></li><li>update操作<ul><li>变为 insert 和 delete 操作的组合，insert 的行保存当前版本号为行版本号，delete 则保存当前版本号到原来的行作为删除标识</li></ul></li></ul><p>由于旧数据并不真正的删除，所以必须对这些数据进行清理，InnoDB 会开启一个后台线程执行清理工作，具体的规则是将删除版本号小于当前系统版本的行删除，这个过程叫做 purge。</p><p>MVCC 只在 READ COMMITTED 和 REPEATABLE READ 两个隔离级别下工作。其他两个隔离级别都和 MVCC 不兼容，因为 READ UNCOMMITTED 总是读取最新的数据行，而不是符合当前事务版本的数据行。而 SERIALIZABLE 则会对所有读取的行都加锁。</p>]]></content>
       
       
       <categories>
@@ -74,9 +99,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -103,9 +128,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -132,9 +157,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -161,9 +186,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -178,7 +203,7 @@
       <link href="/2019/03/02/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E7%9A%84%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97/"/>
       <url>/2019/03/02/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E7%9A%84%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97/</url>
       
-        <content type="html"><![CDATA[<h2 id="二叉搜索树的后序遍历序列"><a href="#二叉搜索树的后序遍历序列" class="headerlink" title="二叉搜索树的后序遍历序列"></a>二叉搜索树的后序遍历序列</h2><hr><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。如果是则输出 Yes,否则输出 No。假设输入的数组的任意两个数字都互不相同。</p><a id="more"></a><h3 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h3><ol><li>后序遍历的序列中，最后一个数字是树的根节点 </li><li>数组中前面的数字可以分为两部分：第一部分是左子树节点的值，都比根节点的值小；第二部分是右子树节点的值，都比根节点的值大</li><li>后面用递归分别判断左右两部分是否符合以上原则</li></ol><h3 id="解题代码"><a href="#解题代码" class="headerlink" title="解题代码"></a>解题代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">bool</span> <span class="title">VerifySquenceOfBST</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; sequence)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (sequence.size() == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 初始边界值为数组最初左右边界</span></span><br><span class="line">            <span class="keyword">int</span> left = <span class="number">0</span>, right = sequence.size() - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">return</span> judge(sequence, left, right);</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">        <span class="function"><span class="keyword">bool</span> <span class="title">judge</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; sequence, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (left &gt;= right) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125; <span class="comment">// 左边界大于等于右边界返回 true</span></span><br><span class="line">            <span class="keyword">int</span> root = sequence[right]; <span class="comment">// 根节点</span></span><br><span class="line">            <span class="keyword">int</span> i, j;</span><br><span class="line">            <span class="keyword">for</span> (i = left; i &lt; right; ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (sequence[i] &gt; root) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125; </span><br><span class="line">            &#125; <span class="comment">// 左半子树都小于根节点，寻找到右半子树起始位置</span></span><br><span class="line">            <span class="keyword">for</span> (j = i; j &lt; right; ++j) &#123;</span><br><span class="line">                <span class="keyword">if</span> (sequence[j] &lt; root) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="comment">// 右半子树都大于根节点，否则 false</span></span><br><span class="line">    </span><br><span class="line">            <span class="comment">// 递归处理左右子树</span></span><br><span class="line">            <span class="keyword">return</span> judge(sequence, left, i - <span class="number">1</span>) &amp;&amp; judge(sequence, i, right - <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+        <content type="html"><![CDATA[<h2 id="二叉搜索树的后序遍历序列"><a href="#二叉搜索树的后序遍历序列" class="headerlink" title="二叉搜索树的后序遍历序列"></a>二叉搜索树的后序遍历序列</h2><hr><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。如果是则输出 Yes,否则输出 No。假设输入的数组的任意两个数字都互不相同。</p><a id="more"></a><h3 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h3><ol><li>后序遍历的序列中，最后一个数字是树的根节点；</li><li>数组中前面的数字可以分为两部分：第一部分是左子树节点的值，都比根节点的值小；第二部分是右子树节点的值，都比根节点的值大；</li><li>后面用递归分别判断左右两部分是否符合以上原则</li></ol><h3 id="解题代码"><a href="#解题代码" class="headerlink" title="解题代码"></a>解题代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">bool</span> <span class="title">VerifySquenceOfBST</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; sequence)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (sequence.size() == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 初始边界值为数组最初左右边界</span></span><br><span class="line">            <span class="keyword">int</span> left = <span class="number">0</span>, right = sequence.size() - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">return</span> judge(sequence, left, right);</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">        <span class="function"><span class="keyword">bool</span> <span class="title">judge</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; sequence, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (left &gt;= right) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125; <span class="comment">// 左边界大于等于右边界返回 true</span></span><br><span class="line">            <span class="keyword">int</span> root = sequence[right]; <span class="comment">// 根节点</span></span><br><span class="line">            <span class="keyword">int</span> i, j;</span><br><span class="line">            <span class="keyword">for</span> (i = left; i &lt; right; ++i) &#123;</span><br><span class="line">                <span class="keyword">if</span> (sequence[i] &gt; root) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125; </span><br><span class="line">            &#125; <span class="comment">// 左半子树都小于根节点，寻找到右半子树起始位置</span></span><br><span class="line">            <span class="keyword">for</span> (j = i; j &lt; right; ++j) &#123;</span><br><span class="line">                <span class="keyword">if</span> (sequence[j] &lt; root) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="comment">// 右半子树都大于根节点，否则 false</span></span><br><span class="line">    </span><br><span class="line">            <span class="comment">// 递归处理左右子树</span></span><br><span class="line">            <span class="keyword">return</span> judge(sequence, left, i - <span class="number">1</span>) &amp;&amp; judge(sequence, i, right - <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
       
       
       <categories>
@@ -190,9 +215,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -219,9 +244,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -248,9 +273,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -277,9 +302,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -306,9 +331,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -335,9 +360,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -364,9 +389,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -393,13 +418,42 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
             <tag> 二叉树 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>LintCode 20. 骰子求和</title>
+      <link href="/2019/02/23/LintCode%2020.%20%E9%AA%B0%E5%AD%90%E6%B1%82%E5%92%8C/"/>
+      <url>/2019/02/23/LintCode%2020.%20%E9%AA%B0%E5%AD%90%E6%B1%82%E5%92%8C/</url>
+      
+        <content type="html"><![CDATA[<h2 id="LintCode-20-骰子求和"><a href="#LintCode-20-骰子求和" class="headerlink" title="LintCode 20. 骰子求和"></a>LintCode 20. 骰子求和</h2><hr><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>扔 n 个骰子，向上面的数字之和为 S。给定 Given n，请列出所有可能的 S 值及其相应的概率。</p><p><strong>样例</strong><br>给定 n = 1，返回 [[1, 0.17], [2, 0.17], [3, 0.17], [4, 0.17], [5, 0.17], [6, 0.17]]。</p><p><strong>注意事项</strong><br>你不需要关心结果的准确性，我们会帮你输出结果。</p><h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>递归求解，dicesSum(n) 可以用 dicesSum(n-1) 和 dicesSum(1) 来求解。<br>利用 map 存放向上的数字之和与概率。</p><a id="more"></a><h3 id="解题代码"><a href="#解题代码" class="headerlink" title="解题代码"></a>解题代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * @param n an integer</span></span><br><span class="line"><span class="comment">         * @return a list of pair&lt;sum, probability&gt;</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="comment">// 递归求骰子的概率</span></span><br><span class="line">        <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt; get_next(<span class="keyword">int</span> n) &#123;</span><br><span class="line">            <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt; m;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">6</span>; ++i) &#123;</span><br><span class="line">                m[i] = (<span class="keyword">double</span>)<span class="number">1</span> / <span class="number">6</span>;</span><br><span class="line">            &#125; <span class="comment">// m 为一次的概率</span></span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (n == <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> m;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt; chance = get_next(n - <span class="number">1</span>); <span class="comment">// 递归获取 n-1 的概率</span></span><br><span class="line">            </span><br><span class="line">            <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt; r;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">auto</span> i : m) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">auto</span> c : chance) &#123;</span><br><span class="line">                    r[i.first + c.first] += i.second*c.second; <span class="comment">// 循环遍历，相加和共 6 种情况，存在对应的 key 中</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> r;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">vector</span>&lt;pair&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt;&gt; dicesSum(<span class="keyword">int</span> n) &#123;</span><br><span class="line">            <span class="built_in">vector</span>&lt;pair&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt;&gt; vec;</span><br><span class="line">            <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt; m = get_next(n);</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">auto</span> i : m) &#123;</span><br><span class="line">                vec.push_back(make_pair(i.first, i.second));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> vec;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> DS </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> DS </tag>
+            
+            <tag> C++ </tag>
+            
+            <tag> LintCode </tag>
             
         </tags>
       
@@ -424,9 +478,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 剑指offer </tag>
             
@@ -455,38 +509,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
             
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>LintCode 20. 骰子求和</title>
-      <link href="/2019/02/23/LintCode%2020.%20%E9%AA%B0%E5%AD%90%E6%B1%82%E5%92%8C/"/>
-      <url>/2019/02/23/LintCode%2020.%20%E9%AA%B0%E5%AD%90%E6%B1%82%E5%92%8C/</url>
-      
-        <content type="html"><![CDATA[<h2 id="LintCode-20-骰子求和"><a href="#LintCode-20-骰子求和" class="headerlink" title="LintCode 20. 骰子求和"></a>LintCode 20. 骰子求和</h2><hr><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>扔 n 个骰子，向上面的数字之和为 S。给定 Given n，请列出所有可能的 S 值及其相应的概率。</p><p><strong>样例</strong><br>给定 n = 1，返回 [[1, 0.17], [2, 0.17], [3, 0.17], [4, 0.17], [5, 0.17], [6, 0.17]]。</p><p><strong>注意事项</strong><br>你不需要关心结果的准确性，我们会帮你输出结果。</p><h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>递归求解，dicesSum(n) 可以用 dicesSum(n-1) 和 dicesSum(1) 来求解。<br>利用 map 存放向上的数字之和与概率。</p><a id="more"></a><h3 id="解题代码"><a href="#解题代码" class="headerlink" title="解题代码"></a>解题代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * @param n an integer</span></span><br><span class="line"><span class="comment">         * @return a list of pair&lt;sum, probability&gt;</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="comment">// 递归求骰子的概率</span></span><br><span class="line">        <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt; get_next(<span class="keyword">int</span> n) &#123;</span><br><span class="line">            <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt; m;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">6</span>; ++i) &#123;</span><br><span class="line">                m[i] = (<span class="keyword">double</span>)<span class="number">1</span> / <span class="number">6</span>;</span><br><span class="line">            &#125; <span class="comment">// m 为一次的概率</span></span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (n == <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> m;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt; chance = get_next(n - <span class="number">1</span>); <span class="comment">// 递归获取 n-1 的概率</span></span><br><span class="line">            </span><br><span class="line">            <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt; r;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">auto</span> i : m) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">auto</span> c : chance) &#123;</span><br><span class="line">                    r[i.first + c.first] += i.second*c.second; <span class="comment">// 循环遍历，相加和共 6 种情况，存在对应的 key 中</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> r;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">vector</span>&lt;pair&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt;&gt; dicesSum(<span class="keyword">int</span> n) &#123;</span><br><span class="line">            <span class="built_in">vector</span>&lt;pair&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt;&gt; vec;</span><br><span class="line">            <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">double</span>&gt; m = get_next(n);</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">auto</span> i : m) &#123;</span><br><span class="line">                vec.push_back(make_pair(i.first, i.second));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> vec;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
-      <categories>
-          
-          <category> DS </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
             <tag> C++ </tag>
-            
-            <tag> DS </tag>
-            
-            <tag> LintCode </tag>
             
         </tags>
       
@@ -520,35 +545,6 @@
     
     
     <entry>
-      <title>单链表的反转</title>
-      <link href="/2019/02/01/%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC/"/>
-      <url>/2019/02/01/%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC/</url>
-      
-        <content type="html"><![CDATA[<h2 id="单链表的反转"><a href="#单链表的反转" class="headerlink" title="单链表的反转"></a>单链表的反转</h2><hr><h3 id="链表的定义"><a href="#链表的定义" class="headerlink" title="链表的定义"></a>链表的定义</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">LinkNode</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> val;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">LinkNode</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; LinkNode;</span><br></pre></td></tr></table></figure><h3 id="非递归写法"><a href="#非递归写法" class="headerlink" title="非递归写法"></a>非递归写法</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LinkNode *<span class="title">Reverse</span><span class="params">(LinkNode *head)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (head == <span class="literal">NULL</span> || head-&gt;next == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    LinkNode *pre = head;</span><br><span class="line">    LinkNode *cur = head-&gt;next;</span><br><span class="line">    LinkNode *temp = head-&gt;next-&gt;next;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (cur) &#123;</span><br><span class="line">        temp = cur-&gt;next;</span><br><span class="line">        cur-&gt;next = pre;</span><br><span class="line">        pre = cur;</span><br><span class="line">        cur = temp;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    head-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> pre;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><a id="more"></a><h3 id="递归写法"><a href="#递归写法" class="headerlink" title="递归写法"></a>递归写法</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LinkNode *<span class="title">Re_Reverse</span><span class="params">(LinkNode *head)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (head == <span class="literal">NULL</span> || head-&gt;next == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> head; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 一直循环到链尾</span></span><br><span class="line">    LinkNode *newHead = Re_Reverse(head-&gt;next);</span><br><span class="line">    <span class="comment">// 翻转链表的指向</span></span><br><span class="line">    head-&gt;next-&gt;next = head;</span><br><span class="line">    <span class="comment">// 记得赋值 NULL，防止链表错乱</span></span><br><span class="line">    head-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="comment">// 新链表头永远指向的是原链表的链尾</span></span><br><span class="line">    <span class="keyword">return</span> newHead;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
-      <categories>
-          
-          <category> DS </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> C++ </tag>
-            
-            <tag> DS </tag>
-            
-            <tag> 剑指offer </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>快速排序递归及非递归实现</title>
       <link href="/2019/02/01/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E9%80%92%E5%BD%92%E5%8F%8A%E9%9D%9E%E9%80%92%E5%BD%92%E5%AE%9E%E7%8E%B0/"/>
       <url>/2019/02/01/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E9%80%92%E5%BD%92%E5%8F%8A%E9%9D%9E%E9%80%92%E5%BD%92%E5%AE%9E%E7%8E%B0/</url>
@@ -565,9 +561,38 @@
       
         <tags>
             
+            <tag> DS </tag>
+            
             <tag> C++ </tag>
             
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>单链表的反转</title>
+      <link href="/2019/02/01/%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC/"/>
+      <url>/2019/02/01/%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC/</url>
+      
+        <content type="html"><![CDATA[<h2 id="单链表的反转"><a href="#单链表的反转" class="headerlink" title="单链表的反转"></a>单链表的反转</h2><hr><h3 id="链表的定义"><a href="#链表的定义" class="headerlink" title="链表的定义"></a>链表的定义</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">LinkNode</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> val;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">LinkNode</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; LinkNode;</span><br></pre></td></tr></table></figure><h3 id="非递归写法"><a href="#非递归写法" class="headerlink" title="非递归写法"></a>非递归写法</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LinkNode *<span class="title">Reverse</span><span class="params">(LinkNode *head)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (head == <span class="literal">NULL</span> || head-&gt;next == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    LinkNode *pre = head;</span><br><span class="line">    LinkNode *cur = head-&gt;next;</span><br><span class="line">    LinkNode *temp = head-&gt;next-&gt;next;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (cur) &#123;</span><br><span class="line">        temp = cur-&gt;next;</span><br><span class="line">        cur-&gt;next = pre;</span><br><span class="line">        pre = cur;</span><br><span class="line">        cur = temp;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    head-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> pre;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><a id="more"></a><h3 id="递归写法"><a href="#递归写法" class="headerlink" title="递归写法"></a>递归写法</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LinkNode *<span class="title">Re_Reverse</span><span class="params">(LinkNode *head)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (head == <span class="literal">NULL</span> || head-&gt;next == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> head; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 一直循环到链尾</span></span><br><span class="line">    LinkNode *newHead = Re_Reverse(head-&gt;next);</span><br><span class="line">    <span class="comment">// 翻转链表的指向</span></span><br><span class="line">    head-&gt;next-&gt;next = head;</span><br><span class="line">    <span class="comment">// 记得赋值 NULL，防止链表错乱</span></span><br><span class="line">    head-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="comment">// 新链表头永远指向的是原链表的链尾</span></span><br><span class="line">    <span class="keyword">return</span> newHead;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> DS </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
+            
+            <tag> 剑指offer </tag>
             
         </tags>
       
@@ -592,9 +617,9 @@
       
         <tags>
             
-            <tag> C++ </tag>
-            
             <tag> DS </tag>
+            
+            <tag> C++ </tag>
             
             <tag> 二叉树 </tag>
             
