@@ -417,7 +417,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-28 00:39:15" itemprop="dateModified" datetime="2019-06-28T00:39:15+08:00">2019-06-28</time>
+                <time title="修改时间：2019-07-11 23:03:27" itemprop="dateModified" datetime="2019-07-11T23:03:27+08:00">2019-07-11</time>
               
             
           </span>
@@ -614,12 +614,24 @@
                 
               
 
-              <time title="创建时间：2019-05-21 00:46:06 / 修改时间：22:42:53" itemprop="dateCreated datePublished" datetime="2019-05-21T00:46:06+08:00">2019-05-21</time>
+              <time title="创建时间：2019-05-21 00:46:06" itemprop="dateCreated datePublished" datetime="2019-05-21T00:46:06+08:00">2019-05-21</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-11 23:03:28" itemprop="dateModified" datetime="2019-07-11T23:03:28+08:00">2019-07-11</time>
               
             
           </span>
@@ -799,12 +811,24 @@
                 
               
 
-              <time title="创建时间：2019-05-21 00:46:06 / 修改时间：22:41:43" itemprop="dateCreated datePublished" datetime="2019-05-21T00:46:06+08:00">2019-05-21</time>
+              <time title="创建时间：2019-05-21 00:46:06" itemprop="dateCreated datePublished" datetime="2019-05-21T00:46:06+08:00">2019-05-21</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-11 23:03:28" itemprop="dateModified" datetime="2019-07-11T23:03:28+08:00">2019-07-11</time>
               
             
           </span>
@@ -1173,7 +1197,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-27 21:58:23" itemprop="dateModified" datetime="2019-06-27T21:58:23+08:00">2019-06-27</time>
+                <time title="修改时间：2019-07-11 23:03:27" itemprop="dateModified" datetime="2019-07-11T23:03:27+08:00">2019-07-11</time>
               
             
           </span>
@@ -1265,6 +1289,7 @@
 </tbody>
 </table>
 <p>MySQL 默认隔离级别为<strong>可重复读</strong></p>
+<p>在实现上，数据库里面会创建一个视图，访问的时候以视图的逻辑结果为准。在“可重复读”隔离级别下，这个视图是在事务启动时创建的，整个事务存在期间都用这个视图。在“读提交”隔离级别下，这个视图是在每个 SQL 语句开始执行的时候创建的。这里需要注意的是，“读未提交”隔离级别下直接返回记录上的最新值，没有视图概念；而“串行化”隔离级别下直接用加锁的方式来避免并行访问。</p>
 <h3 id="脏读、不可重复读、幻读"><a href="#脏读、不可重复读、幻读" class="headerlink" title="脏读、不可重复读、幻读"></a>脏读、不可重复读、幻读</h3><h4 id="脏读"><a href="#脏读" class="headerlink" title="脏读"></a>脏读</h4><p>脏读就是指当一个事务正在访问数据，并且对数据进行了修改，而这种修改还没有提交到数据库中，这时，另外一个事务也访问这个数据，然后使用了这个数据。</p>
           <!--noindex-->
           
