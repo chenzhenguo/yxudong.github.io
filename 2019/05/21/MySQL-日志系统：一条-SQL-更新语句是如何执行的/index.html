@@ -107,7 +107,7 @@
 <meta property="og:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/MySQL%20%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F%EF%BC%9A%E4%B8%80%E6%9D%A1%20SQL%20%E6%9B%B4%E6%96%B0%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84_1.png">
 <meta property="og:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/MySQL%20%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F%EF%BC%9A%E4%B8%80%E6%9D%A1%20SQL%20%E6%9B%B4%E6%96%B0%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84_2.png">
 <meta property="og:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/MySQL%20%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F%EF%BC%9A%E4%B8%80%E6%9D%A1%20SQL%20%E6%9B%B4%E6%96%B0%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84_3.png">
-<meta property="og:updated_time" content="2019-07-11T15:03:28.516Z">
+<meta property="og:updated_time" content="2019-07-11T15:12:34.315Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MySQL 日志系统：一条 SQL 更新语句是如何执行的">
 <meta name="twitter:description" content="MySQL 日志系统：一条 SQL 更新语句是如何执行的 一条查询语句的执行过程一般是经过连接器、分析器、优化器、执行器等功能模块，最后到达存储引擎。 一条更新语句的执行流程又是怎样的呢？ 从一个表的一条更新语句说起，下面是这个表的创建语句，这个表有一个主键 ID 和一个整型字段 c： 1mysql&amp;gt; create table T(ID int primary key, c int); 如果">
@@ -420,7 +420,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-11 23:03:28" itemprop="dateModified" datetime="2019-07-11T23:03:28+08:00">2019-07-11</time>
+                <time title="修改时间：2019-07-11 23:12:34" itemprop="dateModified" datetime="2019-07-11T23:12:34+08:00">2019-07-11</time>
               
             
           </span>
@@ -543,7 +543,7 @@
 <p>由于 redo log 和 binlog 是两个独立的逻辑，如果不用两阶段提交，要么就是先写完 redo log 再写 binlog，或者采用反过来的顺序。下面来看这两种方式会有什么问题。</p>
 <p>仍然用前面的 update 语句来做例子。假设当前 ID = 2 的行，字段 c 的值是 0，再假设执行 update 语句过程中在写完第一个日志后，第二个日志还没有写完期间发生了 crash，会出现什么情况呢？</p>
 <ul>
-<li><strong>先写 redo log 后写 binlog</strong>.假设在 redo log 写完，binlog 还没有写完的时候，MySQL 进程异常重启。由于前面说过的，redo log 写完之后，系统即使崩溃，仍然能够把数据恢复回来，所以恢复后这一行 c 的值是 1。<br><br>但是由于 binlog 没写完就 crash 了，这时候 binlog 里面就没有记录这个语句。因此，之后备份日志的时候，存起来的 binlog 里面就没有这条语句。<br><br>然后会发现，如果需要用这个 binlog 来恢复临时库的话，由于这个语句的 binlog 丢失，这个临时库就会少了这一次更新，恢复出来的这一行 c 的值就是 0，与原库的值不同；</li>
+<li><strong>先写 redo log 后写 binlog</strong>.假设在 redo log 写完，binlog 还没有写完的时候，MySQL 进程异常重启。由于前面说过的，redo log 写完之后，系统即使崩溃，仍然能够把数据恢复回来，所以恢复后这一行 c 的值是 1。<br>但是由于 binlog 没写完就 crash 了，这时候 binlog 里面就没有记录这个语句。因此，之后备份日志的时候，存起来的 binlog 里面就没有这条语句。<br>然后会发现，如果需要用这个 binlog 来恢复临时库的话，由于这个语句的 binlog 丢失，这个临时库就会少了这一次更新，恢复出来的这一行 c 的值就是 0，与原库的值不同；</li>
 <li><strong>先写 binlog 后写 redo log</strong>。如果在 binlog 写完之后 crash，由于 redo log 还没写，崩溃恢复以后这个事务无效，所以这一行 c 的值是 0。<br>但是 binlog 里面已经记录了“把 c 从 0 改成 1”这个日志。所以，在之后用 binlog 来恢复的时候就多了一个事务出来，恢复出来的这一行 c 的值就是 1，与原库的值不同</li>
 </ul>
 <p>可以看到，如果不使用“两阶段提交”，那么数据库的状态就有可能和用它的日志恢复出来的库的状态不一致。</p>
