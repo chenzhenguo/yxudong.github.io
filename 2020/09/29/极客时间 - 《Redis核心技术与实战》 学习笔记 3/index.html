@@ -96,23 +96,23 @@
 
 
 
-  <meta name="description" content="极客时间 - 《Redis核心技术与实战》 学习笔记 3AOF日志：宕机了，Redis如何避免数据丢失？  Redis 的持久化主要有两大机制，即 AOF(Append Only File) 日志和 RDB(Redis DataBase) 快照。 AOF 日志是如何实现的？   AOF 日志写后日志，“写后”的意思是 Redis 是先执行命令，把数据写入内存，然后才记录日志。          -">
+  <meta name="description" content="极客时间 - 《Redis核心技术与实战》 学习笔记 3AOF日志：宕机了，Redis如何避免数据丢失？  Redis 的持久化主要有两大机制，即 AOF(Append Only File) 日志和 RDB(Redis DataBase) 快照。 AOF 日志是如何实现的？   AOF 日志写后日志，“写后”的意思是 Redis 是先执行命令，把数据写入内存，然后才记录日志。">
 <meta name="keywords" content="Redis">
 <meta property="og:type" content="article">
 <meta property="og:title" content="极客时间 - 《Redis核心技术与实战》 学习笔记 3">
 <meta property="og:url" content="http://yxudong.github.io/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 3/index.html">
 <meta property="og:site_name" content="Yxd&#39;s Blog">
-<meta property="og:description" content="极客时间 - 《Redis核心技术与实战》 学习笔记 3AOF日志：宕机了，Redis如何避免数据丢失？  Redis 的持久化主要有两大机制，即 AOF(Append Only File) 日志和 RDB(Redis DataBase) 快照。 AOF 日志是如何实现的？   AOF 日志写后日志，“写后”的意思是 Redis 是先执行命令，把数据写入内存，然后才记录日志。          -">
+<meta property="og:description" content="极客时间 - 《Redis核心技术与实战》 学习笔记 3AOF日志：宕机了，Redis如何避免数据丢失？  Redis 的持久化主要有两大机制，即 AOF(Append Only File) 日志和 RDB(Redis DataBase) 快照。 AOF 日志是如何实现的？   AOF 日志写后日志，“写后”的意思是 Redis 是先执行命令，把数据写入内存，然后才记录日志。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_1.jpg">
 <meta property="og:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_2.jpg">
 <meta property="og:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_3.jpg">
 <meta property="og:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_4.jpg">
 <meta property="og:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_5.jpg">
-<meta property="og:updated_time" content="2020-10-18T02:24:37.509Z">
+<meta property="og:updated_time" content="2020-10-18T02:33:35.056Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="极客时间 - 《Redis核心技术与实战》 学习笔记 3">
-<meta name="twitter:description" content="极客时间 - 《Redis核心技术与实战》 学习笔记 3AOF日志：宕机了，Redis如何避免数据丢失？  Redis 的持久化主要有两大机制，即 AOF(Append Only File) 日志和 RDB(Redis DataBase) 快照。 AOF 日志是如何实现的？   AOF 日志写后日志，“写后”的意思是 Redis 是先执行命令，把数据写入内存，然后才记录日志。          -">
+<meta name="twitter:description" content="极客时间 - 《Redis核心技术与实战》 学习笔记 3AOF日志：宕机了，Redis如何避免数据丢失？  Redis 的持久化主要有两大机制，即 AOF(Append Only File) 日志和 RDB(Redis DataBase) 快照。 AOF 日志是如何实现的？   AOF 日志写后日志，“写后”的意思是 Redis 是先执行命令，把数据写入内存，然后才记录日志。">
 <meta name="twitter:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_1.jpg">
 
 
@@ -422,7 +422,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2020-10-18 10:24:37" itemprop="dateModified" datetime="2020-10-18T10:24:37+08:00">2020-10-18</time>
+                <time title="修改时间：2020-10-18 10:33:35" itemprop="dateModified" datetime="2020-10-18T10:33:35+08:00">2020-10-18</time>
               
             
           </span>
@@ -492,6 +492,8 @@ AOF 日志写后日志，“写后”的意思是 Redis 是先执行命令，把
 <div style="text-align:center">
     <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_1.jpg" width="500">
 </div><br>
+
+<a id="more"></a>
 
 - AOF 为什么要先执行命令再记日志呢？
 
@@ -631,8 +633,8 @@ AOF重写机制指的是，对过大的AOF文件进行重写，以此来压缩AO
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/09/28/极客时间 - 《Redis核心技术与实战》 学习笔记 2/" rel="next" title="极客时间 - 《Redis核心技术与实战》 学习笔记 2">
-                <i class="fa fa-chevron-left"></i> 极客时间 - 《Redis核心技术与实战》 学习笔记 2
+              <a href="/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 5 ####/" rel="next" title="极客时间 - 《Redis核心技术与实战》 学习笔记 5">
+                <i class="fa fa-chevron-left"></i> 极客时间 - 《Redis核心技术与实战》 学习笔记 5
               </a>
             
           </div>
@@ -715,7 +717,7 @@ AOF重写机制指的是，对过大的AOF文件进行重写，以此来压缩AO
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">28</span>
+                    <span class="site-state-item-count">29</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

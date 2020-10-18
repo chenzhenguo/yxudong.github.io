@@ -96,28 +96,27 @@
 
 
 
-  <meta name="description" content="极客时间 - 《Redis核心技术与实战》 学习笔记 4内存快照：宕机后，Redis如何实现快速恢复？  Redis 提供了两个命令来生成 RDB 文件，分别是 save 和 bgsave。   save：在主线程中执行，会导致阻塞； bgsave：创建一个子进程，专门用于写入 RDB 文件，避免了主线程的阻塞，这也是 Redis RDB 文件生成的默认配置。    Redis 就会借助操作系统提">
+  <meta name="description" content="极客时间 - 《Redis核心技术与实战》 学习笔记 5数据同步：主从库如何实现数据一致？  Redis 提供了主从库模式，以保证数据副本的一致，主从库之间采用的是读写分离的方式。  读操作：主库、从库都可以接收；写操作：首先到主库执行，然后，主库将写操作同步给从库。">
 <meta name="keywords" content="Redis">
 <meta property="og:type" content="article">
-<meta property="og:title" content="极客时间 - 《Redis核心技术与实战》 学习笔记 4">
-<meta property="og:url" content="http://yxudong.github.io/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 4/index.html">
+<meta property="og:title" content="极客时间 - 《Redis核心技术与实战》 学习笔记 5">
+<meta property="og:url" content="http://yxudong.github.io/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 5 ####/index.html">
 <meta property="og:site_name" content="Yxd&#39;s Blog">
-<meta property="og:description" content="极客时间 - 《Redis核心技术与实战》 学习笔记 4内存快照：宕机后，Redis如何实现快速恢复？  Redis 提供了两个命令来生成 RDB 文件，分别是 save 和 bgsave。   save：在主线程中执行，会导致阻塞； bgsave：创建一个子进程，专门用于写入 RDB 文件，避免了主线程的阻塞，这也是 Redis RDB 文件生成的默认配置。    Redis 就会借助操作系统提">
+<meta property="og:description" content="极客时间 - 《Redis核心技术与实战》 学习笔记 5数据同步：主从库如何实现数据一致？  Redis 提供了主从库模式，以保证数据副本的一致，主从库之间采用的是读写分离的方式。  读操作：主库、从库都可以接收；写操作：首先到主库执行，然后，主库将写操作同步给从库。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%204_1.jpg">
-<meta property="og:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%204_2.jpg">
-<meta property="og:updated_time" content="2020-10-18T02:34:26.403Z">
+<meta property="og:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_1.jpg">
+<meta property="og:updated_time" content="2020-10-18T02:24:36.016Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="极客时间 - 《Redis核心技术与实战》 学习笔记 4">
-<meta name="twitter:description" content="极客时间 - 《Redis核心技术与实战》 学习笔记 4内存快照：宕机后，Redis如何实现快速恢复？  Redis 提供了两个命令来生成 RDB 文件，分别是 save 和 bgsave。   save：在主线程中执行，会导致阻塞； bgsave：创建一个子进程，专门用于写入 RDB 文件，避免了主线程的阻塞，这也是 Redis RDB 文件生成的默认配置。    Redis 就会借助操作系统提">
-<meta name="twitter:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%204_1.jpg">
+<meta name="twitter:title" content="极客时间 - 《Redis核心技术与实战》 学习笔记 5">
+<meta name="twitter:description" content="极客时间 - 《Redis核心技术与实战》 学习笔记 5数据同步：主从库如何实现数据一致？  Redis 提供了主从库模式，以保证数据副本的一致，主从库之间采用的是读写分离的方式。  读操作：主库、从库都可以接收；写操作：首先到主库执行，然后，主库将写操作同步给从库。">
+<meta name="twitter:image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_1.jpg">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yxudong.github.io/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 4/">
+  <link rel="canonical" href="http://yxudong.github.io/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 5 ####/">
 
 
 
@@ -127,7 +126,7 @@
   };
 </script>
 
-  <title>极客时间 - 《Redis核心技术与实战》 学习笔记 4 | Yxd's Blog</title>
+  <title>极客时间 - 《Redis核心技术与实战》 学习笔记 5 | Yxd's Blog</title>
   
 
 
@@ -359,7 +358,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 4/">
+    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 5 ####/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yxd">
@@ -376,7 +375,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">极客时间 - 《Redis核心技术与实战》 学习笔记 4
+          <h1 class="post-title" itemprop="name headline">极客时间 - 《Redis核心技术与实战》 学习笔记 5
 
               
             
@@ -402,7 +401,7 @@
                 
               
 
-              <time title="创建时间：2020-09-29 11:55:44" itemprop="dateCreated datePublished" datetime="2020-09-29T11:55:44+08:00">2020-09-29</time>
+              <time title="创建时间：2020-09-29 09:43:44" itemprop="dateCreated datePublished" datetime="2020-09-29T09:43:44+08:00">2020-09-29</time>
             
 
             
@@ -419,7 +418,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2020-10-18 10:34:26" itemprop="dateModified" datetime="2020-10-18T10:34:26+08:00">2020-10-18</time>
+                <time title="修改时间：2020-10-18 10:24:36" itemprop="dateModified" datetime="2020-10-18T10:24:36+08:00">2020-10-18</time>
               
             
           </span>
@@ -478,66 +477,12 @@
       
 
       
-        <h2 id="极客时间-《Redis核心技术与实战》-学习笔记-4"><a href="#极客时间-《Redis核心技术与实战》-学习笔记-4" class="headerlink" title="极客时间 - 《Redis核心技术与实战》 学习笔记 4"></a>极客时间 - 《Redis核心技术与实战》 学习笔记 4</h2><h3 id="内存快照：宕机后，Redis如何实现快速恢复？"><a href="#内存快照：宕机后，Redis如何实现快速恢复？" class="headerlink" title="内存快照：宕机后，Redis如何实现快速恢复？"></a>内存快照：宕机后，Redis如何实现快速恢复？</h3><hr>
+        <h2 id="极客时间-《Redis核心技术与实战》-学习笔记-5"><a href="#极客时间-《Redis核心技术与实战》-学习笔记-5" class="headerlink" title="极客时间 - 《Redis核心技术与实战》 学习笔记 5"></a>极客时间 - 《Redis核心技术与实战》 学习笔记 5</h2><h3 id="数据同步：主从库如何实现数据一致？"><a href="#数据同步：主从库如何实现数据一致？" class="headerlink" title="数据同步：主从库如何实现数据一致？"></a>数据同步：主从库如何实现数据一致？</h3><hr>
 <ul>
-<li>Redis 提供了两个命令来生成 RDB 文件，分别是 save 和 bgsave。</li>
+<li>Redis 提供了主从库模式，以保证数据副本的一致，主从库之间采用的是读写分离的方式。</li>
 </ul>
-<pre style="font-size:0.9em; color:#666666;">
-save：在主线程中执行，会导致阻塞；
-bgsave：创建一个子进程，专门用于写入 RDB 文件，避免了主线程的阻塞，这也是 Redis RDB 文件生成的默认配置。
-</pre>
-
-<ul>
-<li>Redis 就会借助操作系统提供的写时复制技术（Copy-On-Write, COW），在执行快照的同时，正常处理写操作。</li>
-</ul>
-<a id="more"></a>
-<pre style="font-size:0.9em; color:#666666;">
-简单来说，bgsave 子进程是由主线程 fork 生成的，可以共享主线程的所有内存数据。<br>
-bgsave 子进程运行后，开始读取主线程的内存数据，并把它们写入 RDB 文件。<br>
-此时，如果主线程对这些数据也都是读操作（例如图中的键值对 A），那么，主线程和 bgsave 子进程相互不影响。<br>
-但是，如果主线程要修改一块数据（例如图中的键值对 C），那么，这块数据就会被复制一份，生成该数据的副本。<br>
-然后，bgsave 子进程会把这个副本数据写入 RDB 文件，而在这个过程中，主线程仍然可以直接修改原来的数据。
-</pre>
-<div style="text-align:center">
-    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%204_1.jpg" width="500">
-</div><br>
-
-- 如果频繁地执行全量快照，也会带来两方面的开销。
-
-<pre style="font-size:0.9em; color:#666666;">
-一方面，频繁将全量数据写入磁盘，会给磁盘带来很大压力，多个快照竞争有限的磁盘带宽，
-前一个快照还没有做完，后一个又开始做了，容易造成恶性循环。<br>
-另一方面，bgsave 子进程需要通过 fork 操作从主线程创建出来。<br>
-虽然，子进程在创建后不会再阻塞主线程，但是，fork 这个创建过程本身会阻塞主线程，
-而且主线程的内存越大，阻塞时间越长。<br>
-如果频繁 fork 出 bgsave 子进程，这就会频繁阻塞主线程了。
-</pre>
-
-<ul>
-<li>Redis 4.0 中提出了一个混合使用 AOF 日志和内存快照的方法。</li>
-</ul>
-<pre style="font-size:0.9em; color:#666666;">
-简单来说，内存快照以一定的频率执行，在两次快照之间，使用 AOF 日志记录这期间的所有命令操作。<br>
-这样一来，快照不用很频繁地执行，这就避免了频繁 fork 对主线程的影响。<br>
-而且，AOF 日志也只用记录两次快照间的操作，也就是说，不需要记录所有操作了，
-因此，就不会出现文件过大的情况了，也可以避免重写开销。<br>
-如下图所示，T1 和 T2 时刻的修改，用 AOF 日志记录，
-等到第二次做全量快照时，就可以清空 AOF 日志，因为此时的修改都已经记录到快照中了，恢复时就不再用日志了。
-</pre>
-<div style="text-align:center">
-    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%204_2.jpg" width="500">
-</div><br>
-
-- RDB 优势在于，可以快速恢复数据库，也就是只需要把 RDB 文件直接读入内存，避免了 AOF 需要顺序、逐一重新执行操作命令带来的低效性能问题。缺点是频繁快照很耗资源
-<br>
-<br>
-- 三点建议
-
-<pre style="font-size:0.9em; color:#666666;">
-1. 数据不能丢失时，内存快照和 AOF 的混合使用是一个很好的选择；<br>
-2. 如果允许分钟级别的数据丢失，可以只使用 RDB；<br>
-3. 如果只用 AOF，优先使用 everysec 的配置选项，因为它在可靠性和性能之间取了一个平衡。
-</pre>
+<p><pre style="font-size:0.9em; color:#666666;"><br>读操作：主库、从库都可以接收；<br><br>写操作：首先到主库执行，然后，主库将写操作同步给从库。<br></pre></p>
+<p><div style="text-align:center"><br>    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_1.jpg" width="500"><br></div><br></p>
 
       
     </div>
@@ -574,8 +519,8 @@ bgsave 子进程运行后，开始读取主线程的内存数据，并把它们�
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 3/" rel="next" title="极客时间 - 《Redis核心技术与实战》 学习笔记 3">
-                <i class="fa fa-chevron-left"></i> 极客时间 - 《Redis核心技术与实战》 学习笔记 3
+              <a href="/2020/09/28/极客时间 - 《Redis核心技术与实战》 学习笔记 2/" rel="next" title="极客时间 - 《Redis核心技术与实战》 学习笔记 2">
+                <i class="fa fa-chevron-left"></i> 极客时间 - 《Redis核心技术与实战》 学习笔记 2
               </a>
             
           </div>
@@ -583,6 +528,10 @@ bgsave 子进程运行后，开始读取主线程的内存数据，并把它们�
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 3/" rel="prev" title="极客时间 - 《Redis核心技术与实战》 学习笔记 3">
+                极客时间 - 《Redis核心技术与实战》 学习笔记 3 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -764,7 +713,7 @@ bgsave 子进程运行后，开始读取主线程的内存数据，并把它们�
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#极客时间-《Redis核心技术与实战》-学习笔记-4"><span class="nav-number">1.</span> <span class="nav-text">极客时间 - 《Redis核心技术与实战》 学习笔记 4</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#内存快照：宕机后，Redis如何实现快速恢复？"><span class="nav-number">1.1.</span> <span class="nav-text">内存快照：宕机后，Redis如何实现快速恢复？</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#极客时间-《Redis核心技术与实战》-学习笔记-5"><span class="nav-number">1.</span> <span class="nav-text">极客时间 - 《Redis核心技术与实战》 学习笔记 5</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据同步：主从库如何实现数据一致？"><span class="nav-number">1.1.</span> <span class="nav-text">数据同步：主从库如何实现数据一致？</span></a></li></ol></li></ol></div>
             
 
           </div>
