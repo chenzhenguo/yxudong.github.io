@@ -355,6 +355,1158 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 4/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yxd">
+      <meta itemprop="description" content="yxd18352839189@gmail.com">
+      <meta itemprop="image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/portrait.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yxd's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 4/" class="post-title-link" itemprop="url">极客时间 - 《Redis核心技术与实战》 学习笔记 4</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-09-29 11:55:44" itemprop="dateCreated datePublished" datetime="2020-09-29T11:55:44+08:00">2020-09-29</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-10-18 10:24:37" itemprop="dateModified" datetime="2020-10-18T10:24:37+08:00">2020-10-18</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="极客时间-《Redis核心技术与实战》-学习笔记-4"><a href="#极客时间-《Redis核心技术与实战》-学习笔记-4" class="headerlink" title="极客时间 - 《Redis核心技术与实战》 学习笔记 4"></a>极客时间 - 《Redis核心技术与实战》 学习笔记 4</h2><h3 id="内存快照：宕机后，Redis如何实现快速恢复？"><a href="#内存快照：宕机后，Redis如何实现快速恢复？" class="headerlink" title="内存快照：宕机后，Redis如何实现快速恢复？"></a>内存快照：宕机后，Redis如何实现快速恢复？</h3><hr>
+<ul>
+<li>Redis 提供了两个命令来生成 RDB 文件，分别是 save 和 bgsave。</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+save：在主线程中执行，会导致阻塞；
+bgsave：创建一个子进程，专门用于写入 RDB 文件，避免了主线程的阻塞，这也是 Redis RDB 文件生成的默认配置。
+</pre>
+
+<ul>
+<li>Redis 就会借助操作系统提供的写时复制技术（Copy-On-Write, COW），在执行快照的同时，正常处理写操作。</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+简单来说，bgsave 子进程是由主线程 fork 生成的，可以共享主线程的所有内存数据。<br>
+bgsave 子进程运行后，开始读取主线程的内存数据，并把它们写入 RDB 文件。<br>
+此时，如果主线程对这些数据也都是读操作（例如图中的键值对 A），那么，主线程和 bgsave 子进程相互不影响。<br>
+但是，如果主线程要修改一块数据（例如图中的键值对 C），那么，这块数据就会被复制一份，生成该数据的副本。<br>
+然后，bgsave 子进程会把这个副本数据写入 RDB 文件，而在这个过程中，主线程仍然可以直接修改原来的数据。
+</pre>
+<div style="text-align:center">
+    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%204_1.jpg" width="500">
+</div><br>
+
+- 如果频繁地执行全量快照，也会带来两方面的开销。
+
+<pre style="font-size:0.9em; color:#666666;">
+一方面，频繁将全量数据写入磁盘，会给磁盘带来很大压力，多个快照竞争有限的磁盘带宽，
+前一个快照还没有做完，后一个又开始做了，容易造成恶性循环。<br>
+另一方面，bgsave 子进程需要通过 fork 操作从主线程创建出来。<br>
+虽然，子进程在创建后不会再阻塞主线程，但是，fork 这个创建过程本身会阻塞主线程，
+而且主线程的内存越大，阻塞时间越长。<br>
+如果频繁 fork 出 bgsave 子进程，这就会频繁阻塞主线程了。
+</pre>
+
+<ul>
+<li>Redis 4.0 中提出了一个混合使用 AOF 日志和内存快照的方法。</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+简单来说，内存快照以一定的频率执行，在两次快照之间，使用 AOF 日志记录这期间的所有命令操作。<br>
+这样一来，快照不用很频繁地执行，这就避免了频繁 fork 对主线程的影响。<br>
+而且，AOF 日志也只用记录两次快照间的操作，也就是说，不需要记录所有操作了，
+因此，就不会出现文件过大的情况了，也可以避免重写开销。<br>
+如下图所示，T1 和 T2 时刻的修改，用 AOF 日志记录，
+等到第二次做全量快照时，就可以清空 AOF 日志，因为此时的修改都已经记录到快照中了，恢复时就不再用日志了。
+</pre>
+<div style="text-align:center">
+    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%204_2.jpg" width="500">
+</div><br>
+
+- RDB 优势在于，可以快速恢复数据库，也就是只需要把 RDB 文件直接读入内存，避免了 AOF 需要顺序、逐一重新执行操作命令带来的低效性能问题。缺点是频繁快照很耗资源
+<br>
+<br>
+- 三点建议
+
+<pre style="font-size:0.9em; color:#666666;">
+1. 数据不能丢失时，内存快照和 AOF 的混合使用是一个很好的选择；<br>
+2. 如果允许分钟级别的数据丢失，可以只使用 RDB；<br>
+3. 如果只用 AOF，优先使用 everysec 的配置选项，因为它在可靠性和性能之间取了一个平衡。
+</pre>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 3/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yxd">
+      <meta itemprop="description" content="yxd18352839189@gmail.com">
+      <meta itemprop="image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/portrait.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yxd's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2020/09/29/极客时间 - 《Redis核心技术与实战》 学习笔记 3/" class="post-title-link" itemprop="url">极客时间 - 《Redis核心技术与实战》 学习笔记 3</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-09-29 09:43:44" itemprop="dateCreated datePublished" datetime="2020-09-29T09:43:44+08:00">2020-09-29</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-10-18 10:24:37" itemprop="dateModified" datetime="2020-10-18T10:24:37+08:00">2020-10-18</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="极客时间-《Redis核心技术与实战》-学习笔记-3"><a href="#极客时间-《Redis核心技术与实战》-学习笔记-3" class="headerlink" title="极客时间 - 《Redis核心技术与实战》 学习笔记 3"></a>极客时间 - 《Redis核心技术与实战》 学习笔记 3</h2><h3 id="AOF日志：宕机了，Redis如何避免数据丢失？"><a href="#AOF日志：宕机了，Redis如何避免数据丢失？" class="headerlink" title="AOF日志：宕机了，Redis如何避免数据丢失？"></a>AOF日志：宕机了，Redis如何避免数据丢失？</h3><hr>
+<ul>
+<li>Redis 的持久化主要有两大机制，即 AOF(Append Only File) 日志和 RDB(Redis DataBase) 快照。</li>
+<li>AOF 日志是如何实现的？</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+AOF 日志写后日志，“写后”的意思是 Redis 是先执行命令，把数据写入内存，然后才记录日志。
+</pre>
+<div style="text-align:center">
+    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_1.jpg" width="500">
+</div><br>
+
+- AOF 为什么要先执行命令再记日志呢？
+
+<pre style="font-size:0.9em; color:#666666;">
+传统数据库的日志，例如 redo log（重做日志），记录的是修改后的数据，
+而 AOF 里记录的是 Redis 收到的每一条命令，这些命令是以文本形式保存的。<br>
+以 Redis 收到 “set testkey testvalue” 命令后记录的日志为例，看看 AOF 日志的内容。
+其中，“*3” 表示当前命令有三个部分，每部分都是由 “$+数字” 开头，后面紧跟着具体的命令、键或值。
+这里，“数字” 表示这部分中的命令、键或值一共有多少字节。
+例如，“$3 set” 表示这部分有 3 个字节，也就是 “set” 命令。<br>
+为了避免额外的检查开销，Redis 在向 AOF 里面记录日志的时候，并不会先去对这些命令进行语法检查。
+所以，如果先记日志再执行命令的话，日志中就有可能记录了错误的命令，Redis 在使用日志恢复数据时，就可能会出错。<br>
+而写后日志这种方式，就是先让系统执行命令，只有命令能执行成功，才会被记录到日志中，
+否则，系统就会直接向客户端报错。<br>
+所以，Redis 使用写后日志这一方式的一大好处是，可以避免出现记录错误命令的情况。<br>
+除此之外，AOF 还有一个好处：它是在命令执行后才记录日志，所以不会阻塞当前的写操作。
+</pre>
+<div style="text-align:center">
+    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_2.jpg" width="500">
+</div><br>
+
+- AOF 两个潜在的风险
+
+<pre style="font-size:0.9em; color:#666666;">
+首先，如果刚执行完一个命令，还没有来得及记日志就宕机了，那么这个命令和相应的数据就有丢失的风险。<br>
+如果此时 Redis 是用作缓存，还可以从后端数据库重新读入数据进行恢复，
+但是，如果 Redis 是直接用作数据库的话，此时，因为命令没有记入日志，所以就无法用日志进行恢复了。<br>
+其次，AOF 虽然避免了对当前命令的阻塞，但可能会给下一个操作带来阻塞风险。<br>
+这是因为，AOF 日志也是在<strong>主线程</strong>中执行的，
+如果在把日志文件写入磁盘时，磁盘写压力大，就会导致写盘很慢，进而导致后续的操作也无法执行了。
+</pre>
+
+<ul>
+<li>三种写回策略</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+对于这个问题，AOF 机制给我们提供了三个选择，也就是 AOF 配置项 appendfsync 的三个可选。<br>
+<ul>
+  <li>Always，同步写回：每个写命令执行完，立马同步地将日志写回磁盘；</li>
+  <li>Everysec，每秒写回：每个写命令执行完，只是先把日志写到 AOF 文件的内存缓冲区，每隔一秒把缓冲区中的内容写入磁盘；</li>
+  <li>No，操作系统控制的写回：每个写命令执行完，只是先把日志写到 AOF 文件的内存缓冲区，由操作系统决定何时将缓冲区内容写回磁盘。</li>
+</ul>
+针对避免主线程阻塞和减少数据丢失问题，这三种写回策略都无法做到两全其美。
+<ul>
+  <li>“同步写回”可以做到基本不丢数据，但是它在每一个写命令后都有一个慢速的落盘操作，不可避免地会影响主线程性能；</li>
+  <li>“每秒写回”采用一秒写回一次的频率，避免了“同步写回”的性能开销，
+虽然减少了对系统性能的影响，但是如果发生宕机，上一秒内未落盘的命令操作仍然会丢失。
+所以，这只能算是，在避免影响主线程性能和避免数据丢失两者间取了个折中。</li>
+  <li>虽然“操作系统控制的写回”在写完缓冲区后，就可以继续执行后续的命令，
+但是落盘的时机已经不在 Redis 手中了，只要 AOF 记录没有写回磁盘，一旦宕机对应的数据就丢失了；</li>
+</ul>
+</pre>
+
+<ul>
+<li>三种策略的写回时机对比</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+想要获得高性能，就选择 No 策略；<br>
+如果想要得到高可靠性保证，就选择 Always 策略；<br>
+如果允许数据有一点丢失，又希望性能别受太大影响的话，那么就选择 Everysec 策略。
+</pre>
+<div style="text-align:center">
+    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_3.jpg" width="500">
+</div><br>
+
+-  AOF 文件过大带来的性能问题
+
+<pre style="font-size:0.9em; color:#666666;">
+这里的“性能问题”，主要在于以下三个方面：<br>
+  一是，文件系统本身对文件大小有限制，无法保存过大的文件；<br>
+  二是，如果文件太大，之后再往里面追加命令记录的话，效率也会变低；<br>
+  三是，如果发生宕机，AOF 中记录的命令要一个个被重新执行，用于故障恢复，
+        如果日志文件太大，整个恢复过程就会非常缓慢，这就会影响到 Redis 的正常使用。
+</pre>
+
+<ul>
+<li>AOF 重写机制</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+AOF重写机制指的是，对过大的AOF文件进行重写，以此来压缩AOF文件的大小。<br>
+具体的实现是：检查当前键值数据库中的键值对，记录键值对的最终状态，
+从而实现对某个键值对 重复操作后产生的多条操作记录压缩成一条的效果。进而实现压缩AOF文件的大小。
+</pre>
+<div style="text-align:center">
+    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_4.jpg" width="500">
+</div><br>
+
+- AOF 重写会阻塞吗?
+
+<pre style="font-size:0.9em; color:#666666;">
+和 AOF 日志由主线程写回不同，重写过程是由后台线程 bgrewriteaof 来完成的，
+这也是为了避免阻塞主线程，导致数据库性能下降。<br>
+</pre>
+
+<ul>
+<li>AOF 重写过程</li>
+</ul>
+<p><pre style="font-size:0.9em; color:#666666;"><br>重写的过程总结为“一个拷贝，两处日志”。<br><br>一个拷贝：<br>    每次执行重写时，主线程 fork 出后台的 bgrewriteaof 子进程。<br><br>    此时，fork 会把主线程的内存拷贝一份给 bgrewriteaof 子进程，这里面就包含了数据库的最新数据。<br><br>    然后，bgrewriteaof 子进程就可以在不影响主线程的情况下，逐一把拷贝的数据写成操作，记入重写日志。<br><br>两处日志：<br>    因为主线程未阻塞，仍然可以处理新来的操作。<br><br>    此时，如果有写操作，第一处日志就是指正在使用的 AOF 日志，Redis 会把这个操作写到它的缓冲区。<br>    这样一来，即使宕机了，这个 AOF 日志的操作仍然是齐全的，可以用于恢复。<br><br>    而第二处日志，<br>    就是指新的 AOF 重写日志。这个操作也会被写到重写日志的缓冲区。<br>    这样，重写日志也不会丢失最新的操作。<br>    等到拷贝数据的所有操作记录重写完成后，重写日志记录的这些最新操作也会写入新的 AOF 文件，以保证数据库最新状态的记录。<br><br>    此时，我们就可以用新的 AOF 文件替代旧文件了。</pre></p>
+<p>总结来说，每次 AOF 重写时，Redis 会先执行一个内存拷贝，用于重写；<br>然后，使用两个日志保证在重写过程中，新写入的数据不会丢失。<br>而且，因为 Redis 采用额外的线程进行数据重写，所以，这个过程并不会阻塞主线程。<br></p>
+<p><div style="text-align:center"><br>    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%203_5.jpg" width="500"><br></div><br></p>
+<ul>
+<li>对于开启 HugePages 的操作系统，父进程申请内存时阻塞的概率将会大大提高，Hugepages 在实际使用 Redis 并需要持久化时是建议关掉的。</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2020/09/28/极客时间 - 《Redis核心技术与实战》 学习笔记 2/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yxd">
+      <meta itemprop="description" content="yxd18352839189@gmail.com">
+      <meta itemprop="image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/portrait.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yxd's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2020/09/28/极客时间 - 《Redis核心技术与实战》 学习笔记 2/" class="post-title-link" itemprop="url">极客时间 - 《Redis核心技术与实战》 学习笔记 2</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-09-28 17:28:44" itemprop="dateCreated datePublished" datetime="2020-09-28T17:28:44+08:00">2020-09-28</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-10-18 10:24:37" itemprop="dateModified" datetime="2020-10-18T10:24:37+08:00">2020-10-18</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="极客时间-《Redis核心技术与实战》-学习笔记-2"><a href="#极客时间-《Redis核心技术与实战》-学习笔记-2" class="headerlink" title="极客时间 - 《Redis核心技术与实战》 学习笔记 2"></a>极客时间 - 《Redis核心技术与实战》 学习笔记 2</h2><h3 id="高性能IO模型：为什么单线程Redis能那么快？"><a href="#高性能IO模型：为什么单线程Redis能那么快？" class="headerlink" title="高性能IO模型：为什么单线程Redis能那么快？"></a>高性能IO模型：为什么单线程Redis能那么快？</h3><hr>
+<ul>
+<li>Redis 单线程的理解</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+Redis 是单线程，主要是指 Redis 的网络 IO 和键值对读写（数据读写）是由一个线程来完成的，
+这也是 Redis 对外提供键值存储服务的主要流程。<br>
+但 Redis 的其他功能，比如持久化、异步删除、集群数据同步等，其实是由额外的线程执行的。
+</pre>
+
+<ul>
+<li>Redis 为什么用单线程？</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+多线程编程模式面临共享资源的并发访问控制问题。<br>
+并发访问控制一直是多线程开发中的一个难点问题，如果没有精细的设计，
+比如说，只是简单地采用一个粗粒度互斥锁，就会出现不理想的结果：
+    即使增加了线程，大部分线程也在等待获取访问共享资源的互斥锁，并行变串行，系统吞吐率并没有随着线程的增加而增加。<br>
+而且，采用多线程开发一般会引入同步原语来保护共享资源的并发访问，这也会降低系统代码的易调试性和可维护性。<br>
+为了避免这些问题，Redis 直接采用了单线程模式。
+</pre>
+
+<ul>
+<li>单线程 Redis 为什么那么快？</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+一方面，Redis 的大部分操作在内存上完成，再加上它采用了高效的数据结构，
+例如哈希表和跳表，这是它实现高性能的一个重要原因。<br>
+另一方面，就是 Redis 采用了多路复用机制，使其在网络 IO 操作中能并发处理大量的客户端请求，实现高吞吐率。
+</pre>
+
+<ul>
+<li>基本 IO 模型与阻塞点</li>
+</ul>
+<p><pre style="font-size:0.9em; color:#666666;"><br>以 Get 请求为例，为了处理一个 Get 请求，<br>需要监听客户端请求（bind/listen），<br>和客户端建立连接（accept），<br>从 socket 中读取请求（recv），<br>解析客户端发送请求（parse），<br>根据请求类型读取键值数据（get），<br>最后给客户端返回结果，即向 socket 中写回数据（send）。<br><br>下图显示了这一过程，其中，bind/listen、accept、recv、parse 和 send 属于网络 IO 处理，而 get 属于键值数据操作。<br>既然 Redis 是单线程，那么，最基本的一种实现是在一个线程中依次执行上面说的这些操作。</pre></p>
+<p>但是，在这里的网络 IO 操作中，有潜在的阻塞点，分别是 accept() 和 recv()。<br><br>当 Redis 监听到一个客户端有连接请求，但一直未能成功建立起连接时，会阻塞在 accept() 函数这里，<br>导致其他客户端无法和 Redis 建立连接。<br><br>类似的，当 Redis 通过 recv() 从一个客户端读取数据时，如果数据一直没有到达，Redis 也会一直阻塞在 recv()。<br></p>
+<div style="text-align:center"><br>    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%202_1.jpg" width="500"><br></div><br><br><br>- 非阻塞模式<br><br><pre style="font-size:0.9em; color:#666666;"><br>在 socket 模型中，不同操作调用后会返回不同的套接字类型。<br><br>socket() 方法会返回主动套接字，然后调用 listen() 方法，将主动套接字转化为监听套接字，此时，可以监听来自客户端的连接请求。<br><br>最后，调用 accept() 方法接收到达的客户端连接，并返回已连接套接字。<br><br>针对监听套接字，我们可以设置非阻塞模式：<br>    当 Redis 调用 accept() 但一直未有连接请求到达时，Redis 线程可以返回处理其他操作，而不用一直等待。<br>    但是，你要注意的是，调用 accept() 时，已经存在监听套接字了<br></pre><br><div style="text-align:center"><br>    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%202_2.jpg" width="500"><br></div><br><br><br>- 基于多路复用的高性能 I/O 模型<br><br><pre style="font-size:0.9em; color:#666666;"><br>Linux 中的 IO 多路复用机制是指一个线程处理多个 IO 流，就是我们经常听到的 select/epoll 机制。<br><br>简单来说，在 Redis 只运行单线程的情况下，该机制允许内核中，同时存在多个监听套接字和已连接套接字。<br><br>内核会一直监听这些套接字上的连接请求或数据请求。<br><br>一旦有请求到达，就会交给 Redis 线程处理，这就实现了一个 Redis 线程处理多个 IO 流的效果。<br><br>下图就是基于多路复用的 Redis IO 模型。<br>图中的多个 FD 就是刚才所说的多个套接字。<br><br>Redis 网络框架调用 epoll 机制，让内核监听这些套接字。<br>此时，Redis 线程不会阻塞在某一个特定的监听或已连接套接字上，<br>也就是说，不会阻塞在某一个特定的客户端请求处理上。<br><br>正因为此，Redis 可以同时和多个客户端连接并处理请求，从而提升并发性。<br><br>为了在请求到达时能通知到 Redis 线程，select/epoll 提供了基于事件的回调机制，<br>即针对不同事件的发生，调用相应的处理函数。<br><br>select/epoll 一旦监测到 FD 上有请求到达时，就会触发相应的事件。<br><br>这些事件会被放进一个事件队列，Redis 单线程对该事件队列不断进行处理。<br><br>这样一来，Redis 无需一直轮询是否有请求实际发生，这就可以避免造成 CPU 资源浪费。<br><br>同时，Redis 在对事件队列中的事件进行处理时，会调用相应的处理函数，这就实现了基于事件的回调。<br><br>因为 Redis 一直在对事件队列进行处理，所以能及时响应客户端请求，提升 Redis 的响应性能。<br></pre><br><div style="text-align:center"><br>    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%202_3.jpg" width="500"><br></div>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2020/09/28/极客时间 - 《Redis核心技术与实战》 学习笔记 1/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yxd">
+      <meta itemprop="description" content="yxd18352839189@gmail.com">
+      <meta itemprop="image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/portrait.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yxd's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2020/09/28/极客时间 - 《Redis核心技术与实战》 学习笔记 1/" class="post-title-link" itemprop="url">极客时间 - 《Redis核心技术与实战》 学习笔记 1</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-09-28 14:06:44" itemprop="dateCreated datePublished" datetime="2020-09-28T14:06:44+08:00">2020-09-28</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-10-18 10:24:37" itemprop="dateModified" datetime="2020-10-18T10:24:37+08:00">2020-10-18</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="极客时间-《Redis核心技术与实战》-学习笔记-1"><a href="#极客时间-《Redis核心技术与实战》-学习笔记-1" class="headerlink" title="极客时间 - 《Redis核心技术与实战》 学习笔记 1"></a>极客时间 - 《Redis核心技术与实战》 学习笔记 1</h2><h3 id="数据结构：快速的Redis有哪些慢操作？"><a href="#数据结构：快速的Redis有哪些慢操作？" class="headerlink" title="数据结构：快速的Redis有哪些慢操作？"></a>数据结构：快速的Redis有哪些慢操作？</h3><hr>
+<ul>
+<li>Redis 表现突出的原因</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+一方面，这是因为它是内存数据库，所有操作都在内存上完成，内存的访问速度本身就很快。<br>
+另一方面，这要归功于它的数据结构。
+这是因为，键值对是按一定的数据结构来组织的，操作键值对最终就是对数据结构进行增删改查操作，
+所以高效的数据结构是 Redis 快速处理数据的基础。
+</pre>
+
+<ul>
+<li>底层数据结构一共有 6 种，分别是简单动态字符串、双向链表、压缩列表、哈希表、跳表和整数数组。</li>
+</ul>
+<div style="text-align:center"><br>    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%201_1.jpg" width="500" align="center"><br></div><br><br><br>- 键和值用什么结构组织？<br><br><pre style="font-size:0.9em; color:#666666;"><br>为了实现从键到值的快速访问，Redis 使用了一个哈希表来保存所有键值对。<br><br>一个哈希表，其实就是一个数组，数组的每个元素称为一个哈希桶。<br>所以，我们常说，一个哈希表是由多个哈希桶组成的，每个哈希桶中保存了键值对数据。<br><br>哈希桶中的 entry 元素中保存了 *key 和 *value 指针，分别指向了实际的键和值，<br>这样一来，即使值是一个集合，也可以通过*value指针被查找到。<br></pre><br><div style="text-align:center"><br>    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%201_2.jpg" width="500"><br></div><br><br><br>- 为什么哈希表操作变慢了？<br><br><pre style="font-size:0.9em; color:#666666;"><br>哈希表的冲突问题和 rehash 可能带来的操作阻塞。<br><br>Redis 解决哈希冲突的方式，就是链式哈希。<br><br>但是，这里依然存在一个问题，哈希冲突链上的元素只能通过指针逐一查找再操作。<br><br>如果哈希表里写入的数据越来越多，哈希冲突可能也会越来越多，<br>这就会导致某些哈希冲突链过长，进而导致这个链上的元素查找耗时长，效率降低。<br><br>对于追求“快”的 Redis 来说，这是不太能接受的。<br><br>所以，Redis 会对哈希表做 rehash 操作。<br></pre><br><div style="text-align:center"><br>    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%201_3.jpg" width="500"><br></div><br><br><br>- 哈希表做 rehash<br><br><pre style="font-size:0.9em; color:#666666;"><br>rehash 也就是增加现有的哈希桶数量，让逐渐增多的 entry 元素能在更多的桶之间分散保存，减少单个桶中的元素数量，从而减少单个桶中的冲突。<br><br>其实，为了使 rehash 操作更高效，Redis 默认使用了两个全局哈希表：<br>哈希表 1 和哈希表 2。<br>一开始，当你刚插入数据时，默认使用哈希表 1，此时的哈希表 2 并没有被分配空间。<br>随着数据逐步增多，Redis 开始执行 rehash，这个过程分为三步：<br>  1. 给哈希表 2 分配更大的空间，例如是当前哈希表 1 大小的两倍；<br>  2. 把哈希表 1 中的数据重新映射并拷贝到哈希表 2 中；<br>  3. 释放哈希表 1 的空间。<br><br>到此，我们就可以从哈希表 1 切换到哈希表 2，用增大的哈希表 2 保存更多数据，而原来的哈希表 1 留作下一次 rehash 扩容备用。<br><br>这个过程看似简单，但是第二步涉及大量的数据拷贝，<br>如果一次性把哈希表 1 中的数据都迁移完，会造成 Redis 线程阻塞，无法服务其他请求。<br>此时，Redis 就无法快速访问数据了。<br><br>为了避免这个问题，Redis 采用了渐进式 rehash。<br></pre><br><br>- 渐进式 rehash<br><br><pre style="font-size:0.9em; color:#666666;"><br>简单来说就是在第二步拷贝数据时，Redis 仍然正常处理客户端请求。<br><br>每处理一个请求时，从哈希表 1 中的第一个索引位置开始，顺带着将这个索引位置上的所有 entries 拷贝到哈希表 2 中。<br><br>等处理下一个请求时，再顺带拷贝哈希表 1 中的下一个索引位置的 entries。如下图所示：<br></pre><br><div style="text-align:center"><br>    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%201_4.jpg" width="500"><br></div><br><br><br>- 对于 String 类型来说，找到哈希桶就能直接增删改查了，所以，哈希表的 O(1) 操作复杂度也就是它的复杂度了。<br>- 压缩列表<br><br><pre style="font-size:0.9em; color:#666666;"><br>压缩列表实际上类似于一个数组，数组中的每一个元素都对应保存一个数据。<br><br>和数组不同的是，压缩列表在表头有三个字段 zlbytes、zltail 和 zllen，分别表示列表长度、列表尾的偏移量和列表中的 entry 个数；<br>压缩列表在表尾还有一个 zlend，表示列表结束。<br><br>在压缩列表中，如果我们要查找定位第一个元素和最后一个元素，可以通过表头三个字段的长度直接定位，复杂度是 O(1)。<br><br>而查找其他元素时，就没有这么高效了，只能逐个查找，此时的复杂度就是 O(N) 了。<br></pre><br><div style="text-align:center"><br>    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%201_5.jpg" width="500"><br></div><br><br><br>- 跳表<br><br><pre style="font-size:0.9em; color:#666666;"><br>有序链表只能逐一查找元素，导致操作起来非常缓慢，于是就出现了跳表。<br><br>具体来说，跳表在链表的基础上，增加了多级索引，通过索引位置的几个跳转，实现数据的快速定位，如下图所示：<br>当数据量很大时，跳表的查找复杂度就是 O(logN)。<br></pre><br><div style="text-align:center"><br>    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%201_6.jpg" width="500"><br></div><br><br><br>- 数据结构的时间复杂度<br><div style="text-align:center"><br>    <img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%201_7.jpg" width="500"><br></div>
+
+<ul>
+<li><p>四句口诀</p>
+<ul>
+<li>单元素操作是基础；</li>
+<li>范围操作非常耗时；</li>
+<li>统计操作通常高效；</li>
+<li>例外情况只有几个。</li>
+</ul>
+</li>
+<li><p>单元素操作</p>
+</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+是指每一种集合类型对单个数据实现的增删改查操作。<br>
+例如，Hash 类型的 HGET、HSET 和 HDEL，Set 类型的 SADD、SREM、SRANDMEMBER 等。<br>
+这些操作的复杂度由集合采用的数据结构决定，例如，HGET、HSET 和 HDEL 是对哈希表做操作，所以它们的复杂度都是 O(1)；<br>
+Set 类型用哈希表作为底层数据结构时，它的 SADD、SREM、SRANDMEMBER 复杂度也是 O(1)。<br>
+这里，有个地方你需要注意一下，集合类型支持同时对多个元素进行增删改查，
+例如 Hash 类型的 HMGET 和 HMSET，Set 类型的 SADD 也支持同时增加多个元素。<br>
+此时，这些操作的复杂度，就是由单个元素操作复杂度和元素个数决定的。例如，HMSET 增加 M 个元素时，复杂度就从 O(1) 变成 O(M) 了。
+</pre>
+
+<ul>
+<li>范围操作</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+是指集合类型中的遍历操作，可以返回集合中的所有数据。<br>
+比如 Hash 类型的 HGETALL 和 Set 类型的 SMEMBERS，或者返回一个范围内的部分数据，比如 List 类型的 LRANGE 和 ZSet 类型的 ZRANGE。<br>
+这类操作的复杂度一般是 O(N)，比较耗时，我们应该尽量避免。<br>
+Redis 从 2.8 版本开始提供了 SCAN 系列操作（包括 HSCAN，SSCAN 和 ZSCAN），这类操作实现了渐进式遍历，每次只返回有限数量的数据。<br>
+这样一来，相比于 HGETALL、SMEMBERS 这类操作来说，就避免了一次性返回所有元素而导致的 Redis 阻塞。
+</pre>
+
+<ul>
+<li>统计操作</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+是指集合类型对集合中所有元素个数的记录，例如 LLEN 和 SCARD。<br>
+这类操作复杂度只有 O(1)，这是因为当集合类型采用压缩列表、双向链表、整数数组这些数据结构时，
+这些结构中专门记录了元素的个数统计，因此可以高效地完成相关操作。
+</pre>
+
+<ul>
+<li>例外情况</li>
+</ul>
+<pre style="font-size:0.9em; color:#666666;">
+是指某些数据结构的特殊记录，例如压缩列表和双向链表都会记录表头和表尾的偏移量。<br>
+这样一来，对于 List 类型的 LPOP、RPOP、LPUSH、RPUSH 这四个操作来说，它们是在列表的头尾增删元素，
+这就可以通过偏移量直接定位，所以它们的复杂度也只有 O(1)，可以实现快速操作。
+</pre>
+
+<ul>
+<li>复杂度较高的 List 类型，它的两种底层实现结构：双向链表和压缩列表的操作复杂度都是 O(N)。因此，<strong>因地制宜地使用 List 类型</strong>。</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2019/08/16/uWSGI、WSGI 和 uwsgi/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yxd">
+      <meta itemprop="description" content="yxd18352839189@gmail.com">
+      <meta itemprop="image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/portrait.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yxd's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/08/16/uWSGI、WSGI 和 uwsgi/" class="post-title-link" itemprop="url">uWSGI、WSGI 和 uwsgi</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-16 00:46:06" itemprop="dateCreated datePublished" datetime="2019-08-16T00:46:06+08:00">2019-08-16</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-10-18 10:24:36" itemprop="dateModified" datetime="2020-10-18T10:24:36+08:00">2020-10-18</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="uWSGI、WSGI-和-uwsgi"><a href="#uWSGI、WSGI-和-uwsgi" class="headerlink" title="uWSGI、WSGI 和 uwsgi"></a>uWSGI、WSGI 和 uwsgi</h2><hr>
+<h3 id="图解"><a href="#图解" class="headerlink" title="图解"></a>图解</h3><p><img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/uWSGI%E3%80%81WSGI%20%E5%92%8C%20uwsgi_1.jpg" alt="image"></p>
+<p><img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/uWSGI%E3%80%81WSGI%20%E5%92%8C%20uwsgi_2.jpg" alt="image"></p>
+<p><img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/uWSGI%E3%80%81WSGI%20%E5%92%8C%20uwsgi_3.jpg" alt="image"></p>
+<h4 id="WSGI"><a href="#WSGI" class="headerlink" title="WSGI"></a>WSGI</h4><p>wsgi server（比如 uWSGI）要和 wsgi application（比如 django ）交互，uWSGI 需要将过来的请求转给 django 处理，那么 uWSGI 和 django 的交互和调用就需要一个统一的规范，这个规范就是 WSGI。</p>
+<p>WSGI，全称 Web Server Gateway Interface，或者 Python Web Server Gateway Interface，是为 Python 语言定义的 Web 服务器和 Web 应用程序或框架之间的一种简单而通用的接口。自从 WSGI 被开发出来以后，许多其它语言中也出现了类似接口。</p>
+<p>WSGI 的官方定义是，the Python Web Server Gateway Interface。从名字就可以看出来，这东西是一个 Gateway，也就是网关。网关的作用就是在协议之间进行转换。</p>
+<p>WSGI 是作为 Web 服务器与 Web 应用程序或应用框架之间的一种低级别的接口，以提升可移植 Web 应用开发的共同点。WSGI 是基于现存的 CGI 标准而设计的。</p>
+<h4 id="uWSGI"><a href="#uWSGI" class="headerlink" title="uWSGI"></a>uWSGI</h4><p>uWSGI 是一个 Web 服务器，它实现了 WSGI 协议、uwsgi、http 等协议。Nginx 中 HttpUwsgiModule 的作用是与 uWSGI 服务器进行交换。</p>
+<h4 id="uwsgi"><a href="#uwsgi" class="headerlink" title="uwsgi"></a>uwsgi</h4><p>与 WSGI 一样是一种通信协议，是 uWSGI 服务器的独占协议，用于定义传输信息的类型（type of information），每一个 uwsgi packet 前 4byte 为传输信息类型的描述，与 WSGI 协议是两种东西，据说该协议是 fcgi 协议的 10 倍快。</p>
+<h4 id="FastCgi-协议，-uwsgi-协议与-http-协议有什么用？"><a href="#FastCgi-协议，-uwsgi-协议与-http-协议有什么用？" class="headerlink" title="FastCgi 协议， uwsgi 协议与 http 协议有什么用？"></a>FastCgi 协议， uwsgi 协议与 http 协议有什么用？</h4><p>nginx 和下游服务器交互就必须使用同一个协议，只要大家沟通好使用哪个协议，就可以正常运行了。</p>
+<p>这三种协议就是 nginx 为了与下游服务器交互事先约定好的协议。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2019/06/27/Dijkstra 最短路径算法 Python 实现/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -417,7 +1569,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-11 23:13:05" itemprop="dateModified" datetime="2019-07-11T23:13:05+08:00">2019-07-11</time>
+                <time title="修改时间：2020-10-18 10:24:37" itemprop="dateModified" datetime="2020-10-18T10:24:37+08:00">2020-10-18</time>
               
             
           </span>
@@ -434,7 +1586,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/DS/" itemprop="url" rel="index"><span itemprop="name">DS</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/DS-A/" itemprop="url" rel="index"><span itemprop="name">DS&A</span></a></span>
 
                 
                 
@@ -544,398 +1696,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2019/05/21/MySQL-日志系统：一条-SQL-更新语句是如何执行的/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yxd">
-      <meta itemprop="description" content="yxd18352839189@gmail.com">
-      <meta itemprop="image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/portrait.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yxd's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/05/21/MySQL-日志系统：一条-SQL-更新语句是如何执行的/" class="post-title-link" itemprop="url">MySQL 日志系统：一条 SQL 更新语句是如何执行的</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-05-21 00:46:06" itemprop="dateCreated datePublished" datetime="2019-05-21T00:46:06+08:00">2019-05-21</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-07-11 23:12:34" itemprop="dateModified" datetime="2019-07-11T23:12:34+08:00">2019-07-11</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="MySQL-日志系统：一条-SQL-更新语句是如何执行的"><a href="#MySQL-日志系统：一条-SQL-更新语句是如何执行的" class="headerlink" title="MySQL 日志系统：一条 SQL 更新语句是如何执行的"></a>MySQL 日志系统：一条 SQL 更新语句是如何执行的</h2><hr>
-<p>一条查询语句的执行过程一般是经过连接器、分析器、优化器、执行器等功能模块，最后到达存储引擎。</p>
-<p>一条更新语句的执行流程又是怎样的呢？</p>
-<p>从一个表的一条更新语句说起，下面是这个表的创建语句，这个表有一个主键 ID 和一个整型字段 c：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; create table T(ID int primary key, c int);</span><br></pre></td></tr></table></figure>
-<p>如果要将 ID = 2 这一行的值加 1，SQL 语句就会这么写：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; update T set c = c + 1 where ID = 2;</span><br></pre></td></tr></table></figure>
-<p>之前介绍过 SQL 语句基本的执行链路，这里再把那张图拿过来，可以先简单看看这个图回顾下。首先，可以确定的说，查询语句的那一套流程，更新语句也是同样会走一遍。</p>
-<p><img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/MySQL%20%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F%EF%BC%9A%E4%B8%80%E6%9D%A1%20SQL%20%E6%9B%B4%E6%96%B0%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84_1.png" alt="image"><center>MySQL 的逻辑架构图</center></p>
-<p>执行语句前要先连接数据库，这是连接器的工作。</p>
-<p>之前提过，在一个表上有更新的时候，跟这个表有关的查询缓存会失效，所以这条语句就会把表 T 上所有缓存结果都清空。这也就是一般不建议使用查询缓存的原因。</p>
-<p>接下来，分析器会通过词法和语法解析知道这是一条更新语句。优化器决定要使用 ID 这个索引。然后，执行器负责具体执行，找到这一行，然后更新。</p>
-<p>与查询流程不一样的是，更新流程还涉及两个重要的日志模块，它们正是要讨论的主角：redo log（重做日志）和 binlog（归档日志）。如果接触 MySQL，那这两个词肯定是绕不过的。redo log 和 binlog 在设计上有很多有意思的地方，这些设计思路也可以用到自己的程序里。</p>
-<h3 id="重要的日志模块：redo-log"><a href="#重要的日志模块：redo-log" class="headerlink" title="重要的日志模块：redo log"></a>重要的日志模块：redo log</h3><p>《孔乙己》有篇文章，酒店掌柜有一个粉板，专门用来记录客人的赊账记录。如果赊账的人不多，那么他可以把顾客名和账目写在板上。但如果赊账的人多了，粉板总会有记不下的时候，这个时候掌柜一定还有一个专门记录赊账的账本。</p>
-<p>如果有人要赊账或者还账的话，掌柜一般有两种做法：</p>
-<ol>
-<li>一种做法是直接把账本翻出来，把这次赊的账加上去或者扣除掉；</li>
-<li>另一种做法是先在粉板上记下这次的账，等打烊以后再把账本翻出来核算</li>
-</ol>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/05/21/MySQL-日志系统：一条-SQL-更新语句是如何执行的/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2019/05/21/MySQL-基础架构：一条-SQL-查询语句是如何执行的/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yxd">
-      <meta itemprop="description" content="yxd18352839189@gmail.com">
-      <meta itemprop="image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/portrait.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yxd's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/05/21/MySQL-基础架构：一条-SQL-查询语句是如何执行的/" class="post-title-link" itemprop="url">MySQL 基础架构：一条 SQL 查询语句是如何执行的</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-05-21 00:46:06" itemprop="dateCreated datePublished" datetime="2019-05-21T00:46:06+08:00">2019-05-21</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-07-11 23:03:28" itemprop="dateModified" datetime="2019-07-11T23:03:28+08:00">2019-07-11</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="MySQL-基础架构：一条-SQL-查询语句是如何执行的"><a href="#MySQL-基础架构：一条-SQL-查询语句是如何执行的" class="headerlink" title="MySQL 基础架构：一条 SQL 查询语句是如何执行的"></a>MySQL 基础架构：一条 SQL 查询语句是如何执行的</h2><hr>
-<h3 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h3><p>MySQL 可以分为 <strong>Server 层和存储引擎层</strong>两部分</p>
-<p>Server 层包括连接器、查询缓存、分析器、优化器、执行器等，涵盖 MySQL 的大多数核心服务功能，以及所有的内置函数（如日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程、触发器、视图等。</p>
-<p>存储引擎层负责数据的存储和提取。其架构模式是插件式的，支持 InnoDB、MyISAM、Memory 等多个存储引擎。现在最常用的存储引擎是 InnoDB，它从 MySQL 5.5.5 版本开始成为了默认存储引擎。</p>
-<p>从图中可以看出，<strong>不同的存储引擎共用一个 Server 层</strong>，也就是从连接器到执行器的部分。</p>
-<p><img src="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/MySQL%20%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84%EF%BC%9A%E4%B8%80%E6%9D%A1%20SQL%20%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84_1.png" alt="image"><center>MySQL 的逻辑架构图</center></p>
-<p>比如，有个最简单的表，表里只有一个 ID 字段，在执行下面这个查询语句时：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from T where ID = 10;</span><br></pre></td></tr></table></figure>
-<p>过程如下</p>
-<h3 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a>连接器</h3><p>第一步，先连接到这个数据库上，这时候就是连接器。连接器负责跟客户端建立连接、获取权限、维持和管理连接。连接命令一般是这么写的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -h$ip -P$port -u$user -p</span><br></pre></td></tr></table></figure>
-<p>连接命令中的 mysql 是客户端工具，用来跟服务端建立连接。在完成经典的 TCP 握手后，连接器开始认证身份，这个时候用的就是输入的用户名和密码：</p>
-<ul>
-<li>如果用户名或密码不对，会收到一个”Access denied for user”的错误，然后客户端程序结束执行。</li>
-<li>如果用户名密码认证通过，连接器会到权限表里面查出拥有的权限。之后，这个连接里面的权限判断逻辑，都将依赖于此时读到的权限。</li>
-</ul>
-<p>这就意味着，一个用户成功建立连接后，即使用管理员账号对这个用户的权限做了修改，也不会影响已经存在连接的权限。修改完成后，只有再新建的连接才会使用新的权限设置。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/05/21/MySQL-基础架构：一条-SQL-查询语句是如何执行的/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2019/03/10/LeetCode 14. Longest Common Prefix/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -981,12 +1741,24 @@
                 
               
 
-              <time title="创建时间：2019-03-10 23:12:35 / 修改时间：23:34:28" itemprop="dateCreated datePublished" datetime="2019-03-10T23:12:35+08:00">2019-03-10</time>
+              <time title="创建时间：2019-03-10 23:12:35" itemprop="dateCreated datePublished" datetime="2019-03-10T23:12:35+08:00">2019-03-10</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-10-18 10:24:36" itemprop="dateModified" datetime="2020-10-18T10:24:36+08:00">2020-10-18</time>
               
             
           </span>
@@ -1003,7 +1775,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/DS/" itemprop="url" rel="index"><span itemprop="name">DS</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/DS-A/" itemprop="url" rel="index"><span itemprop="name">DS&A</span></a></span>
 
                 
                 
@@ -1051,225 +1823,6 @@
           
             <div class="post-button text-center">
               <a class="btn" href="/2019/03/10/LeetCode 14. Longest Common Prefix/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2019/03/05/MySQL 事务隔离级别/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yxd">
-      <meta itemprop="description" content="yxd18352839189@gmail.com">
-      <meta itemprop="image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/portrait.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yxd's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/03/05/MySQL 事务隔离级别/" class="post-title-link" itemprop="url">MySQL 事务隔离级别</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-03-05 23:41:44" itemprop="dateCreated datePublished" datetime="2019-03-05T23:41:44+08:00">2019-03-05</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-07-11 23:03:27" itemprop="dateModified" datetime="2019-07-11T23:03:27+08:00">2019-07-11</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="MySQL-事务隔离级别"><a href="#MySQL-事务隔离级别" class="headerlink" title="MySQL 事务隔离级别"></a>MySQL 事务隔离级别</h2><hr>
-<h3 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a>事务隔离级别</h3><p>数据库事务的隔离级别有 4 个，由低到高依次为 Read uncommitted 、Read committed 、Repeatable read 、Serializable，这四个级别可以逐个解决<strong>脏读 、不可重复读 、幻读</strong>这几类问题。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">&nbsp;</th>
-<th style="text-align:center">脏读</th>
-<th style="text-align:center">不可重复读</th>
-<th style="text-align:center">幻读</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">READ UNCOMMITTED</td>
-<td style="text-align:center">√</td>
-<td style="text-align:center">√</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:center">READ COMMITTED</td>
-<td style="text-align:center">×</td>
-<td style="text-align:center">√</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:center">REPEATABLE READ</td>
-<td style="text-align:center">×</td>
-<td style="text-align:center">×</td>
-<td style="text-align:center">√</td>
-</tr>
-<tr>
-<td style="text-align:center">SERIALIZABLE</td>
-<td style="text-align:center">×</td>
-<td style="text-align:center">×</td>
-<td style="text-align:center">×</td>
-</tr>
-</tbody>
-</table>
-<p>MySQL 默认隔离级别为<strong>可重复读</strong></p>
-<p>在实现上，数据库里面会创建一个视图，访问的时候以视图的逻辑结果为准。在“可重复读”隔离级别下，这个视图是在事务启动时创建的，整个事务存在期间都用这个视图。在“读提交”隔离级别下，这个视图是在每个 SQL 语句开始执行的时候创建的。这里需要注意的是，“读未提交”隔离级别下直接返回记录上的最新值，没有视图概念；而“串行化”隔离级别下直接用加锁的方式来避免并行访问。</p>
-<h3 id="脏读、不可重复读、幻读"><a href="#脏读、不可重复读、幻读" class="headerlink" title="脏读、不可重复读、幻读"></a>脏读、不可重复读、幻读</h3><h4 id="脏读"><a href="#脏读" class="headerlink" title="脏读"></a>脏读</h4><p>脏读就是指当一个事务正在访问数据，并且对数据进行了修改，而这种修改还没有提交到数据库中，这时，另外一个事务也访问这个数据，然后使用了这个数据。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/03/05/MySQL 事务隔离级别/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1391,7 +1944,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-07 10:15:18" itemprop="dateModified" datetime="2019-03-07T10:15:18+08:00">2019-03-07</time>
+                <time title="修改时间：2020-10-18 10:24:37" itemprop="dateModified" datetime="2020-10-18T10:24:37+08:00">2020-10-18</time>
               
             
           </span>
@@ -1408,7 +1961,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/DS/" itemprop="url" rel="index"><span itemprop="name">DS</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/DS-A/" itemprop="url" rel="index"><span itemprop="name">DS&A</span></a></span>
 
                 
                 
@@ -1572,7 +2125,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-07 10:12:37" itemprop="dateModified" datetime="2019-03-07T10:12:37+08:00">2019-03-07</time>
+                <time title="修改时间：2020-10-18 10:24:37" itemprop="dateModified" datetime="2020-10-18T10:24:37+08:00">2020-10-18</time>
               
             
           </span>
@@ -1589,7 +2142,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/DS/" itemprop="url" rel="index"><span itemprop="name">DS</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/DS-A/" itemprop="url" rel="index"><span itemprop="name">DS&A</span></a></span>
 
                 
                 
@@ -1755,7 +2308,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-28 00:21:04" itemprop="dateModified" datetime="2019-06-28T00:21:04+08:00">2019-06-28</time>
+                <time title="修改时间：2020-10-18 10:24:36" itemprop="dateModified" datetime="2020-10-18T10:24:36+08:00">2020-10-18</time>
               
             
           </span>
@@ -1772,7 +2325,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/DS/" itemprop="url" rel="index"><span itemprop="name">DS</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/DS-A/" itemprop="url" rel="index"><span itemprop="name">DS&A</span></a></span>
 
                 
                 
@@ -1814,366 +2367,6 @@
           
             <div class="post-button text-center">
               <a class="btn" href="/2019/03/02/连续子数组的最大和/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2019/03/02/数组中只出现一次的数字/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yxd">
-      <meta itemprop="description" content="yxd18352839189@gmail.com">
-      <meta itemprop="image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/portrait.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yxd's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/03/02/数组中只出现一次的数字/" class="post-title-link" itemprop="url">数组中只出现一次的数字</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-03-02 03:49:35" itemprop="dateCreated datePublished" datetime="2019-03-02T03:49:35+08:00">2019-03-02</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-03-07 10:17:16" itemprop="dateModified" datetime="2019-03-07T10:17:16+08:00">2019-03-07</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/DS/" itemprop="url" rel="index"><span itemprop="name">DS</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="数组中只出现一次的数字"><a href="#数组中只出现一次的数字" class="headerlink" title="数组中只出现一次的数字"></a>数组中只出现一次的数字</h2><hr>
-<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>一个整型数组里除了两个数字之外，其他的数字都出现了偶数次。请写程序找出这两个只出现一次的数字。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/03/02/数组中只出现一次的数字/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yxudong.github.io/2019/03/02/二叉搜索树的后序遍历序列/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yxd">
-      <meta itemprop="description" content="yxd18352839189@gmail.com">
-      <meta itemprop="image" content="https://yxd-blog.oss-cn-shanghai.aliyuncs.com/portrait.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yxd's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/03/02/二叉搜索树的后序遍历序列/" class="post-title-link" itemprop="url">二叉搜索树的后序遍历序列</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-03-02 00:15:35" itemprop="dateCreated datePublished" datetime="2019-03-02T00:15:35+08:00">2019-03-02</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-05-20 22:29:00" itemprop="dateModified" datetime="2019-05-20T22:29:00+08:00">2019-05-20</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/DS/" itemprop="url" rel="index"><span itemprop="name">DS</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="二叉搜索树的后序遍历序列"><a href="#二叉搜索树的后序遍历序列" class="headerlink" title="二叉搜索树的后序遍历序列"></a>二叉搜索树的后序遍历序列</h2><hr>
-<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。如果是则输出 Yes,否则输出 No。假设输入的数组的任意两个数字都互不相同。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/03/02/二叉搜索树的后序遍历序列/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -2267,7 +2460,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">26</span>
+                    <span class="site-state-item-count">28</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2380,7 +2573,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
   <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>
