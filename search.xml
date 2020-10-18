@@ -23,17 +23,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[极客时间 - 《Redis核心技术与实战》 学习笔记 5]]></title>
-    <url>%2F2020%2F09%2F29%2F%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%205%20%23%23%23%23%2F</url>
-    <content type="text"><![CDATA[极客时间 - 《Redis核心技术与实战》 学习笔记 5数据同步：主从库如何实现数据一致？ Redis 提供了主从库模式，以保证数据副本的一致，主从库之间采用的是读写分离的方式。 读操作：主库、从库都可以接收；写操作：首先到主库执行，然后，主库将写操作同步给从库。]]></content>
-      <categories>
-        <category>Redis</category>
-      </categories>
-      <tags>
-        <tag>Redis</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[极客时间 - 《Redis核心技术与实战》 学习笔记 2]]></title>
     <url>%2F2020%2F09%2F28%2F%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%20-%20%E3%80%8ARedis%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%AE%9E%E6%88%98%E3%80%8B%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%202%2F</url>
     <content type="text"><![CDATA[极客时间 - 《Redis核心技术与实战》 学习笔记 2高性能IO模型：为什么单线程Redis能那么快？ Redis 单线程的理解 Redis 是单线程，主要是指 Redis 的网络 IO 和键值对读写（数据读写）是由一个线程来完成的， 这也是 Redis 对外提供键值存储服务的主要流程。 但 Redis 的其他功能，比如持久化、异步删除、集群数据同步等，其实是由额外的线程执行的。 Redis 为什么用单线程？ 多线程编程模式面临共享资源的并发访问控制问题。 并发访问控制一直是多线程开发中的一个难点问题，如果没有精细的设计， 比如说，只是简单地采用一个粗粒度互斥锁，就会出现不理想的结果： 即使增加了线程，大部分线程也在等待获取访问共享资源的互斥锁，并行变串行，系统吞吐率并没有随着线程的增加而增加。 而且，采用多线程开发一般会引入同步原语来保护共享资源的并发访问，这也会降低系统代码的易调试性和可维护性。 为了避免这些问题，Redis 直接采用了单线程模式。 单线程 Redis 为什么那么快？ 一方面，Redis 的大部分操作在内存上完成，再加上它采用了高效的数据结构， 例如哈希表和跳表，这是它实现高性能的一个重要原因。 另一方面，就是 Redis 采用了多路复用机制，使其在网络 IO 操作中能并发处理大量的客户端请求，实现高吞吐率。 基本 IO 模型与阻塞点 以 Get 请求为例，为了处理一个 Get 请求，需要监听客户端请求（bind/listen），和客户端建立连接（accept），从 socket 中读取请求（recv），解析客户端发送请求（parse），根据请求类型读取键值数据（get），最后给客户端返回结果，即向 socket 中写回数据（send）。下图显示了这一过程，其中，bind/listen、accept、recv、parse 和 send 属于网络 IO 处理，而 get 属于键值数据操作。既然 Redis 是单线程，那么，最基本的一种实现是在一个线程中依次执行上面说的这些操作。 但是，在这里的网络 IO 操作中，有潜在的阻塞点，分别是 accept() 和 recv()。当 Redis 监听到一个客户端有连接请求，但一直未能成功建立起连接时，会阻塞在 accept() 函数这里，导致其他客户端无法和 Redis 建立连接。类似的，当 Redis 通过 recv() 从一个客户端读取数据时，如果数据一直没有到达，Redis 也会一直阻塞在 recv()。 - 非阻塞模式在 socket 模型中，不同操作调用后会返回不同的套接字类型。socket() 方法会返回主动套接字，然后调用 listen() 方法，将主动套接字转化为监听套接字，此时，可以监听来自客户端的连接请求。最后，调用 accept() 方法接收到达的客户端连接，并返回已连接套接字。针对监听套接字，我们可以设置非阻塞模式： 当 Redis 调用 accept() 但一直未有连接请求到达时，Redis 线程可以返回处理其他操作，而不用一直等待。 但是，你要注意的是，调用 accept() 时，已经存在监听套接字了 - 基于多路复用的高性能 I/O 模型Linux 中的 IO 多路复用机制是指一个线程处理多个 IO 流，就是我们经常听到的 select/epoll 机制。简单来说，在 Redis 只运行单线程的情况下，该机制允许内核中，同时存在多个监听套接字和已连接套接字。内核会一直监听这些套接字上的连接请求或数据请求。一旦有请求到达，就会交给 Redis 线程处理，这就实现了一个 Redis 线程处理多个 IO 流的效果。下图就是基于多路复用的 Redis IO 模型。图中的多个 FD 就是刚才所说的多个套接字。Redis 网络框架调用 epoll 机制，让内核监听这些套接字。此时，Redis 线程不会阻塞在某一个特定的监听或已连接套接字上，也就是说，不会阻塞在某一个特定的客户端请求处理上。正因为此，Redis 可以同时和多个客户端连接并处理请求，从而提升并发性。为了在请求到达时能通知到 Redis 线程，select/epoll 提供了基于事件的回调机制，即针对不同事件的发生，调用相应的处理函数。select/epoll 一旦监测到 FD 上有请求到达时，就会触发相应的事件。这些事件会被放进一个事件队列，Redis 单线程对该事件队列不断进行处理。这样一来，Redis 无需一直轮询是否有请求实际发生，这就可以避免造成 CPU 资源浪费。同时，Redis 在对事件队列中的事件进行处理时，会调用相应的处理函数，这就实现了基于事件的回调。因为 Redis 一直在对事件队列进行处理，所以能及时响应客户端请求，提升 Redis 的响应性能。]]></content>
@@ -196,9 +185,9 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[求 1 + 2 + 3 + ... + n]]></title>
-    <url>%2F2019%2F02%2F24%2F%E6%B1%82%201%20%2B%202%20%2B%203%20%2B%20...%20%2B%20n%2F</url>
-    <content type="text"><![CDATA[求 1 + 2 + 3 + … + n 题目描述求 1 + 2 + 3 + … + n，要求不能使用乘除法、for、while、if、else、switch、case 等关键字及条件判断语句（ A ? B : C）。 解题思路 利用逻辑与的短路特性实现递归终止； 当 n == 0 时，(n &gt; 0) &amp;&amp; ((sum += Sum_Solution(n - 1)) &gt; 0) 只执行前面的判断，为 false，然后直接返回 0； 当 n &gt; 0 时，执行 sum += Sum_Solution(n - 1)，实现递归计算 Sum_Solution(n) 解题代码12345678class Solution &#123; public: int Sum_Solution(int n) &#123; int sum = n; (n &gt; 0) &amp;&amp; (sum += Sum_Solution(n - 1)); return sum; &#125;&#125;;]]></content>
+    <title><![CDATA[数组中出现次数超过一半的数字]]></title>
+    <url>%2F2019%2F02%2F24%2F%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97%2F</url>
+    <content type="text"><![CDATA[数组中出现次数超过一半的数字 题目描述数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。 思路一 题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多； 我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数； 当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1 解题代码一123456789101112131415161718192021222324252627class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; int r = numbers[0]; int count = 1; for (int i = 1; i &lt; numbers.size(); ++i) &#123; if (count == 0) &#123; r = numbers[i]; count = 1; &#125; else if (numbers[i] == r) &#123; ++count; &#125; else &#123; --count; &#125; &#125; // 看最后一个元素个数是否超过长度一半 count = 0; for (int i = 0; i &lt; numbers.size(); ++i) &#123; if (numbers[i] == r) &#123; ++count; &#125; &#125; return count &gt; numbers.size() / 2 ? r : 0; &#125;&#125;; 思路二首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置 解题代码二123456789101112131415class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; sort(numbers.begin(),numbers.end()); int half = numbers.size() / 2; int count = 0; for (int i = 0; i &lt; numbers.size(); ++i) &#123; if (numbers[i]==numbers[half]) &#123; ++count; &#125; &#125; return count &gt; half ? numbers[half] : 0; &#125;&#125;; 思路三利用 map 把每个数字出现的次数储存起来 解题代码三12345678910111213141516171819class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; map&lt;int, int&gt; numbersMap; for (int i = 0; i &lt; numbers.size(); ++i) &#123; numbersMap[numbers[i]] += 1; &#125; int half = numbers.size() / 2; int number = 0; for (map&lt;int, int&gt;::iterator it = numbersMap.begin(); it != numbersMap.end(); ++it) &#123; if (it-&gt;second &gt; half) &#123; number = it-&gt;first; break; &#125; &#125; return number; &#125;&#125;;]]></content>
       <categories>
         <category>DS&amp;A</category>
       </categories>
@@ -209,9 +198,9 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[数组中出现次数超过一半的数字]]></title>
-    <url>%2F2019%2F02%2F24%2F%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97%2F</url>
-    <content type="text"><![CDATA[数组中出现次数超过一半的数字 题目描述数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。例如输入一个长度为 9 的数组 {1, 2, 3, 2, 2, 2, 5, 4, 2}。由于数字 2 在数组中出现了 5 次，超过数组长度的一半，因此输出 2。如果不存在则输出 0。 思路一 题目中要找的数字出现的次数超过数组长度的一半，也就是说它出现的次数比其他所有数字出现的次数的和还要多； 我们可以考虑在遍历数组的时候保存两个值：一个是数组中的一个数字，一个是次数； 当我们遍历到下一个数字的时，如果下一个数字和当前我们保存的数字相同，则次数加 1；如果和当前我们保存的数字不同，则次数减 1；当次数减到 0 的时候，我们将保存的数字改为当前遍历所处的位置，并将次数更改为 1 解题代码一123456789101112131415161718192021222324252627class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; int r = numbers[0]; int count = 1; for (int i = 1; i &lt; numbers.size(); ++i) &#123; if (count == 0) &#123; r = numbers[i]; count = 1; &#125; else if (numbers[i] == r) &#123; ++count; &#125; else &#123; --count; &#125; &#125; // 看最后一个元素个数是否超过长度一半 count = 0; for (int i = 0; i &lt; numbers.size(); ++i) &#123; if (numbers[i] == r) &#123; ++count; &#125; &#125; return count &gt; numbers.size() / 2 ? r : 0; &#125;&#125;; 思路二首先将容器中的数字排序，排序结束后，如果存在次数大于数组大小一半的数，必定在数组中间位置 解题代码二123456789101112131415class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; sort(numbers.begin(),numbers.end()); int half = numbers.size() / 2; int count = 0; for (int i = 0; i &lt; numbers.size(); ++i) &#123; if (numbers[i]==numbers[half]) &#123; ++count; &#125; &#125; return count &gt; half ? numbers[half] : 0; &#125;&#125;; 思路三利用 map 把每个数字出现的次数储存起来 解题代码三12345678910111213141516171819class Solution &#123; public: int MoreThanHalfNum_Solution(vector&lt;int&gt; numbers) &#123; map&lt;int, int&gt; numbersMap; for (int i = 0; i &lt; numbers.size(); ++i) &#123; numbersMap[numbers[i]] += 1; &#125; int half = numbers.size() / 2; int number = 0; for (map&lt;int, int&gt;::iterator it = numbersMap.begin(); it != numbersMap.end(); ++it) &#123; if (it-&gt;second &gt; half) &#123; number = it-&gt;first; break; &#125; &#125; return number; &#125;&#125;;]]></content>
+    <title><![CDATA[求 1 + 2 + 3 + ... + n]]></title>
+    <url>%2F2019%2F02%2F24%2F%E6%B1%82%201%20%2B%202%20%2B%203%20%2B%20...%20%2B%20n%2F</url>
+    <content type="text"><![CDATA[求 1 + 2 + 3 + … + n 题目描述求 1 + 2 + 3 + … + n，要求不能使用乘除法、for、while、if、else、switch、case 等关键字及条件判断语句（ A ? B : C）。 解题思路 利用逻辑与的短路特性实现递归终止； 当 n == 0 时，(n &gt; 0) &amp;&amp; ((sum += Sum_Solution(n - 1)) &gt; 0) 只执行前面的判断，为 false，然后直接返回 0； 当 n &gt; 0 时，执行 sum += Sum_Solution(n - 1)，实现递归计算 Sum_Solution(n) 解题代码12345678class Solution &#123; public: int Sum_Solution(int n) &#123; int sum = n; (n &gt; 0) &amp;&amp; (sum += Sum_Solution(n - 1)); return sum; &#125;&#125;;]]></content>
       <categories>
         <category>DS&amp;A</category>
       </categories>
@@ -249,18 +238,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[计算日期差]]></title>
-    <url>%2F2019%2F02%2F23%2F%E8%AE%A1%E7%AE%97%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E6%97%A5%E6%9C%9F%E5%B7%AE%2F</url>
-    <content type="text"><![CDATA[计算任意两个日期差 题目描述有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天 输入： 有多组数据，每组数据有两行，分别表示两个日期，形式为 YYYYMMDD 输出： 每组数据输出一行，即日期差值 样例输入： 2011041220110422 样例输出： 11 解题方法该题目是求两个日期间的天数差，即求分别以两个特定日期为界的日期区间的长度。解决这类区间问题有一个统一的思想——把原区间问题统一到起点确定的区间问题上去。采用预处理手段，即在程序真正开始处理输入数据之前，预处理出所有日期与原点日期之间的天数差并保存起来。再者，预处理也是空间换时间的重要手段（保存预处理所得数据所需的内存来换取实时处理所需要的时间消耗）日期类问题有个需要注意的要点——闰年，闰年并不严格按照四年一次的规律出现，在某种情况下也可能出现两个相邻闰年相隔8年的情况（如1896年与1904年）。即应采用该如下代码表示： 1#define ISYEAP(X) X%100 != 0 &amp;&amp; X%4 == 0 || X%400 == 0 ? 1:0 当需要开辟大量内存空间的情况，必须在函数体外定义，即定义全局变量，或者在函数中使用malloc等函数动态申请变量空间。即下面的代码中的buf[5001][13][32]在保存某个特定日期与原点日期的天数差时，使用了三维数组，用年、月、日分别表示该数组下标，便将日期本身与其存储地址联系起来，通过利用它的年月日数字即可找到我们保存的值，即Hash的基本思想。 解题代码123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960#include &lt;stdio.h&gt;#include &lt;cmath&gt;// 定义宏判断是否是闰年#define ISYEAP(x) x % 100 != 0 &amp;&amp; x % 4 == 0 || x % 400 == 0 ? 1 : 0int dayOfMonth[13][2] = &#123; 0, 0, 31, 31, 28, 29, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31&#125;; // 预存每月的天数，二月配合宏定义做特殊处理struct Date &#123; int Day; int Month; int Year; void nextDay() &#123; // 计算下一天的日期 ++Day; if (Day &gt; dayOfMonth[Month][ISYEAP(Year)]) &#123; // 若日数超过了当月最大日数 Day = 1; ++Month; if (Month &gt; 12) &#123; // 若月份超过 12 Month = 1; ++Year; &#125; &#125; &#125;&#125;;int buf[5001][13][32]; // 保存预处理的天数int main() &#123; Date tmp; int cnt = 0; tmp.Day = 0; tmp.Month = 0; tmp.Year = 0; while (tmp.Year != 5001) &#123; buf[tmp.Year][tmp.Month][tmp.Day] = cnt; tmp.nextDay(); ++cnt; &#125; int d1, m1, y1; int d2, m2, y2; while (scanf("%4d%2d%2d", &amp;y1, &amp;m1, &amp;d1) != EOF) &#123; scanf("%4d%2d%2d", &amp;y2, &amp;m2, &amp;d2); printf("%d\n", abs(buf[y1][m1][d1] - buf[y2][m2][d2]) + 1); &#125; return 0;&#125;]]></content>
-      <categories>
-        <category>DS&amp;A</category>
-      </categories>
-      <tags>
-        <tag>DS&amp;A</tag>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[LintCode 20. 骰子求和]]></title>
     <url>%2F2019%2F02%2F23%2FLintCode%2020.%20%E9%AA%B0%E5%AD%90%E6%B1%82%E5%92%8C%2F</url>
     <content type="text"><![CDATA[LintCode 20. 骰子求和 题目描述扔 n 个骰子，向上面的数字之和为 S。给定 Given n，请列出所有可能的 S 值及其相应的概率。 样例给定 n = 1，返回 [[1, 0.17], [2, 0.17], [3, 0.17], [4, 0.17], [5, 0.17], [6, 0.17]]。 注意事项你不需要关心结果的准确性，我们会帮你输出结果。 思路递归求解，dicesSum(n) 可以用 dicesSum(n-1) 和 dicesSum(1) 来求解。利用 map 存放向上的数字之和与概率。 解题代码123456789101112131415161718192021222324252627282930313233343536class Solution &#123; public: /** * @param n an integer * @return a list of pair&lt;sum, probability&gt; */ // 递归求骰子的概率 map&lt;int, double&gt; get_next(int n) &#123; map&lt;int, double&gt; m; for (int i = 1; i &lt;= 6; ++i) &#123; m[i] = (double)1 / 6; &#125; // m 为一次的概率 if (n == 1) &#123; return m; &#125; map&lt;int, double&gt; chance = get_next(n - 1); // 递归获取 n-1 的概率 map&lt;int, double&gt; r; for (auto i : m) &#123; for (auto c : chance) &#123; r[i.first + c.first] += i.second*c.second; // 循环遍历，相加和共 6 种情况，存在对应的 key 中 &#125; &#125; return r; &#125; vector&lt;pair&lt;int, double&gt;&gt; dicesSum(int n) &#123; vector&lt;pair&lt;int, double&gt;&gt; vec; map&lt;int, double&gt; m = get_next(n); for (auto i : m) &#123; vec.push_back(make_pair(i.first, i.second)); &#125; return vec; &#125;&#125;;]]></content>
@@ -288,6 +265,18 @@
       </tags>
   </entry>
   <entry>
+    <title><![CDATA[计算日期差]]></title>
+    <url>%2F2019%2F02%2F23%2F%E8%AE%A1%E7%AE%97%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E6%97%A5%E6%9C%9F%E5%B7%AE%2F</url>
+    <content type="text"><![CDATA[计算任意两个日期差 题目描述有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天 输入： 有多组数据，每组数据有两行，分别表示两个日期，形式为 YYYYMMDD 输出： 每组数据输出一行，即日期差值 样例输入： 2011041220110422 样例输出： 11 解题方法该题目是求两个日期间的天数差，即求分别以两个特定日期为界的日期区间的长度。解决这类区间问题有一个统一的思想——把原区间问题统一到起点确定的区间问题上去。采用预处理手段，即在程序真正开始处理输入数据之前，预处理出所有日期与原点日期之间的天数差并保存起来。再者，预处理也是空间换时间的重要手段（保存预处理所得数据所需的内存来换取实时处理所需要的时间消耗）日期类问题有个需要注意的要点——闰年，闰年并不严格按照四年一次的规律出现，在某种情况下也可能出现两个相邻闰年相隔8年的情况（如1896年与1904年）。即应采用该如下代码表示： 1#define ISYEAP(X) X%100 != 0 &amp;&amp; X%4 == 0 || X%400 == 0 ? 1:0 当需要开辟大量内存空间的情况，必须在函数体外定义，即定义全局变量，或者在函数中使用malloc等函数动态申请变量空间。即下面的代码中的buf[5001][13][32]在保存某个特定日期与原点日期的天数差时，使用了三维数组，用年、月、日分别表示该数组下标，便将日期本身与其存储地址联系起来，通过利用它的年月日数字即可找到我们保存的值，即Hash的基本思想。 解题代码123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960#include &lt;stdio.h&gt;#include &lt;cmath&gt;// 定义宏判断是否是闰年#define ISYEAP(x) x % 100 != 0 &amp;&amp; x % 4 == 0 || x % 400 == 0 ? 1 : 0int dayOfMonth[13][2] = &#123; 0, 0, 31, 31, 28, 29, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31, 31, 31, 30, 30, 31, 31, 30, 30, 31, 31&#125;; // 预存每月的天数，二月配合宏定义做特殊处理struct Date &#123; int Day; int Month; int Year; void nextDay() &#123; // 计算下一天的日期 ++Day; if (Day &gt; dayOfMonth[Month][ISYEAP(Year)]) &#123; // 若日数超过了当月最大日数 Day = 1; ++Month; if (Month &gt; 12) &#123; // 若月份超过 12 Month = 1; ++Year; &#125; &#125; &#125;&#125;;int buf[5001][13][32]; // 保存预处理的天数int main() &#123; Date tmp; int cnt = 0; tmp.Day = 0; tmp.Month = 0; tmp.Year = 0; while (tmp.Year != 5001) &#123; buf[tmp.Year][tmp.Month][tmp.Day] = cnt; tmp.nextDay(); ++cnt; &#125; int d1, m1, y1; int d2, m2, y2; while (scanf("%4d%2d%2d", &amp;y1, &amp;m1, &amp;d1) != EOF) &#123; scanf("%4d%2d%2d", &amp;y2, &amp;m2, &amp;d2); printf("%d\n", abs(buf[y1][m1][d1] - buf[y2][m2][d2]) + 1); &#125; return 0;&#125;]]></content>
+      <categories>
+        <category>DS&amp;A</category>
+      </categories>
+      <tags>
+        <tag>DS&amp;A</tag>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Python [1, -1][x == 0] 写法解释和用处]]></title>
     <url>%2F2019%2F02%2F03%2FPython%20%5B1%2C%20-1%5D%5Bx%20%3D%3D%200%5D%20%E5%86%99%E6%B3%95%E8%A7%A3%E9%87%8A%E5%92%8C%E7%94%A8%E5%A4%84%2F</url>
     <content type="text"><![CDATA[Python [1, -1][x == 0] 写法解释和用处 解释这种写法通俗形式为 [条件为假, 条件为真][判断条件]在 Python 中，布尔型 True 转变为整数等于 1，False 转变为整数等于 0所以条件为真时，返回第二个数，条件为假时，返回第一个数 用处1234if x == 0: a = -1else: a = 1 可以写成这样的形式1a = [1, -1][x == 0]]]></content>
@@ -299,15 +288,16 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[快速排序递归及非递归实现]]></title>
-    <url>%2F2019%2F02%2F01%2F%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E9%80%92%E5%BD%92%E5%8F%8A%E9%9D%9E%E9%80%92%E5%BD%92%E5%AE%9E%E7%8E%B0%2F</url>
-    <content type="text"><![CDATA[快速排序递归及非递归实现 递归1234567891011121314151617181920212223void QuickSort(int A[], int low, int high) &#123; if (low &lt; high) &#123; int pivotpos = Partition(A, low, high); QuickSort(A, low, pivotpos - 1); QuickSort(A, pivotpos + 1, high); &#125;&#125;int Partition(int A [], int low, int high) &#123; int pivot = A[low]; while (low &lt; high) &#123; while (low &lt; high &amp;&amp; A[high] &gt;= pivot) &#123; --high; &#125; A[low] = A[high]; while (low &lt; high &amp;&amp; A [low] &lt;= pivot) &#123; ++low; &#125; A[high] = A[low]; &#125; A[low] = pivot; return low;&#125; 非递归123456789101112131415161718192021222324252627282930313233343536373839void QuickSort(int *array, int left, int right) &#123; stack&lt;int&gt; s; s.push(left); s.push(right); // 后入的 right，所以要先拿 right // 其实就是用栈保存每一个待排序子串的首尾元素下标，下一次 while 循环时取出这个范围，对这段子序列进行 partition 操作 while (!s.empty) &#123; int right = s.top(); s.pop(); int left = s.top(); s.pop(); int index = Partition(array, left, right); if (index-1 &gt; left) &#123; s.push(left); s.push(index - 1); &#125; if (index+1 &lt; right) &#123; s.push(index + 1); s.push(right); &#125; &#125;&#125;int PartSort(int *array,int left,int right) &#123; int key = array[right]; while (left &lt; right) &#123; while (left &lt; right &amp;&amp; array[left] &lt;= key) &#123; ++left; &#125; array[right] = array[left]; while (left &lt; right &amp;&amp; array[right] &gt;= key) &#123; --right; &#125; array[left] = array[right]; &#125; array[right] = key; return right;&#125;]]></content>
+    <title><![CDATA[单链表的反转]]></title>
+    <url>%2F2019%2F02%2F01%2F%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC%2F</url>
+    <content type="text"><![CDATA[单链表的反转 链表的定义1234typedef struct LinkNode &#123; int val; struct LinkNode *next;&#125; LinkNode; 非递归写法123456789101112131415161718LinkNode *Reverse(LinkNode *head) &#123; if (head == NULL || head-&gt;next == NULL) &#123; return head; &#125; LinkNode *pre = head; LinkNode *cur = head-&gt;next; LinkNode *temp = head-&gt;next-&gt;next; while (cur) &#123; temp = cur-&gt;next; cur-&gt;next = pre; pre = cur; cur = temp; &#125; head-&gt;next = NULL; return pre;&#125; 递归写法1234567891011121314LinkNode *Re_Reverse(LinkNode *head) &#123; if (head == NULL || head-&gt;next == NULL) &#123; return head; &#125; // 一直循环到链尾 LinkNode *newHead = Re_Reverse(head-&gt;next); // 翻转链表的指向 head-&gt;next-&gt;next = head; // 记得赋值 NULL，防止链表错乱 head-&gt;next = NULL; // 新链表头永远指向的是原链表的链尾 return newHead;&#125;]]></content>
       <categories>
         <category>DS&amp;A</category>
       </categories>
       <tags>
         <tag>DS&amp;A</tag>
         <tag>C++</tag>
+        <tag>剑指offer</tag>
       </tags>
   </entry>
   <entry>
@@ -324,16 +314,15 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[单链表的反转]]></title>
-    <url>%2F2019%2F02%2F01%2F%E5%8D%95%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8F%8D%E8%BD%AC%2F</url>
-    <content type="text"><![CDATA[单链表的反转 链表的定义1234typedef struct LinkNode &#123; int val; struct LinkNode *next;&#125; LinkNode; 非递归写法123456789101112131415161718LinkNode *Reverse(LinkNode *head) &#123; if (head == NULL || head-&gt;next == NULL) &#123; return head; &#125; LinkNode *pre = head; LinkNode *cur = head-&gt;next; LinkNode *temp = head-&gt;next-&gt;next; while (cur) &#123; temp = cur-&gt;next; cur-&gt;next = pre; pre = cur; cur = temp; &#125; head-&gt;next = NULL; return pre;&#125; 递归写法1234567891011121314LinkNode *Re_Reverse(LinkNode *head) &#123; if (head == NULL || head-&gt;next == NULL) &#123; return head; &#125; // 一直循环到链尾 LinkNode *newHead = Re_Reverse(head-&gt;next); // 翻转链表的指向 head-&gt;next-&gt;next = head; // 记得赋值 NULL，防止链表错乱 head-&gt;next = NULL; // 新链表头永远指向的是原链表的链尾 return newHead;&#125;]]></content>
+    <title><![CDATA[快速排序递归及非递归实现]]></title>
+    <url>%2F2019%2F02%2F01%2F%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E9%80%92%E5%BD%92%E5%8F%8A%E9%9D%9E%E9%80%92%E5%BD%92%E5%AE%9E%E7%8E%B0%2F</url>
+    <content type="text"><![CDATA[快速排序递归及非递归实现 递归1234567891011121314151617181920212223void QuickSort(int A[], int low, int high) &#123; if (low &lt; high) &#123; int pivotpos = Partition(A, low, high); QuickSort(A, low, pivotpos - 1); QuickSort(A, pivotpos + 1, high); &#125;&#125;int Partition(int A [], int low, int high) &#123; int pivot = A[low]; while (low &lt; high) &#123; while (low &lt; high &amp;&amp; A[high] &gt;= pivot) &#123; --high; &#125; A[low] = A[high]; while (low &lt; high &amp;&amp; A [low] &lt;= pivot) &#123; ++low; &#125; A[high] = A[low]; &#125; A[low] = pivot; return low;&#125; 非递归123456789101112131415161718192021222324252627282930313233343536373839void QuickSort(int *array, int left, int right) &#123; stack&lt;int&gt; s; s.push(left); s.push(right); // 后入的 right，所以要先拿 right // 其实就是用栈保存每一个待排序子串的首尾元素下标，下一次 while 循环时取出这个范围，对这段子序列进行 partition 操作 while (!s.empty) &#123; int right = s.top(); s.pop(); int left = s.top(); s.pop(); int index = Partition(array, left, right); if (index-1 &gt; left) &#123; s.push(left); s.push(index - 1); &#125; if (index+1 &lt; right) &#123; s.push(index + 1); s.push(right); &#125; &#125;&#125;int PartSort(int *array,int left,int right) &#123; int key = array[right]; while (left &lt; right) &#123; while (left &lt; right &amp;&amp; array[left] &lt;= key) &#123; ++left; &#125; array[right] = array[left]; while (left &lt; right &amp;&amp; array[right] &gt;= key) &#123; --right; &#125; array[left] = array[right]; &#125; array[right] = key; return right;&#125;]]></content>
       <categories>
         <category>DS&amp;A</category>
       </categories>
       <tags>
         <tag>DS&amp;A</tag>
         <tag>C++</tag>
-        <tag>剑指offer</tag>
       </tags>
   </entry>
   <entry>
